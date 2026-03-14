@@ -1,7 +1,7 @@
 [project]
 name = "mvp"
 version = "0.1.0"
-description = "Add your description here"
+description = "Web application for automated compliance verification of radio equipment according to EN 18031"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
