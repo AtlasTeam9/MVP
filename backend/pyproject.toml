@@ -1,0 +1,60 @@
+[project]
+name = "mvp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]==0.124.4",
+    "fastapi-utils>=0.8.0",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "uuid>=1.30",
+    "typing-inspect>=0.9.0",
+]
+
+[tool.ruff]
+# Sezione 2.2.4.1 - Lunghezza massima riga: 100 caratteri
+line-length = 100
+
+# Cartelle da escludere dall'analisi
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "dist",
+    "build",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # Errori di stile (pycodestyle)
+    "F",   # Errori logici (pyflakes)
+    "N",   # Convenzioni di nomenclatura (pep8-naming)
+    "W",   # Warning di stile
+    "UP",  # Aggiornamenti sintassi Python moderno
+    "B",   # Bug-prone patterns (flake8-bugbear)
+    "C90", # Complessità ciclomatica (McCabe)
+]
+
+ignore = [
+    "E501", # Lunghezza riga già gestita da line-length
+]
+
+[tool.ruff.lint.pep8-naming]
+# Sezione 2.2.4.1 - Convenzioni di nomenclatura Backend:
+# - Classi: PascalCase        → già gestito di default
+# - Variabili e Metodi: snake_case → già gestito di default
+# - Costanti: UPPER_SNAKE_CASE     → già gestito di default
+
+[tool.ruff.lint.mccabe]
+# Sezione 2.2.4.1 - Best practices: max 3 livelli di annidamento
+# La complessità ciclomatica è correlata: soglia consigliata
+max-complexity = 10
+
+[tool.ruff.format]
+# Sezione 2.2.4.1 - Indentazione: 4 spazi
+indent-style = "space"
+line-ending = "lf"
+
