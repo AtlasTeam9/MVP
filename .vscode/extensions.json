@@ -1,0 +1,19 @@
+{
+    "recommendations": [
+        // Python / FastAPI (sezione 2.2.4.2)
+        "charliermarsh.ruff", // Linting e formatting Python
+        "ms-python.python", // Supporto Python base
+        "ms-python.vscode-pylance", // IntelliSense avanzato Python
+
+        // React / Frontend (sezione 2.2.4.2)
+        "esbenp.prettier-vscode", // Formatting JS/JSX
+        "dbaeumer.vscode-eslint", // Linting JS/JSX
+
+        // Convenzioni generali (sezione 2.2.4.1)
+        "editorconfig.editorconfig", // Rispetto .editorconfig
+
+        // Strumenti di progetto (sezione 2.2.1 e 4.2.2)
+        "eamodio.gitlens", // Git avanzato
+        "ms-azuretools.vscode-docker" // Supporto Docker
+    ]
+}

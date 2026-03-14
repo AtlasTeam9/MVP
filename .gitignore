@@ -1,0 +1,35 @@
+# ── Python / Backend ──────────────────────
+__pycache__/
+*.py[oc]
+*.pyc
+*.pyo
+.venv/
+venv/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# ── Node / Frontend ───────────────────────
+node_modules/
+dist/
+build/
+coverage/
+*.local
+
+# ── Vite ──────────────────────────────────
+frontend/dist/
+frontend/.vite/
+
+# ── Sistema operativo ─────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Variabili d'ambiente ──────────────────
+.env
+.env.local
+.env.production
+
+# ── Docker ────────────────────────────────
+*.log

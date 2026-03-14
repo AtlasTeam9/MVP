@@ -1,0 +1,48 @@
+{
+    // Formattazione automatica al salvataggio
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+
+    // Lunghezza riga visiva (sezione 2.2.4.1)
+    "editor.rulers": [100],
+    "editor.wordWrapColumn": 100,
+
+    // Prettier come formatter di default per il frontend
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+    // Ruff come formatter per Python (sezione 2.2.4.2)
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.tabSize": 4
+    },
+
+    // Fix automatici Ruff al salvataggio
+    "editor.codeActionsOnSave": {
+        "source.fixAll.ruff": "explicit",
+        "source.organizeImports.ruff": "explicit"
+    },
+
+    // ESLint attivo su file JS/JSX
+    "eslint.validate": ["javascript", "javascriptreact"],
+
+    // Nomi file kebab-case per il frontend: promemoria visivo
+    // (non automatizzabile, da rispettare manualmente - sezione 2.2.4.1)
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+
+    // Configurazione pytest
+    "python.testing.pytestArgs": ["backend"],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+
+    // Esclusioni dalla ricerca
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/build": true,
+        "**/__pycache__": true,
+        "**/.venv": true
+    }
+}
