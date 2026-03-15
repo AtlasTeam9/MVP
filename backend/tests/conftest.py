@@ -46,9 +46,9 @@ def sample_trees_objects() -> list[DecisionTree]:
     node1 = Node("Test question 1?", Result.NOT_APPLICABLE, node2)
 
     nodes = [node1, node2]
-    tree = DecisionTree(id="tree_01", title="Test Tree 1", nodes=nodes, dependencies=[])
-    tree = DecisionTree(id="tree_02", title="Test Tree 2", nodes=nodes, dependencies=["tree_01"])
-    return [tree]
+    tree1 = DecisionTree(id="tree_01", title="Test Tree 1", nodes=nodes, dependencies=[])
+    tree2 = DecisionTree(id="tree_02", title="Test Tree 2", nodes=nodes, dependencies=["tree_01"])
+    return [tree1, tree2]
 
 
 @pytest.fixture
@@ -58,7 +58,7 @@ def fixtures_dir():
 
 
 @pytest.fixture
-def sample_device_file(tmp_path, sample_device_data):
+def sample_device_file(tmp_path, sample_device_data) -> Path:
     """
     Crea file dispositivo temporaneo.
     tmp_path è fornito da pytest.
