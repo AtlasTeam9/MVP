@@ -3,7 +3,7 @@ from uuid import uuid4
 from app.domain.interfaces.tree_provider import TreeProvider
 from app.domain.utils.dependency_evaluator import DependencyEvaluator
 from app.domain.utils.result_store import ResultStore
-from app.domain.utils.session_navigator import SessionNavigator
+from app.domain.utils.session_navigator import AnswerResult, GoBackResult, SessionNavigator
 from app.domain.utils.session_state import SessionState
 
 from .device import Asset, Device
@@ -32,7 +32,7 @@ class Session:
         self.dependencies = DependencyEvaluator(self.results)
 
     @property
-    def get_id(self):
+    def get_id(self) -> str:
         return self._id
 
     @property
@@ -55,7 +55,7 @@ class Session:
     def current_node(self) -> Node | None:
         return self.navigator.current_node()
 
-    def record_result(self, result: Result):
+    def record_result(self, result: Result) -> None:
 
         asset = self.current_asset
         tree = self.current_tree
@@ -63,7 +63,7 @@ class Session:
         if asset and tree:
             self.results.record(asset.get_id, tree.get_id, result)
 
-    def answer(self, ans: bool):
+    def answer(self, ans: bool) -> AnswerResult:
         """
         Processa la risposta al nodo corrente.
         Se il tree si completa, registra automaticamente il risultato.
@@ -84,9 +84,9 @@ class Session:
     def advance(self):
         self.navigator.next()
 
-    def go_back(self, target_node: Node):
+    def go_back(self, target_node: Node) -> GoBackResult:
         return self.navigator.go_back(target_node)
 
     @property
-    def navigation_history(self):
+    def navigation_history(self) -> list[dict]:
         return self.navigator.navigation_history()
