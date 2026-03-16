@@ -45,11 +45,11 @@ class TestSession:
         session = self._create_test_session(mock_tree_provider)
 
         if session.current_node:
-            assert session.current_node.get_question == "Test question 1?"
+            assert session.current_node.get_question == "Q1?"
             assert session.current_node.get_yes == Result.NOT_APPLICABLE
             no_node = session.current_node.get_no
             if isinstance(no_node, Node):
-                assert no_node.get_question == "Test question 2?"
+                assert no_node.get_question == "Q2?"
                 assert no_node.get_yes == Result.PASS
                 assert no_node.get_no == Result.FAIL
 
@@ -62,6 +62,49 @@ class TestSession:
         assert result.session_finished is False
         assert result.tree_completed is True
         assert result.tree_result == Result.NOT_APPLICABLE
+
+    def test_auto_skip_dependent_trees_on_answer(self, mock_tree_provider):
+        """
+        Verifica che completando un albero con esito NOT_APPLICABLE (o FAIL),
+        gli alberi dipendenti vengano saltati e l'esito N/A venga propagato.
+        """
+        session = self._create_test_session(mock_tree_provider)
+        asset1_id = ""
+        if session.current_asset:
+            asset1_id = session.current_asset.get_id
+
+        result = session.answer(True)
+
+        assert result.tree_completed is True
+        assert result.tree_result == Result.NOT_APPLICABLE
+
+        # tree_02 dipende da tree_01. Poiché tree_01 è N/A, session._skip_invalid_trees()
+        # deve aver saltato tree_02 e deve averci spostato direttamente all'Asset 2 (a2).
+        if session.current_asset and session.current_tree:
+            assert session.current_asset.get_id == "a2"
+            assert session.current_tree.get_id == "tree_01"
+
+        # Controlliamo che nel ResultStore sia stato registrato automaticamente N/A per il tree_02 saltato
+        skipped_tree_result = session.results.get(asset1_id, "tree_02")
+        assert skipped_tree_result == Result.NOT_APPLICABLE
+
+    def test_auto_skip_finishes_session(self, mock_tree_provider):
+        """
+        Verifica che se l'ultimo albero dell'ultimo asset fallisce/N/A
+        e i restanti alberi vengono saltati, la sessione si chiuda correttamente.
+        """
+        session = self._create_test_session(mock_tree_provider)
+
+        session.navigator.state.current_asset_index = 1
+
+        # Rispondiamo True alla Q1 del tree_01 dell'Asset 2 (esito N/A)
+        result = session.answer(True)
+
+        # Poiché il tree_02 (ultimo albero) dipende dal tree_01 appena fallito,
+        # verrà saltato. Essendo l'ultimo albero dell'ultimo asset, la sessione deve finire.
+        assert result.tree_completed is True
+        assert result.session_finished is True
+        assert session.state.is_finished is True
 
     def _create_test_session(self, mock_tree_provider) -> Session:
         """Helper per creare sessione di test"""

@@ -40,14 +40,23 @@ def mock_tree_provider(sample_trees_objects) -> TreeProvider:
 
 
 @pytest.fixture
-def sample_trees_objects() -> list[DecisionTree]:
-    """Restituisce lista di DecisionTree con nodi reali"""
-    node2 = Node("Test question 2?", Result.PASS, Result.FAIL)
-    node1 = Node("Test question 1?", Result.NOT_APPLICABLE, node2)
+def sample_nodes() -> list[Node]:
+    node2 = Node("Q2?", Result.PASS, Result.FAIL)
+    node1 = Node("Q1?", Result.NOT_APPLICABLE, node2)
 
-    nodes = [node1, node2]
-    tree1 = DecisionTree(id="tree_01", title="Test Tree 1", nodes=nodes, dependencies=[])
-    tree2 = DecisionTree(id="tree_02", title="Test Tree 2", nodes=nodes, dependencies=["tree_01"])
+    node3 = Node("Q3?", Result.PASS, Result.FAIL)
+    return [node1, node2, node3]
+
+
+@pytest.fixture
+def sample_trees_objects(sample_nodes) -> list[DecisionTree]:
+    """Restituisce lista di DecisionTree con nodi reali"""
+    [node1, node2, node3] = sample_nodes
+
+    nodes1 = [node1, node2]
+
+    tree1 = DecisionTree(id="tree_01", title="Test Tree 1", nodes=nodes1, dependencies=[])
+    tree2 = DecisionTree(id="tree_02", title="Test Tree 2", nodes=[node3], dependencies=["tree_01"])
     return [tree1, tree2]
 
 
