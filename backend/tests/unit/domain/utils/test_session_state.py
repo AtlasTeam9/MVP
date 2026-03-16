@@ -1,7 +1,5 @@
 import pytest
 
-from app.domain.entities.result import Result
-from app.domain.entities.tree import Node
 from app.domain.utils.session_state import SessionState
 
 
@@ -10,14 +8,6 @@ class TestSessionState:
     def fresh_state(self) -> SessionState:
         """Fornisce un'istanza pulita di SessionState per ogni test."""
         return SessionState()
-
-    @pytest.fixture
-    def sample_nodes(self) -> list[Node]:
-        """Fornisce alcuni nodi di test da inserire nello stack."""
-        node3 = Node("Question 2?", Result.FAIL, Result.PASS)
-        node2 = Node("Question 2?", Result.NOT_APPLICABLE, node3)
-        node1 = Node("Question 1?", Result.NOT_APPLICABLE, node2)
-        return [node1, node2, node3]
 
     def test_initial_state(self, fresh_state: SessionState):
         assert fresh_state.current_asset_index == 0
