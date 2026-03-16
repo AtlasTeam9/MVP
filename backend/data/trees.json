@@ -1,0 +1,314 @@
+[
+    {
+        "id": "ACM-1",
+        "title": "Applicability of access control mechanisms",
+        "dependencies": [],
+        "nodes": {
+            "node1": {
+                "question": "Is the public accessibility of the asset the equipment's intended functionality?",
+                "true": "result_na",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Do the physical or logical measures in the targeted operational environment limit the accessibility to authorized entities?",
+                "true": "result_na",
+                "false": "node3"
+            },
+            "node3": {
+                "question": "Do legal implications not allow access control mechanisms?",
+                "true": "result_na",
+                "false": "node4"
+            },
+            "node4": {
+                "question": "Are there access control mechanisms that manage entities' access to the security assets and network assets?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "ACM-2",
+        "title": "Appropriate access control mechanisms",
+        "dependencies": [
+            "ACM-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Do the access control mechanisms ensure that only authorized entities have access to the protected security asset or network asset?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-1-1",
+        "title": "Applicability of authentication mechanisms - network interface",
+        "dependencies": [
+            "ACM-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Is the managed access for network functions or network functions configuration where the absence of authentication is required for the equipment's intended functionality?",
+                "true": "result_na",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Is the managed access performed over networks where access is limited to authorized entities?",
+                "true": "result_na",
+                "false": "node3"
+            },
+            "node3": {
+                "question": "Does the managed access use authentication mechanisms?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-1-2",
+        "title": "Applicability of authentication mechanisms - user interface",
+        "dependencies": [
+            "ACM-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Is the managed access performed over a user interface where physical or logical measures in the targeted environment provide confidence in the correctness of an entity's claim?",
+                "true": "result_na",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Is the managed access only for reading of network functions or network functions configuration where access without authentication is needed to enable the intended equipment functionality?",
+                "true": "result_na",
+                "false": "node3"
+            },
+            "node3": {
+                "question": "Is the managed access only for reading of network functions or network functions configuration where access without authentication is needed because legal implications do not allow for authentication mechanisms?",
+                "true": "result_na",
+                "false": "node4"
+            },
+            "node4": {
+                "question": "Does the managed access use authentication mechanisms?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-2-NI",
+        "title": "Appropriate authentication mechanisms - network interface",
+        "dependencies": [
+            "AUM-1-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Does the authentication mechanism examine evidence from at least one element of the categories knowledge, possession and inherence (one factor authentication)?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-2-UI",
+        "title": "Appropriate authentication mechanisms - user interface",
+        "dependencies": [
+            "AUM-1-2"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Does the authentication mechanism examine evidence from at least one element of the categories knowledge, possession and inherence (one factor authentication)?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-3-NI",
+        "title": "Authenticator validation - network interface",
+        "dependencies": [
+            "AUM-1-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Does the authentication mechanism validate all relevant properties considering the available information about the authenticator in the operational environments of use?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-3-UI",
+        "title": "Authenticator validation - user interface",
+        "dependencies": [
+            "AUM-1-2"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Does the authentication mechanism validate all relevant properties considering the available information about the authenticator in the operational environments of use?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-4-NI",
+        "title": "Changing authenticators - network interface",
+        "dependencies": [
+            "AUM-1-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Does the change of the authenticator conflict security goals?",
+                "true": "result_na",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Does the authentication mechanism allow the change of the authenticator?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-4-UI",
+        "title": "Changing authenticators - user interface",
+        "dependencies": [
+            "AUM-1-2"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Does the change of the authenticator conflict security goals?",
+                "true": "result_na",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Does the authentication mechanism allow the change of the authenticator?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-5-1-NI",
+        "title": "Password strength - factory default passwords - network interface",
+        "dependencies": [
+            "AUM-1-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Is the password enforced to be changed by the user before or on first use?",
+                "true": "result_pass",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Is the password unique per equipment?",
+                "true": "node3",
+                "false": "result_fail"
+            },
+            "node3": {
+                "question": "Does the password follow best practice concerning strength?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-5-1-UI",
+        "title": "Password strength - factory default passwords - user interface",
+        "dependencies": [
+            "AUM-1-2"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Is the password enforced to be changed by the user before or on first use?",
+                "true": "result_pass",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Is the password unique per equipment?",
+                "true": "node3",
+                "false": "result_fail"
+            },
+            "node3": {
+                "question": "Does the password follow best practice concerning strength?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-5-2-NI",
+        "title": "Password strength - non-factory default passwords - network interface",
+        "dependencies": [
+            "AUM-1-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Is the password enforced to be set by the user before or on first use and before the equipment is logically connected to a network?",
+                "true": "result_pass",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Is the password defined by an authorized entity within a network where access is limited to authorised entities?",
+                "true": "result_pass",
+                "false": "node3"
+            },
+            "node3": {
+                "question": "Is the password generated by the equipment using best practice concerning strength and only communicated to an authorized entity within a network where access is limited to authorised entities?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-5-2-UI",
+        "title": "Password strength - non-factory default passwords - user interface",
+        "dependencies": [
+            "AUM-1-2"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Is the password enforced to be set by the user before or on first use and before the equipment is logically connected to a network?",
+                "true": "result_pass",
+                "false": "node2"
+            },
+            "node2": {
+                "question": "Is the password defined by an authorized entity within a network where access is limited to authorised entities?",
+                "true": "result_pass",
+                "false": "node3"
+            },
+            "node3": {
+                "question": "Is the password generated by the equipment using best practice concerning strength and only communicated to an authorized entity within a network where access is limited to authorised entities?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-6-NI",
+        "title": "Brute force protection - network interface",
+        "dependencies": [
+            "AUM-1-1"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Has the authentication mechanism the capability to be resilient against brute force attacks?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    },
+    {
+        "id": "AUM-6-UI",
+        "title": "Brute force protection - user interface",
+        "dependencies": [
+            "AUM-1-2"
+        ],
+        "nodes": {
+            "node1": {
+                "question": "Has the authentication mechanism the capability to be resilient against brute force attacks?",
+                "true": "result_pass",
+                "false": "result_fail"
+            }
+        }
+    }
+]
