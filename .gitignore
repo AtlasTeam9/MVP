@@ -1,5 +1,6 @@
 # ── Python / Backend ──────────────────────
 __pycache__/
+.pytest_cache/
 *.py[oc]
 *.pyc
 *.pyo

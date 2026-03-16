@@ -53,7 +53,7 @@ class Asset:
 
     @property
     def get_sensitivity(self) -> bool | str:
-        return self._is_sensitive or "Sensitivity not inserted"
+        return self._is_sensitive if self._is_sensitive is not None else "Sensitivity not inserted"
 
     def set_sensitivity(self, is_sensitive: bool) -> None:
         self._is_sensitive = is_sensitive
