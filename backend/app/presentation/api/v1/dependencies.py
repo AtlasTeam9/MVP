@@ -1,10 +1,10 @@
-from app.infrastructure.persistence.file_storage import FileStorage
-from app.infrastructure.persistence.file_tree_provider import FileTreeProvider
-from app.infrastructure.repositories.session_repository import SessionRepository
 from fastapi import Depends
 
 from app.domain.interfaces.tree_provider import TreeProvider
 from app.domain.services.session_service import SessionService
+from app.infrastructure.persistence.file_storage import FileStorage
+from app.infrastructure.persistence.file_tree_provider import FileTreeProvider
+from app.infrastructure.repositories.session_repository import SessionRepository
 
 
 def get_file_storage() -> FileStorage:
