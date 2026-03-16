@@ -35,8 +35,8 @@ class TestNode:
 class TestDecisionTree:
     @pytest.fixture
     def sample_nodes(self):
-        node1 = Node("Question 1?", Result.PASS, Result.FAIL)
-        node2 = Node("Question 2?", Result.NOT_APPLICABLE, Result.FAIL)
+        node2 = Node("Question 2?", Result.FAIL, Result.PASS)
+        node1 = Node("Question 1?", Result.NOT_APPLICABLE, node2)
         return [node1, node2]
 
     def test_tree_initialization_and_getters(self, sample_nodes):
