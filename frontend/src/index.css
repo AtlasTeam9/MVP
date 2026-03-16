@@ -35,4 +35,8 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    background-image: url("leftwave.svg");
+    background-repeat: no-repeat;
+    background-size: 103%;
+    background-position: 15% 125%;
 }
