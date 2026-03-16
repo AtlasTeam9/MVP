@@ -55,6 +55,10 @@ class Session:
     def current_node(self) -> Node | None:
         return self.navigator.current_node()
 
+    @property
+    def navigation_history(self) -> list[dict]:
+        return self.navigator.navigation_history()
+
     def record_result(self, result: Result) -> None:
 
         asset = self.current_asset
@@ -64,29 +68,46 @@ class Session:
             self.results.record(asset.get_id, tree.get_id, result)
 
     def answer(self, ans: bool) -> AnswerResult:
-        """
-        Processa la risposta al nodo corrente.
-        Se il tree si completa, registra automaticamente il risultato.
-        """
-        from app.domain.utils.session_navigator import AnswerResult
-
         asset = self.current_asset
         tree = self.current_tree
 
         answer_result: AnswerResult = self.navigator.answer(ans)
 
+        # Se l'albero è finito, salviamo il risultato
         if answer_result.tree_completed and answer_result.tree_result is not None:
             if asset and tree:
                 self.results.record(asset.get_id, tree.get_id, answer_result.tree_result)
 
-        return answer_result
+            # Il navigatore è passato automaticamente al prossimo albero. Controlliamo se va saltato!
+            self._skip_invalid_trees()
 
-    def advance(self):
-        self.navigator.next()
+            # Aggiorniamo il risultato ritornato per riflettere lo stato corretto
+            # della sessione dopo eventuali salti (es. se abbiamo saltato tutti gli
+            # alberi rimanenti, la sessione è finita)
+            answer_result.session_finished = self.state.is_finished
+
+        return answer_result
 
     def go_back(self, target_node: Node) -> GoBackResult:
         return self.navigator.go_back(target_node)
 
-    @property
-    def navigation_history(self) -> list[dict]:
-        return self.navigator.navigation_history()
+    def _skip_invalid_trees(self) -> None:
+        """
+        Scorre in avanti gli alberi se le loro dipendenze non sono soddisfatte.
+        Registra Result.NOT_APPLICABLE per gli alberi saltati, permettendo
+        l'effetto a catena.
+        """
+        while not self.state.is_finished:
+            asset = self.current_asset
+            tree = self.current_tree
+
+            if not asset or not tree:
+                break
+
+            # Se le dipendenze sono OK, ci fermiamo e facciamo rispondere l'utente
+            if self.dependencies.check(asset.get_id, tree):
+                break
+
+            self.results.record(asset.get_id, tree.get_id, Result.NOT_APPLICABLE)
+
+            self.navigator.next()
