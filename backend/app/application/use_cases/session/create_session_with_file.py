@@ -1,30 +1,19 @@
-from dataclasses import dataclass
-
+from app.application.interfaces.create_session_with_file_use_case import (
+    ICreateSessionWithFileUseCase,
+)
+from app.application.interfaces.session_service import ISessionService
+from app.application.use_cases.session.dto import (
+    CreateSessionWithFileRequest,
+    CreateSessionWithFileResponse,
+)
 from app.domain.entities.device import Asset, AssetType, Device
-from app.domain.services.session_service import SessionService
 
 
-@dataclass
-class CreateSessionWithUploadRequest:
-    device_data: dict
-
-
-@dataclass
-class CreateSessionWithUploadResponse:
-    session_id: str
-    device_name: str
-    assets: list[dict[str, str]]
-    current_asset_index: int
-    current_tree_index: int
-
-
-class CreateSessionWithUploadUseCase:
-    def __init__(self, session_service: SessionService):
+class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
+    def __init__(self, session_service: ISessionService):
         self._session_service = session_service
 
-    async def execute(
-        self, request: CreateSessionWithUploadRequest
-    ) -> CreateSessionWithUploadResponse:
+    async def execute(self, request: CreateSessionWithFileRequest) -> CreateSessionWithFileResponse:
         device_data = request.device_data
 
         device = Device(
@@ -36,7 +25,7 @@ class CreateSessionWithUploadUseCase:
         )
         session = self._session_service.create_session(device)
 
-        return CreateSessionWithUploadResponse(
+        return CreateSessionWithFileResponse(
             session_id=session.get_id,
             device_name=session.get_device.get_name,
             assets=[
