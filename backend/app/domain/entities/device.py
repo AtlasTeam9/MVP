@@ -70,7 +70,7 @@ class Asset:
             "id": self.get_id,
             "name": self.get_name,
             "type": self.get_type.value,
-            "sensitivity": self.get_sensitivity,
+            "sensitive": self.get_sensitivity,
         }
 
 
