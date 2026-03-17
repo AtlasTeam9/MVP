@@ -5,12 +5,15 @@ Usato da tutti i test.
 
 import json
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
 from app.domain.entities.result import Result
 from app.domain.entities.tree import DecisionTree, Node
 from app.domain.interfaces.tree_provider import TreeProvider
+from app.infrastructure.persistence.file_storage import FileStorage
+from app.infrastructure.persistence.file_tree_provider import FileTreeProvider
 
 
 @pytest.fixture
@@ -26,6 +29,16 @@ def sample_device_data():
             {"id": "asset_002", "name": "Componente B", "type": "Security"},
         ],
     }
+
+
+@pytest.fixture
+def mock_storage() -> MagicMock:
+    return MagicMock(spec=FileStorage)
+
+
+@pytest.fixture
+def provider(mock_storage) -> FileTreeProvider:
+    return FileTreeProvider(mock_storage)
 
 
 @pytest.fixture
