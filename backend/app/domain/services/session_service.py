@@ -1,10 +1,11 @@
+from app.application.interfaces.session_service import ISessionService
 from app.domain.entities.device import Device
 from app.domain.entities.session import Session
 from app.domain.interfaces.base_repository import BaseRepository
 from app.domain.interfaces.tree_provider import TreeProvider
 
 
-class SessionService:
+class SessionService(ISessionService):
     def __init__(self, session_repository: BaseRepository, tree_provider: TreeProvider):
         self._repo = session_repository
         self._tree_provider = tree_provider

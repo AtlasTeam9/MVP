@@ -40,6 +40,7 @@ select = [
 
 ignore = [
     "E501", # Lunghezza riga già gestita da line-length
+    "B008"
 ]
 
 [tool.ruff.lint.pep8-naming]
