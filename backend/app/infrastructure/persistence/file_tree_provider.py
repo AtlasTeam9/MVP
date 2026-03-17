@@ -12,7 +12,6 @@ class FileTreeProvider(TreeProvider):
         if self._cache is None:
             data = self._storage.load_trees()
             self._cache = [
-                DecisionTree(d["id"], d["title"], d["dependencies"], d["nodes"])
-                for d in data["trees"]
+                DecisionTree(d["id"], d["title"], d["dependencies"], d["nodes"]) for d in data
             ]
         return self._cache
