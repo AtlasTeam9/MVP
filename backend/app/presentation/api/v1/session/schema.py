@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -24,7 +26,7 @@ class SessionResponseSchema(BaseModel):
 
     session_id: str = Field(..., description="ID univoco della sessione")
     device: DeviceSchema = Field(..., description="Oggetto del dispositivo")
-    position: dict[str, int] = Field(
+    position: dict[str, Any] = Field(
         ..., description="Dizionario che mostra lo stato di avanzamento del test nella sessione"
     )
 
@@ -41,6 +43,7 @@ class SessionResponseSchema(BaseModel):
                 "position": {
                     "current_asset_index": 0,
                     "current_tree_index": 0,
+                    "current_node_id": "node1",
                 },
             }
         }

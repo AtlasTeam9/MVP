@@ -13,3 +13,4 @@ class CreateSessionWithFileResponse:
     assets: list[dict[str, str]]
     current_asset_index: int
     current_tree_index: int
+    current_node_id: str

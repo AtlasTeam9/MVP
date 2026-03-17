@@ -34,4 +34,5 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
             ],
             current_asset_index=session.state.current_asset_index,
             current_tree_index=session.state.current_tree_index,
+            current_node_id=session.state.current_node_id,
         )

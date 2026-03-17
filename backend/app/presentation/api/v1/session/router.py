@@ -57,5 +57,6 @@ class SessionController:
             position={
                 "current_asset_index": result.current_asset_index,
                 "current_tree_index": result.current_tree_index,
+                "current_node_id": result.current_node_id,
             },
         )
