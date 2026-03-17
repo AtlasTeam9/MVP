@@ -1,16 +1,16 @@
 from dataclasses import dataclass
 
+from app.application.interfaces.session_service_interface import ISessionService
 from app.domain.entities.device import Asset, AssetType, Device
-from app.domain.services.session_service import SessionService
 
 
 @dataclass
-class CreateSessionWithUploadRequest:
+class CreateSessionWithDeviceRequest:
     device_data: dict
 
 
 @dataclass
-class CreateSessionWithUploadResponse:
+class CreateSessionWithDeviceResponse:
     session_id: str
     device_name: str
     assets: list[dict[str, str]]
@@ -18,13 +18,13 @@ class CreateSessionWithUploadResponse:
     current_tree_index: int
 
 
-class CreateSessionWithUploadUseCase:
-    def __init__(self, session_service: SessionService):
+class CreateSessionWithDeviceUseCase:
+    def __init__(self, session_service: ISessionService):
         self._session_service = session_service
 
     async def execute(
-        self, request: CreateSessionWithUploadRequest
-    ) -> CreateSessionWithUploadResponse:
+        self, request: CreateSessionWithDeviceRequest
+    ) -> CreateSessionWithDeviceResponse:
         device_data = request.device_data
 
         device = Device(
@@ -36,7 +36,7 @@ class CreateSessionWithUploadUseCase:
         )
         session = self._session_service.create_session(device)
 
-        return CreateSessionWithUploadResponse(
+        return CreateSessionWithDeviceResponse(
             session_id=session.get_id,
             device_name=session.get_device.get_name,
             assets=[

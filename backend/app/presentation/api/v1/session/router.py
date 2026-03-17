@@ -5,11 +5,11 @@ from fastapi import Depends, File, HTTPException, UploadFile
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
+from app.application.interfaces.session_service_interface import ISessionService
 from app.application.use_cases.session.create_session_with_file_upload import (
-    CreateSessionWithUploadRequest,
-    CreateSessionWithUploadUseCase,
+    CreateSessionWithDeviceRequest,
+    CreateSessionWithDeviceUseCase,
 )
-from app.domain.services.session_service import SessionService
 
 from ..dependencies import get_session_service
 from .schema import (
@@ -23,7 +23,7 @@ router = InferringRouter(prefix="/session", tags=["session"])
 @cbv(router)
 class SessionController:
     # Dipendenza
-    service: SessionService = Depends(get_session_service)
+    service: ISessionService = Depends(get_session_service)
 
     @router.post("/", status_code=201)
     async def create_session_with_device_upload(
@@ -38,8 +38,8 @@ class SessionController:
         except json.JSONDecodeError:
             raise HTTPException(400, "File JSON non valido.")
 
-        use_case = CreateSessionWithUploadUseCase(self.service)
-        result = await use_case.execute(CreateSessionWithUploadRequest(device_data=device_data))
+        use_case = CreateSessionWithDeviceUseCase(self.service)
+        result = await use_case.execute(CreateSessionWithDeviceRequest(device_data=device_data))
 
         return SessionResponseSchema(
             session_id=result.session_id,
