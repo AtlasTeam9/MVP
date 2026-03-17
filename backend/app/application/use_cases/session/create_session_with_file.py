@@ -19,7 +19,7 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
         device = Device(
             device_name=device_data["device_name"],
             assets=[
-                Asset(asset["id"], asset["name"], AssetType.from_string(asset["type"]))
+                Asset(asset["id"], asset["name"], AssetType.from_string(asset["type"]), True)
                 for asset in device_data["assets"]
             ],
         )

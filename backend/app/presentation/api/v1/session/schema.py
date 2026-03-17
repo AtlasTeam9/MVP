@@ -11,6 +11,11 @@ class AssetSchema(BaseModel):
     type: str
 
 
+class DeviceSchema(BaseModel):
+    device_name: str = Field(..., description="Nome del dispositivo")
+    assets: list[AssetSchema] = Field(..., description="Lista degli asset del dispositivo")
+
+
 class SessionResponseSchema(BaseModel):
     """
     Response alla creazione di una sessione
@@ -18,8 +23,7 @@ class SessionResponseSchema(BaseModel):
     """
 
     session_id: str = Field(..., description="ID univoco della sessione")
-    device_name: str = Field(..., description="Nome del dispositivo")
-    assets: list[AssetSchema] = Field(..., description="Lista degli asset del dispositivo")
+    device: DeviceSchema = Field(..., description="Oggetto del dispositivo")
     position: dict[str, int] = Field(
         ..., description="Dizionario che mostra lo stato di avanzamento del test nella sessione"
     )
@@ -28,10 +32,12 @@ class SessionResponseSchema(BaseModel):
         json_schema_extra={
             "example": {
                 "session_id": "550e8400-e29b-41d4-a716-446655440000",
-                "device_name": "Dispositivo Medico XYZ",
-                "assets": [
-                    {"id": "ASSET_01", "name": "DHCP Client", "type": "Network Function"},
-                ],
+                "device": {
+                    "device_name": "Dispositivo Medico XYZ",
+                    "assets": [
+                        {"id": "ASSET_01", "name": "DHCP Client", "type": "Network Function"},
+                    ],
+                },
                 "position": {
                     "current_asset_index": 0,
                     "current_tree_index": 0,

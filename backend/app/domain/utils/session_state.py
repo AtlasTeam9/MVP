@@ -9,6 +9,10 @@ class SessionState:
         self.is_finished = False
         self.navigation_stack: list[tuple[Node, bool]] = []
 
+    @property
+    def current_node_id(self) -> str:
+        return self.current_node.get_id if self.current_node else ""
+
     def push(self, node: Node, answer: bool) -> None:
         self.navigation_stack.append((node, answer))
 

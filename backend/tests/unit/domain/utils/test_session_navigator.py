@@ -17,7 +17,7 @@ class TestAnswerResult:
         assert res1.session_finished is False
 
         # Testiamo i valori custom
-        node = Node("Q?", Result.PASS, Result.FAIL)
+        node = Node("node1", "Q?", Result.PASS, Result.FAIL)
         res2 = AnswerResult(
             next_node=node, tree_result=Result.PASS, tree_completed=True, session_finished=True
         )
@@ -35,7 +35,7 @@ class TestGoBackResult:
         assert res1.found is False
 
         # Custom
-        node = Node("Q?", Result.PASS, Result.FAIL)
+        node = Node("node1", "Q?", Result.PASS, Result.FAIL)
         res2 = GoBackResult(node=node, found=True)
         assert res2.node == node
         assert res2.found is True
@@ -181,7 +181,7 @@ class TestSessionNavigator:
         assert navigator.state.current_tree_index == 1
 
     def test_go_back_not_found(self, navigator: SessionNavigator):
-        target_node = Node("Fake", Result.PASS, Result.FAIL)
+        target_node = Node("node1", "Fake", Result.PASS, Result.FAIL)
         # Assumiamo che pop_until ritorni False se non trova il nodo
         navigator.state.pop_until(target_node)
         result = navigator.go_back(target_node)

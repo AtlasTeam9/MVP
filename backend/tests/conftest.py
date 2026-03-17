@@ -41,10 +41,10 @@ def mock_tree_provider(sample_trees_objects) -> TreeProvider:
 
 @pytest.fixture
 def sample_nodes() -> list[Node]:
-    node2 = Node("Q2?", Result.PASS, Result.FAIL)
-    node1 = Node("Q1?", Result.NOT_APPLICABLE, node2)
+    node2 = Node("node2", "Q2?", Result.PASS, Result.FAIL)
+    node1 = Node("node1", "Q1?", Result.NOT_APPLICABLE, node2)
 
-    node3 = Node("Q3?", Result.PASS, Result.FAIL)
+    node3 = Node("node3", "Q3?", Result.PASS, Result.FAIL)
     return [node1, node2, node3]
 
 
