@@ -1,8 +1,7 @@
-from backend.app.application.interfaces.session_service import ISessionService
-
 from app.application.interfaces.create_session_with_file_use_case import (
     ICreateSessionWithFileUseCase,
 )
+from app.application.interfaces.session_service import ISessionService
 from app.application.use_cases.session.dto import (
     CreateSessionWithFileRequest,
     CreateSessionWithFileResponse,

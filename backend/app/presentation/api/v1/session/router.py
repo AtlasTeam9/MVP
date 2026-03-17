@@ -5,10 +5,10 @@ from fastapi import Depends, File, HTTPException, UploadFile
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
-from backend.app.application.interfaces.create_session_with_file_use_case import (
+from app.application.interfaces.create_session_with_file_use_case import (
     ICreateSessionWithFileUseCase,
 )
-from backend.app.application.use_cases.session.create_session_with_file import (
+from app.application.use_cases.session.create_session_with_file import (
     CreateSessionWithFileRequest,
 )
 
