@@ -1,8 +1,8 @@
-from app.application.interfaces.session_service_interface import ISessionService
 from app.domain.entities.device import Device
 from app.domain.entities.session import Session
 from app.domain.interfaces.base_repository import BaseRepository
 from app.domain.interfaces.tree_provider import TreeProvider
+from backend.app.application.interfaces.session_service import ISessionService
 
 
 class SessionService(ISessionService):
