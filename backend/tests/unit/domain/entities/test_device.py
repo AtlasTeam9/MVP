@@ -42,12 +42,11 @@ class TestAsset:
 
     def test_asset_default_properties(self):
         # Testiamo i fallback ("... not inserted") quando i valori opzionali sono None
-        asset = Asset("a2", "Switch", AssetType.NETWORK)
-        assert asset.get_sensitivity == "Sensitivity not inserted"
+        asset = Asset("a2", "Switch", AssetType.NETWORK, True)
         assert asset.get_description == "Description not inserted"
 
     def test_asset_setters(self):
-        asset = Asset("a3", "Router", AssetType.NETWORK)
+        asset = Asset("a3", "Router", AssetType.NETWORK, False)
 
         asset.set_name("Core Router")
         assert asset.get_name == "Core Router"
@@ -62,15 +61,18 @@ class TestAsset:
         assert asset.get_description == "Updated desc"
 
     def test_asset_to_dict(self):
-        asset = Asset("a4", "Server", AssetType.NETWORK)
-        expected = {"id": "a4", "name": "Server", "type": "Network"}
+        asset = Asset("a4", "Server", AssetType.NETWORK, False)
+        expected = {"id": "a4", "name": "Server", "type": "Network", "sensitivity": False}
         assert asset.to_dict() == expected
 
 
 class TestDevice:
     @pytest.fixture
     def sample_assets(self):
-        return [Asset("1", "Asset 1", AssetType.NETWORK), Asset("2", "Asset 2", AssetType.SECURITY)]
+        return [
+            Asset("1", "Asset 1", AssetType.NETWORK, True),
+            Asset("2", "Asset 2", AssetType.SECURITY, False),
+        ]
 
     def test_device_initialization_and_getters(self, sample_assets):
         device = Device(
@@ -121,5 +123,15 @@ class TestDevice:
 
         assert result["device_name"] == "Test Device"
         assert len(result["assets"]) == 2
-        assert result["assets"][0] == {"id": "1", "name": "Asset 1", "type": "Network"}
-        assert result["assets"][1] == {"id": "2", "name": "Asset 2", "type": "Security"}
+        assert result["assets"][0] == {
+            "id": "1",
+            "name": "Asset 1",
+            "type": "Network",
+            "sensitivity": True,
+        }
+        assert result["assets"][1] == {
+            "id": "2",
+            "name": "Asset 2",
+            "type": "Security",
+            "sensitivity": False,
+        }

@@ -24,7 +24,7 @@ class Asset:
         asset_id: str,
         name: str,
         type: AssetType,
-        is_sensitive: bool | None = None,
+        is_sensitive: bool,
         desc: str | None = None,
     ):
         self._asset_id: str = asset_id
@@ -53,7 +53,7 @@ class Asset:
 
     @property
     def get_sensitivity(self) -> bool | str:
-        return self._is_sensitive if self._is_sensitive is not None else "Sensitivity not inserted"
+        return self._is_sensitive
 
     def set_sensitivity(self, is_sensitive: bool) -> None:
         self._is_sensitive = is_sensitive
@@ -66,7 +66,12 @@ class Asset:
         self._desc = desc
 
     def to_dict(self) -> dict:
-        return {"id": self.get_id, "name": self.get_name, "type": self.get_type.value}
+        return {
+            "id": self.get_id,
+            "name": self.get_name,
+            "type": self.get_type.value,
+            "sensitivity": self.get_sensitivity,
+        }
 
 
 class Device:

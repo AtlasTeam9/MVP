@@ -45,8 +45,8 @@ class TestSessionNavigator:
     @pytest.fixture
     def sample_assets(self):
         return [
-            Asset("a1", "Router", AssetType.NETWORK),
-            Asset("a2", "Firewall", AssetType.SECURITY),
+            Asset("a1", "Router", AssetType.NETWORK, True),
+            Asset("a2", "Firewall", AssetType.SECURITY, True),
         ]
 
     @pytest.fixture
