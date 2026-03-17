@@ -62,7 +62,7 @@ class TestAsset:
 
     def test_asset_to_dict(self):
         asset = Asset("a4", "Server", AssetType.NETWORK, False)
-        expected = {"id": "a4", "name": "Server", "type": "Network", "sensitivity": False}
+        expected = {"id": "a4", "name": "Server", "type": "Network", "sensitive": False}
         assert asset.to_dict() == expected
 
 
@@ -127,11 +127,11 @@ class TestDevice:
             "id": "1",
             "name": "Asset 1",
             "type": "Network",
-            "sensitivity": True,
+            "sensitive": True,
         }
         assert result["assets"][1] == {
             "id": "2",
             "name": "Asset 2",
             "type": "Security",
-            "sensitivity": False,
+            "sensitive": False,
         }
