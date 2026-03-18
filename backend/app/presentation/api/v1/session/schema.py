@@ -22,6 +22,15 @@ class AnswerRequestSchema(BaseModel):
     answer: bool = Field(..., description="Risposta al nodo corrente")
 
 
+class GoBackRequestSchema(BaseModel):
+    target_node_id: str = Field(..., description="ID del nodo a cui tornare")
+
+
+class GoBackResponseSchema(BaseModel):
+    found: bool = Field(...)
+    node_id: str | None = Field(None)
+
+
 class AnswerResponseSchema(BaseModel):
     next_node_id: str | None = Field(None)
     tree_completed: bool = Field(...)
