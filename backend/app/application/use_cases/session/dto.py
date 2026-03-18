@@ -17,6 +17,18 @@ class AnswerResponse:
 
 
 @dataclass
+class GoBackRequest:
+    session_id: str
+    target_node_id: str
+
+
+@dataclass
+class GoBackResponse:
+    found: bool
+    node_id: str | None
+
+
+@dataclass
 class CreateSessionWithFileRequest:
     device_data: dict
 
