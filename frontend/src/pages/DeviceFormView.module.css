@@ -5,6 +5,8 @@
     padding: 40px 20px;
     max-width: 600px;
     margin: 0 auto;
+    height: 100svh;
+    justify-content: center;
 }
 
 .formGroup {

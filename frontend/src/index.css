@@ -33,10 +33,24 @@ body {
         -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
+    position: relative;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    background-image: url("leftwave.svg");
+    background-image: url("waveleft.png");
     background-repeat: no-repeat;
-    background-size: 103%;
-    background-position: 15% 125%;
+    background-size: 100%;
+    background-position: center 120%;
+}
+
+body::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100svh;
+    background-image: url("waveright.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: center 140%;
+    z-index: -999;
 }
