@@ -2,6 +2,21 @@ from dataclasses import dataclass
 
 
 @dataclass
+class AnswerRequest:
+    session_id: str
+    answer: bool
+
+
+@dataclass
+class AnswerResponse:
+    next_node_id: str | None
+    tree_completed: bool
+    tree_result: str | None
+    session_finished: bool
+    results: dict | None
+
+
+@dataclass
 class CreateSessionWithFileRequest:
     device_data: dict
 
