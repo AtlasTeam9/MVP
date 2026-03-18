@@ -5,15 +5,19 @@ from fastapi import Depends, File, HTTPException, UploadFile
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
+from app.application.interfaces.answer_use_case import IAnswerUseCase
 from app.application.interfaces.create_session_with_file_use_case import (
     ICreateSessionWithFileUseCase,
 )
 from app.application.use_cases.session.create_session_with_file import (
     CreateSessionWithFileRequest,
 )
+from app.application.use_cases.session.dto import AnswerRequest
 
-from ..dependencies import get_create_session_with_file_use_case
+from ..dependencies import get_answer_use_case, get_create_session_with_file_use_case
 from .schema import (
+    AnswerRequestSchema,
+    AnswerResponseSchema,
     AssetSchema,
     DeviceSchema,
     SessionResponseSchema,
@@ -27,6 +31,7 @@ class SessionController:
     create_session_use_case: ICreateSessionWithFileUseCase = Depends(
         get_create_session_with_file_use_case
     )
+    answer_use_case: IAnswerUseCase = Depends(get_answer_use_case)
 
     @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
@@ -59,4 +64,20 @@ class SessionController:
                 "current_tree_index": result.current_tree_index,
                 "current_node_id": result.current_node_id,
             },
+        )
+
+    @router.post("/{session_id}/answer", status_code=200)
+    async def answer(self, session_id: str, body: AnswerRequestSchema) -> AnswerResponseSchema:
+        """
+        Risponde al nodo corrente con true (sì) o false (no).
+        """
+        result = await self.answer_use_case.execute(
+            AnswerRequest(session_id=session_id, answer=body.answer)
+        )
+        return AnswerResponseSchema(
+            next_node_id=result.next_node_id,
+            tree_completed=result.tree_completed,
+            tree_result=result.tree_result,
+            session_finished=result.session_finished,
+            results=result.results,
         )
