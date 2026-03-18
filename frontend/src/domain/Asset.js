@@ -1,4 +1,5 @@
 export const AssetType = {
+    // TODO: sistemare i tipi di asset
     NETWORK: 'Network',
     SECURITY: 'Security',
 
@@ -39,3 +40,5 @@ class Asset {
         }
     }
 }
+
+export default Asset

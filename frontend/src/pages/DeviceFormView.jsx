@@ -61,8 +61,11 @@ function InputField({ label, registration, error, isTextArea = false }) {
     const InputTag = isTextArea ? 'textarea' : 'input'
     return (
         <div className={styles.formGroup}>
-            <label className={styles.label}>{label}</label>
+            <label className={styles.label} htmlFor={registration.name}>
+                {label}
+            </label>
             <InputTag
+                id={registration.name}
                 className={`${styles.input} ${error ? styles.inputError : ''}`}
                 {...registration}
             />
