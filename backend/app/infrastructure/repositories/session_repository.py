@@ -35,6 +35,7 @@ class SessionRepository(BaseRepository):
                     "current_node_id": entity.state.current_node_id,
                 },
                 "results": entity.results.to_dict(),
+                "is_finished": entity.state.is_finished,
             }
 
             self._storage.save_session(entity.get_id, session_dict)

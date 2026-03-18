@@ -2,6 +2,33 @@ from dataclasses import dataclass
 
 
 @dataclass
+class AnswerRequest:
+    session_id: str
+    answer: bool
+
+
+@dataclass
+class AnswerResponse:
+    next_node_id: str | None
+    tree_completed: bool
+    tree_result: str | None
+    session_finished: bool
+    results: dict | None
+
+
+@dataclass
+class GoBackRequest:
+    session_id: str
+    target_node_id: str
+
+
+@dataclass
+class GoBackResponse:
+    found: bool
+    node_id: str | None
+
+
+@dataclass
 class CreateSessionWithFileRequest:
     device_data: dict
 
