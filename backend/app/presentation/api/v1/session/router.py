@@ -9,17 +9,24 @@ from app.application.interfaces.answer_use_case import IAnswerUseCase
 from app.application.interfaces.create_session_with_file_use_case import (
     ICreateSessionWithFileUseCase,
 )
+from app.application.interfaces.go_back_use_case import IGoBackUseCase
 from app.application.use_cases.session.create_session_with_file import (
     CreateSessionWithFileRequest,
 )
-from app.application.use_cases.session.dto import AnswerRequest
+from app.application.use_cases.session.dto import AnswerRequest, GoBackRequest
 
-from ..dependencies import get_answer_use_case, get_create_session_with_file_use_case
+from ..dependencies import (
+    get_answer_use_case,
+    get_create_session_with_file_use_case,
+    get_go_back_use_case,
+)
 from .schema import (
     AnswerRequestSchema,
     AnswerResponseSchema,
     AssetSchema,
     DeviceSchema,
+    GoBackRequestSchema,
+    GoBackResponseSchema,
     SessionResponseSchema,
 )
 
@@ -32,6 +39,7 @@ class SessionController:
         get_create_session_with_file_use_case
     )
     answer_use_case: IAnswerUseCase = Depends(get_answer_use_case)
+    go_back_use_case: IGoBackUseCase = Depends(get_go_back_use_case)
 
     @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
@@ -80,4 +88,17 @@ class SessionController:
             tree_result=result.tree_result,
             session_finished=result.session_finished,
             results=result.results,
+        )
+
+    @router.post("/{session_id}/go_back", status_code=200)
+    async def go_back(self, session_id: str, body: GoBackRequestSchema) -> GoBackResponseSchema:
+        """
+        Torna a un nodo precedente nella history del tree corrente.
+        """
+        result = await self.go_back_use_case.execute(
+            GoBackRequest(session_id=session_id, target_node_id=body.target_node_id)
+        )
+        return GoBackResponseSchema(
+            found=result.found,
+            node_id=result.node_id,
         )
