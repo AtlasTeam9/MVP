@@ -11,7 +11,7 @@ router = InferringRouter(prefix="/trees", tags=["trees"])
 @cbv(router)
 class TreesController:
     @router.get("/", status_code=201)
-    async def get_trees(self):
+    async def get_trees(self) -> list[dict]:
         return [
             {
                 "id": t.get_id,

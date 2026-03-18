@@ -1,6 +1,6 @@
 from app.application.interfaces.session_service import ISessionService
 from app.application.state import AppState
-from app.domain.entities.device import Asset, Device
+from app.domain.entities.device import Asset, AssetType, Device
 from app.domain.entities.result import Result
 from app.domain.entities.session import Session
 from app.domain.interfaces.base_repository import BaseRepository
@@ -30,7 +30,12 @@ class SessionService(ISessionService):
         device = Device(
             device_name=device_dict["device_name"],
             assets=[
-                Asset(asset["id"], asset["name"], asset["type"], asset["sensitive"])
+                Asset(
+                    asset["id"],
+                    asset["name"],
+                    AssetType.from_string(asset["type"]),
+                    asset["sensitive"],
+                )
                 for asset in device_dict["assets"]
             ],
         )
