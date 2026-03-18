@@ -11,6 +11,7 @@ export default class Device {
     get name() {
         return this._name
     }
+
     set name(val) {
         this._name = val
     }
@@ -20,15 +21,15 @@ export default class Device {
     }
 
     get operativeSystem() {
-        return this._os || 'Operative System not inserted'
+        return this._os
     }
 
     get firmwareVersion() {
-        return this._firmware || 'Firmware version not inserted'
+        return this._firmware
     }
 
     get functionalities() {
-        return this._funcs || 'Functionalities not inserted'
+        return this._funcs
     }
 
     get description() {
