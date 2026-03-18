@@ -10,10 +10,6 @@
         "dbaeumer.vscode-eslint", // Linting JS/JSX
 
         // Convenzioni generali (sezione 2.2.4.1)
-        "editorconfig.editorconfig", // Rispetto .editorconfig
-
-        // Strumenti di progetto (sezione 2.2.1 e 4.2.2)
-        "eamodio.gitlens", // Git avanzato
-        "ms-azuretools.vscode-docker" // Supporto Docker
+        "editorconfig.editorconfig" // Rispetto .editorconfig
     ]
 }
