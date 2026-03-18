@@ -1,4 +1,5 @@
 from app.application.interfaces.session_service import ISessionService
+from app.application.state import AppState
 from app.domain.entities.device import Asset, Device
 from app.domain.entities.result import Result
 from app.domain.entities.session import Session
@@ -13,21 +14,24 @@ class SessionService(ISessionService):
 
     def create_session(self, device: Device) -> Session:
         session = Session(tree_provider=self._tree_provider, device=device)
-
+        AppState.sessions[session.get_id] = session
         self._repo.save(session)
         return session
 
-    def load_session(self, session_id: str) -> Session | None:
+    def get_session(self, session_id: str) -> Session | None:
+        if session_id in AppState.sessions:
+            return AppState.sessions[session_id]
+
         data = self._repo.get(session_id)
         if data is None:
             return None
 
         device_dict = data["device"]
         device = Device(
-            device_name=device_dict.name,
+            device_name=device_dict["device_name"],
             assets=[
                 Asset(asset["id"], asset["name"], asset["type"], asset["sensitive"])
-                for asset in device_dict.assets
+                for asset in device_dict["assets"]
             ],
         )
 
@@ -41,6 +45,7 @@ class SessionService(ISessionService):
             for tree_id, result_str in trees.items():
                 session.results.record(asset_id, tree_id, Result(result_str))
 
+        AppState.sessions[session.get_id] = session
         return session
 
     def save_session(self, session: Session) -> None:
