@@ -16,8 +16,8 @@ export default class Device {
         this._name = val
     }
 
-    get assets() {
-        return [...this._assets]
+    getAssets() {
+        return this._assets
     }
 
     get operativeSystem() {
@@ -38,7 +38,7 @@ export default class Device {
 
     toDict() {
         return {
-            deviceName: this._name,
+            deviceName: this.name,
             assets: this._assets.map((asset) => asset.toDict()),
             operativeSystem: this.operativeSystem,
             firmwareVersion: this.firmwareVersion,
