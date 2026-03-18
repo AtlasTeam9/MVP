@@ -11,7 +11,7 @@ class TestDependencyEvaluator:
     @pytest.fixture
     def result_store(self):
         """Fixture che crea un ResultStore pre-popolato con un asset fittizio"""
-        dummy_asset = Asset(asset_id="a1", name="Test", type=AssetType.NETWORK)
+        dummy_asset = Asset(asset_id="a1", name="Test", type=AssetType.NETWORK, is_sensitive=True)
         return ResultStore([dummy_asset])
 
     def test_check_no_dependencies(self, result_store):

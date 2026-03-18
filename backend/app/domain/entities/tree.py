@@ -2,13 +2,18 @@ from app.domain.entities.result import Result
 
 
 class Node:
-    def __init__(self, q: str, y_res: "Result | Node", n_res: "Result | Node"):
+    def __init__(self, node_id: str, q: str, y_res: "Result | Node", n_res: "Result | Node"):
+        self._id: str = node_id
         self._question: str = q
         self._yes: Node | Result = y_res
         self._no: Node | Result = n_res
 
     def to_dict(self) -> dict:
-        return {"question": self._question, "yes": self._yes, "no": self._no}
+        return {"id": self._id, "question": self._question, "yes": self._yes, "no": self._no}
+
+    @property
+    def get_id(self) -> str:
+        return self._id
 
     @property
     def get_question(self) -> str:

@@ -4,22 +4,29 @@ from app.application.interfaces.create_session_with_file_use_case import (
     ICreateSessionWithFileUseCase,
 )
 from app.application.interfaces.session_service import ISessionService
+from app.application.state import AppState
 from app.application.use_cases.session.create_session_with_file import CreateSessionWithFileUseCase
+from app.domain.entities.tree import DecisionTree
 from app.domain.interfaces.tree_provider import TreeProvider
 from app.domain.services.session_service import SessionService
 from app.infrastructure.persistence.file_storage import FileStorage
-from app.infrastructure.persistence.file_tree_provider import FileTreeProvider
 from app.infrastructure.repositories.session_repository import SessionRepository
+
+
+def get_trees() -> list[DecisionTree]:
+    return AppState.trees
 
 
 def get_file_storage() -> FileStorage:
     return FileStorage()
 
 
-def get_tree_provider(
-    storage: FileStorage = Depends(get_file_storage),
-) -> TreeProvider:
-    return FileTreeProvider(storage)
+def get_tree_provider() -> TreeProvider:
+    class InMemoryTreeProvider:
+        def get_all(self) -> list[DecisionTree]:
+            return get_trees()
+
+    return InMemoryTreeProvider()
 
 
 def get_session_repository() -> SessionRepository:

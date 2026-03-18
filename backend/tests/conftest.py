@@ -5,12 +5,15 @@ Usato da tutti i test.
 
 import json
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
 from app.domain.entities.result import Result
 from app.domain.entities.tree import DecisionTree, Node
 from app.domain.interfaces.tree_provider import TreeProvider
+from app.infrastructure.persistence.file_storage import FileStorage
+from app.infrastructure.persistence.file_tree_provider import FileTreeProvider
 
 
 @pytest.fixture
@@ -29,6 +32,16 @@ def sample_device_data():
 
 
 @pytest.fixture
+def mock_storage() -> MagicMock:
+    return MagicMock(spec=FileStorage)
+
+
+@pytest.fixture
+def provider(mock_storage) -> FileTreeProvider:
+    return FileTreeProvider(mock_storage)
+
+
+@pytest.fixture
 def mock_tree_provider(sample_trees_objects) -> TreeProvider:
     """Mock TreeProvider che restituisce i trees di test senza toccare file"""
 
@@ -41,10 +54,10 @@ def mock_tree_provider(sample_trees_objects) -> TreeProvider:
 
 @pytest.fixture
 def sample_nodes() -> list[Node]:
-    node2 = Node("Q2?", Result.PASS, Result.FAIL)
-    node1 = Node("Q1?", Result.NOT_APPLICABLE, node2)
+    node2 = Node("node2", "Q2?", Result.PASS, Result.FAIL)
+    node1 = Node("node1", "Q1?", Result.NOT_APPLICABLE, node2)
 
-    node3 = Node("Q3?", Result.PASS, Result.FAIL)
+    node3 = Node("node3", "Q3?", Result.PASS, Result.FAIL)
     return [node1, node2, node3]
 
 

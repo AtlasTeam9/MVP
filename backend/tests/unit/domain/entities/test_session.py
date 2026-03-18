@@ -15,7 +15,9 @@ class TestSession:
         """Test creazione sessione base"""
         device = Device(
             device_name="Test Device",
-            assets=[Asset(asset_id="ASSET_1", name="a1", type=AssetType.NETWORK)],
+            assets=[
+                Asset(asset_id="ASSET_1", name="a1", type=AssetType.NETWORK, is_sensitive=True)
+            ],
         )
 
         session = Session(
@@ -112,8 +114,8 @@ class TestSession:
         device = Device(
             device_name="Test Device",
             assets=[
-                Asset(asset_id="a1", name="Asset 1", type=AssetType.NETWORK),
-                Asset(asset_id="a2", name="Asset 2", type=AssetType.SECURITY),
+                Asset(asset_id="a1", name="Asset 1", type=AssetType.NETWORK, is_sensitive=True),
+                Asset(asset_id="a2", name="Asset 2", type=AssetType.SECURITY, is_sensitive=True),
             ],
         )
 

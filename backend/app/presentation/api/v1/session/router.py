@@ -15,6 +15,7 @@ from app.application.use_cases.session.create_session_with_file import (
 from ..dependencies import get_create_session_with_file_use_case
 from .schema import (
     AssetSchema,
+    DeviceSchema,
     SessionResponseSchema,
 )
 
@@ -27,7 +28,7 @@ class SessionController:
         get_create_session_with_file_use_case
     )
 
-    @router.post("/", status_code=201)
+    @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
         self, file: Annotated[UploadFile, File(...)]
     ) -> SessionResponseSchema:
@@ -46,13 +47,16 @@ class SessionController:
 
         return SessionResponseSchema(
             session_id=result.session_id,
-            device_name=result.device_name,
-            assets=[
-                AssetSchema(id=asset["id"], name=asset["name"], type=asset["type"])
-                for asset in result.assets
-            ],
+            device=DeviceSchema(
+                device_name=result.device_name,
+                assets=[
+                    AssetSchema(id=asset["id"], name=asset["name"], type=asset["type"])
+                    for asset in result.assets
+                ],
+            ),
             position={
                 "current_asset_index": result.current_asset_index,
                 "current_tree_index": result.current_tree_index,
+                "current_node_id": result.current_node_id,
             },
         )

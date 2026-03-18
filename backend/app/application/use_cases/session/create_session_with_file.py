@@ -19,7 +19,7 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
         device = Device(
             device_name=device_data["device_name"],
             assets=[
-                Asset(asset["id"], asset["name"], AssetType.from_string(asset["type"]))
+                Asset(asset["id"], asset["name"], AssetType.from_string(asset["type"]), True)
                 for asset in device_data["assets"]
             ],
         )
@@ -34,4 +34,5 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
             ],
             current_asset_index=session.state.current_asset_index,
             current_tree_index=session.state.current_tree_index,
+            current_node_id=session.state.current_node_id,
         )

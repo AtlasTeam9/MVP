@@ -25,8 +25,14 @@ class SessionRepository(BaseRepository):
             device = entity.get_device.to_dict()
             session_dict = {
                 "session_id": entity.get_id,
-                "device_name": device["device_name"],
-                "assets": [asset for asset in device["assets"]],
+                "device": {
+                    "device_name": device["device_name"],
+                    "assets": [asset for asset in device["assets"]],
+                },
+                "position": {
+                    "current_asset_index": entity.state.current_asset_index,
+                    "current_tree_index": entity.state.current_tree_index,
+                },
             }
 
             self._storage.save_session(entity.get_id, session_dict)
