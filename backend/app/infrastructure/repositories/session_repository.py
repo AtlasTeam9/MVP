@@ -32,7 +32,9 @@ class SessionRepository(BaseRepository):
                 "position": {
                     "current_asset_index": entity.state.current_asset_index,
                     "current_tree_index": entity.state.current_tree_index,
+                    "current_node_id": entity.state.current_node_id,
                 },
+                "results": entity.results.to_dict(),
             }
 
             self._storage.save_session(entity.get_id, session_dict)
