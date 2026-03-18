@@ -18,6 +18,18 @@ class DeviceSchema(BaseModel):
     assets: list[AssetSchema] = Field(..., description="Lista degli asset del dispositivo")
 
 
+class AnswerRequestSchema(BaseModel):
+    answer: bool = Field(..., description="Risposta al nodo corrente")
+
+
+class AnswerResponseSchema(BaseModel):
+    next_node_id: str | None = Field(None)
+    tree_completed: bool = Field(...)
+    tree_result: str | None = Field(None)
+    session_finished: bool = Field(...)
+    results: dict | None = Field(None)
+
+
 class SessionResponseSchema(BaseModel):
     """
     Response alla creazione di una sessione
