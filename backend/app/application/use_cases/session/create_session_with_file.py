@@ -2,10 +2,8 @@ from app.application.interfaces.create_session_with_file_use_case import (
     ICreateSessionWithFileUseCase,
 )
 from app.application.interfaces.session_service import ISessionService
-from app.application.use_cases.session.dto import (
-    CreateSessionWithFileRequest,
-    CreateSessionWithFileResponse,
-)
+from app.application.use_cases.session.dtos.requests import CreateSessionWithFileRequest
+from app.application.use_cases.session.dtos.responses import CreateSessionWithFileResponse
 from app.domain.entities.device import Asset, AssetType, Device
 
 
