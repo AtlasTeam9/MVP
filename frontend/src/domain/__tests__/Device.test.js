@@ -2,37 +2,42 @@ import { describe, it, expect } from 'vitest'
 import Device from '../Device'
 import Asset, { AssetType } from '../Asset'
 
-describe('Device — costruttore e valori di default', () => {
-    it('crea un Device con solo il nome', () => {
-        const dev = new Device('Router')
-        expect(dev.name).toBe('Router')
-        expect(dev.getAssets()).toEqual([])
-        expect(dev.operativeSystem).toBeNull()
-        expect(dev.firmwareVersion).toBeNull()
-        expect(dev.functionalities).toBeNull()
-    })
-
-    it('restituisce la descrizione di default se non fornita', () => {
-        const dev = new Device('Switch')
-        expect(dev.description).toBe('Description not inserted')
-    })
-
-    it('restituisce la descrizione fornita se presente', () => {
-        const dev = new Device('Switch', [], null, null, null, 'My description')
-        expect(dev.description).toBe('My description')
-    })
-
-    it('inizializza correttamente tutti i campi', () => {
+// Unit test for contructor
+describe('Device — constructor and default values', () => {
+    it('initialize all fields correctly', () => {
         const dev = new Device('Firewall', [], 'Linux', '2.1.0', 'filtering', 'A firewall device')
+        expect(dev.name).toBe('Firewall')
+        expect(dev.assets).toEqual([])
         expect(dev.operativeSystem).toBe('Linux')
         expect(dev.firmwareVersion).toBe('2.1.0')
         expect(dev.functionalities).toBe('filtering')
         expect(dev.description).toBe('A firewall device')
     })
+
+    it('create a Device with only the obligatory parameters', () => {
+        const dev = new Device('Router', [], 'Linux', '1.0', 'routing')
+        expect(dev.name).toBe('Router')
+        expect(dev.assets).toEqual([])
+        expect(dev.operativeSystem).toBe('Linux')
+        expect(dev.firmwareVersion).toBe('1.0')
+        expect(dev.functionalities).toBe('routing')
+        expect(dev.description).toBe('Description not inserted')
+    })
+
+    it('use the default description if not provided', () => {
+        const dev = new Device('Switch', [], 'Linux', '1.0', 'switching')
+        expect(dev.description).toBe('Description not inserted')
+    })
+
+    it('use the provided description if available', () => {
+        const dev = new Device('Switch', [], 'Linux', '1.0', 'switching', 'My description')
+        expect(dev.description).toBe('My description')
+    })
 })
 
-describe('Device — toDict() campi base', () => {
-    it('serializza correttamente un device senza asset', () => {
+// Unit test for toDict() method
+describe('Device — toDict() without assets or description', () => {
+    it('serialize correctly a device without assets', () => {
         const dev = new Device('Router', [], 'Linux', '1.0', 'routing', 'Desc')
         const dict = dev.toDict()
         expect(dict).toEqual({
@@ -45,14 +50,15 @@ describe('Device — toDict() campi base', () => {
         })
     })
 
-    it('usa la descrizione di default in toDict() se non fornita', () => {
-        const dev = new Device('Router')
+    it('use the default description in toDict() if not provided', () => {
+        const dev = new Device('Router', [], 'Linux', '1.0', 'routing')
         expect(dev.toDict().description).toBe('Description not inserted')
     })
 })
 
-describe('Device — toDict() con asset', () => {
-    it('serializza correttamente gli asset inclusi', () => {
+// Unit test for toDict() with assets
+describe('Device — toDict() with assets', () => {
+    it('serialize correctly the included assets', () => {
         const asset = new Asset('a1', 'eth0', AssetType.NETWORK, false, 'LAN interface')
         const dev = new Device('Router', [asset], 'Linux', '1.0', 'routing')
         const dict = dev.toDict()
@@ -67,16 +73,17 @@ describe('Device — toDict() con asset', () => {
     })
 })
 
-describe('Device — getAssets()', () => {
-    it('restituisce array vuoto se nessun asset', () => {
-        const dev = new Device('Device')
-        expect(dev.getAssets()).toEqual([])
+// Unit test for length of assets returned by get assets() method
+describe('Device — get assets()', () => {
+    it('returns an empty array if no assets are provided', () => {
+        const dev = new Device('Device', [], 'Linux', '1.0', 'functionality')
+        expect(dev.assets).toHaveLength(0)
     })
 
-    it('restituisce gli asset passati al costruttore', () => {
-        const a1 = new Asset('1', 'eth0', AssetType.NETWORK)
-        const a2 = new Asset('2', 'wlan0', AssetType.SECURITY)
-        const dev = new Device('Device', [a1, a2])
-        expect(dev.getAssets()).toHaveLength(2)
+    it('returns the assets passed to the constructor', () => {
+        const a1 = new Asset('1', 'eth0', AssetType.NETWORK, false, 'LAN interface')
+        const a2 = new Asset('2', 'wlan0', AssetType.SECURITY, true, 'Wireless interface')
+        const dev = new Device('Device', [a1, a2], 'Linux', '1.0', 'functionality')
+        expect(dev.assets).toHaveLength(2)
     })
 })

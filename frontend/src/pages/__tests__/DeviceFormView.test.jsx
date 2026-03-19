@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import DeviceFormView from '../DeviceFormView'
 
+// Support function to render the DeviceFormView component within a router context for testing
 function renderForm() {
     return render(
         <MemoryRouter initialEntries={['/device/new']}>
@@ -15,13 +16,14 @@ function renderForm() {
     )
 }
 
+// Integration tests for DeviceFormView covering rendering logic
 describe('DeviceFormView — rendering', () => {
-    it('mostra il titolo del form', () => {
+    it('shows the correct form title', () => {
         renderForm()
         expect(screen.getByText('Create a new Device')).toBeInTheDocument()
     })
 
-    it('mostra tutti i campi obbligatori', () => {
+    it('shows all required fields', () => {
         renderForm()
         expect(screen.getByLabelText(/nome/i)).toBeInTheDocument()
         expect(screen.getByLabelText(/os/i)).toBeInTheDocument()
@@ -29,12 +31,12 @@ describe('DeviceFormView — rendering', () => {
         expect(screen.getByLabelText(/functionality/i)).toBeInTheDocument()
     })
 
-    it('mostra il campo opzionale Description', () => {
+    it('shows the optional Description field', () => {
         renderForm()
         expect(screen.getByLabelText(/description/i)).toBeInTheDocument()
     })
 
-    it('mostra i bottoni Cancel, Reset e Save', () => {
+    it('shows the Cancel, Reset and Save buttons', () => {
         renderForm()
         expect(screen.getByText('Cancel')).toBeInTheDocument()
         expect(screen.getByText('Reset')).toBeInTheDocument()
@@ -42,8 +44,9 @@ describe('DeviceFormView — rendering', () => {
     })
 })
 
-describe('DeviceFormView — validazione', () => {
-    it('mostra errori di validazione se si invia il form vuoto', async () => {
+// Integration tests for DeviceFormView covering validation logic
+describe('DeviceFormView — validation', () => {
+    it('shows validation errors if the form is submitted empty', async () => {
         renderForm()
         const user = userEvent.setup()
         await user.click(screen.getByText('Save'))
@@ -56,7 +59,7 @@ describe('DeviceFormView — validazione', () => {
         })
     })
 
-    it('non mostra errori con dati validi', async () => {
+    it('does not show errors with valid data', async () => {
         renderForm()
         const user = userEvent.setup()
 
@@ -68,19 +71,23 @@ describe('DeviceFormView — validazione', () => {
 
         await waitFor(() => {
             expect(screen.queryByText('Name is required')).not.toBeInTheDocument()
+            expect(screen.queryByText('OS is required')).not.toBeInTheDocument()
+            expect(screen.queryByText('Firmware is required')).not.toBeInTheDocument()
+            expect(screen.queryByText('Functionality is required')).not.toBeInTheDocument()
         })
     })
 })
 
-describe('DeviceFormView — azioni', () => {
-    it('naviga alla home al click su Cancel', async () => {
+// Integration tests for DeviceFormView covering action logic
+describe('DeviceFormView — actions', () => {
+    it('navigates to the home page when clicking Cancel', async () => {
         renderForm()
         const user = userEvent.setup()
         await user.click(screen.getByText('Cancel'))
         expect(screen.getByText('Home')).toBeInTheDocument()
     })
 
-    it('resetta i campi al click su Reset', async () => {
+    it('resets the fields when clicking Reset', async () => {
         renderForm()
         const user = userEvent.setup()
         const nameInput = screen.getByLabelText(/nome/i)
@@ -92,7 +99,8 @@ describe('DeviceFormView — azioni', () => {
         expect(nameInput).toHaveValue('')
     })
 
-    it('naviga alla home dopo un salvataggio valido', async () => {
+    // TODO: modificare e verificare che si vada alla pagina corretta dopo il salvataggio
+    it('navigates to the home page after a valid save', async () => {
         renderForm()
         const user = userEvent.setup()
 

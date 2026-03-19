@@ -1,5 +1,5 @@
 export default class Device {
-    constructor(name, assets = [], os = null, firmware = null, funcs = null, desc = null) {
+    constructor(name, assets = [], os, firmware, funcs, desc = null) {
         this._name = name
         this._assets = assets
         this._os = os
@@ -12,12 +12,8 @@ export default class Device {
         return this._name
     }
 
-    set name(val) {
-        this._name = val
-    }
-
-    getAssets() {
-        return this._assets
+    get assets() {
+        return [...this._assets]
     }
 
     get operativeSystem() {
@@ -39,7 +35,7 @@ export default class Device {
     toDict() {
         return {
             deviceName: this.name,
-            assets: this._assets.map((asset) => asset.toDict()),
+            assets: this.assets.map((asset) => asset.toDict()),
             operativeSystem: this.operativeSystem,
             firmwareVersion: this.firmwareVersion,
             functionalities: this.functionalities,
