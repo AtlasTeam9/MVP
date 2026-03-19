@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './HomeView.module.css'
 
+// Custom hook for managing navigation logic in the home view
 function useHomeNavigation() {
     const navigate = useNavigate()
 
@@ -24,34 +25,37 @@ function useHomeNavigation() {
     }
 }
 
+// Button group component for the home view
 function HomeActions({ actions }) {
     return (
         <div className={styles.buttonGroup}>
             {/* TODO: Questo diventerà <UploadButton /> */}
             <button className={styles.button} onClick={actions.handleLoadDevice}>
-                Carica Dispositivo (JSON)
+                Upload Device (JSON)
             </button>
 
             <button className={styles.button} onClick={actions.handleCreateDevice}>
-                Crea Nuovo Dispositivo
+                Create New Device
             </button>
 
             {/* TODO: Questo diventerà <UploadButton /> */}
             <button className={styles.button} onClick={actions.handleLoadPreviousSession}>
-                Carica Sessione Precedente
+                Upload Previous Session
             </button>
         </div>
     )
 }
 
-export default function HomeView() {
+// Main component for the home view, displaying title, description, and action buttons
+function HomeView() {
     const actions = useHomeNavigation()
-
     return (
         <div className={styles.container}>
-            <h1>EN-18031 Compliance Validation</h1>
+            <h1>EN-18031 Compliance Verification</h1>
             <p>Upload a session file or create a new one to get started.</p>
             <HomeActions actions={actions} />
         </div>
     )
 }
+
+export default HomeView

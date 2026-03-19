@@ -12,7 +12,7 @@ export const AssetType = {
 }
 
 class Asset {
-    constructor(id, name, type, isSensitive = null, desc = null) {
+    constructor(id, name, type, isSensitive, desc = null) {
         this._id = id
         this._name = name
         this._type = type
@@ -26,8 +26,14 @@ class Asset {
     get name() {
         return this._name
     }
-    set name(val) {
-        this._name = val
+    get type() {
+        return this._type
+    }
+    get isSensitive() {
+        return this._isSensitive
+    }
+    get desc() {
+        return this._desc
     }
 
     toDict() {
