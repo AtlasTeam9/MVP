@@ -16,3 +16,9 @@ class GoBackRequest:
 @dataclass
 class CreateSessionWithFileRequest:
     device_data: dict
+
+
+@dataclass
+class ExportResultsRequest:
+    session_id: str
+    format: str  # "csv" | "pdf"

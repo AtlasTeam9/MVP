@@ -24,3 +24,10 @@ class CreateSessionWithFileResponse:
     current_asset_index: int
     current_tree_index: int
     current_node_id: str
+
+
+@dataclass
+class ExportResultsResponse:
+    content: bytes
+    media_type: str
+    filename: str
