@@ -2,7 +2,8 @@ from fastapi import HTTPException
 
 from app.application.interfaces.answer_use_case import IAnswerUseCase
 from app.application.interfaces.session_service import ISessionService
-from app.application.use_cases.session.dto import AnswerRequest, AnswerResponse
+from app.application.use_cases.session.dtos.requests import AnswerRequest
+from app.application.use_cases.session.dtos.responses import AnswerResponse
 
 
 class AnswerUseCase(IAnswerUseCase):

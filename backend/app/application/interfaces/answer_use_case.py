@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from app.application.use_cases.session.dto import AnswerRequest, AnswerResponse
+from app.application.use_cases.session.dtos.requests import AnswerRequest
+from app.application.use_cases.session.dtos.responses import AnswerResponse
 
 
 class IAnswerUseCase(ABC):

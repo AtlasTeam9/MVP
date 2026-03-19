@@ -13,7 +13,7 @@ from app.application.interfaces.go_back_use_case import IGoBackUseCase
 from app.application.use_cases.session.create_session_with_file import (
     CreateSessionWithFileRequest,
 )
-from app.application.use_cases.session.dto import AnswerRequest, GoBackRequest
+from app.application.use_cases.session.dtos.requests import AnswerRequest, GoBackRequest
 
 from ..dependencies import (
     get_answer_use_case,
