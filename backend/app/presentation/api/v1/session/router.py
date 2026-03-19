@@ -2,6 +2,7 @@ import json
 from typing import Annotated
 
 from fastapi import Depends, File, HTTPException, UploadFile
+from fastapi.responses import Response
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
@@ -13,11 +14,17 @@ from app.application.interfaces.go_back_use_case import IGoBackUseCase
 from app.application.use_cases.session.create_session_with_file import (
     CreateSessionWithFileRequest,
 )
-from app.application.use_cases.session.dtos.requests import AnswerRequest, GoBackRequest
+from app.application.use_cases.session.dtos.requests import (
+    AnswerRequest,
+    ExportResultsRequest,
+    GoBackRequest,
+)
+from app.application.use_cases.session.export_results import ExportResultsUseCase
 
 from ..dependencies import (
     get_answer_use_case,
     get_create_session_with_file_use_case,
+    get_export_results_use_case,
     get_go_back_use_case,
 )
 from .schema import (
@@ -40,6 +47,7 @@ class SessionController:
     )
     answer_use_case: IAnswerUseCase = Depends(get_answer_use_case)
     go_back_use_case: IGoBackUseCase = Depends(get_go_back_use_case)
+    export_results_use_case: ExportResultsUseCase = Depends(get_export_results_use_case)
 
     @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
@@ -101,4 +109,18 @@ class SessionController:
         return GoBackResponseSchema(
             found=result.found,
             node_id=result.node_id,
+        )
+
+    @router.get("/{session_id}/export/results", status_code=200)
+    async def export_results(self, session_id: str, format: str = "csv") -> Response:
+        """
+        Scarica i risultati della sessione in CSV o PDF.
+        """
+        result = await self.export_results_use_case.execute(
+            ExportResultsRequest(session_id=session_id, format=format)
+        )
+        return Response(
+            content=result.content,
+            media_type=result.media_type,
+            headers={"Content-Disposition": f"attachment; filename={result.filename}"},
         )
