@@ -10,6 +10,7 @@ from app.application.state import AppState
 from app.application.use_cases.session.answer import AnswerUseCase
 from app.application.use_cases.session.create_session_with_file import CreateSessionWithFileUseCase
 from app.application.use_cases.session.export_results import ExportResultsUseCase
+from app.application.use_cases.session.export_session import ExportSessionUseCase
 from app.application.use_cases.session.go_back import GoBackUseCase
 from app.domain.entities.tree import DecisionTree
 from app.domain.interfaces.tree_provider import TreeProvider
@@ -67,3 +68,9 @@ def get_export_results_use_case(
     service: ISessionService = Depends(get_session_service),
 ) -> ExportResultsUseCase:
     return ExportResultsUseCase(service)
+
+
+def get_export_session_use_case(
+    service: ISessionService = Depends(get_session_service),
+) -> ExportSessionUseCase:
+    return ExportSessionUseCase(service)
