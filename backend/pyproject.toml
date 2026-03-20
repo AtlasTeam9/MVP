@@ -62,3 +62,18 @@ max-complexity = 10
 indent-style = "space"
 line-ending = "lf"
 
+[tool.coverage.run]
+omit = [
+    "*/__init__.py",
+    "app/__init__.py",
+    "app/*/__ init__.py",
+    "app/application/interfaces/*",
+    "app/domain/interfaces/*",
+    "app/main.py",
+]
+
+[tool.coverage.report]
+omit = [
+    "*/__init__.py",
+]
+
