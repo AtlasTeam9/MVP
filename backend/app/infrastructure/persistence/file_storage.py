@@ -73,6 +73,12 @@ class FileStorage:
             logger.error(f"Failed to backup corrupted file: {e}")
             return None
 
+    def delete_session(self, session_id: str) -> None:
+        session_path = self._get_session_path(session_id)
+        if session_path.exists():
+            session_path.unlink()
+            logger.info(f"Session file deleted: {session_id}")
+
     def _get_session_path(self, session_id: str) -> Path:
         return self.sessions_dir / f"{session_id}.json"
 

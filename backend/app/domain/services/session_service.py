@@ -55,3 +55,7 @@ class SessionService(ISessionService):
 
     def save_session(self, session: Session) -> None:
         self._repo.save(session)
+
+    def delete_session(self, session_id: str) -> None:
+        AppState.sessions.pop(session_id, None)
+        self._repo.delete(session_id)

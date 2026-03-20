@@ -10,3 +10,6 @@ class BaseRepository(ABC, Generic[T]):
 
     @abstractmethod
     def get(self, entity_id: str) -> T | None: ...
+
+    @abstractmethod
+    def delete(self, entity_id: str) -> None: ...
