@@ -31,7 +31,6 @@ class FileStorage:
                 logger.error(f"Failed to create directory {directory}: {e}")
                 raise OSError(f"Cannot create directory {directory}: {e}")
 
-    # SESSION methods
     def save_session(self, session_id: str, data: dict[str, Any]) -> None:
         file_path = self._get_session_path(session_id)
         temp_path = file_path.with_suffix(".tmp")
