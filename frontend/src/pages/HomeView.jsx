@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './HomeView.module.css'
+import UploadButton from '../components/UploadButton'
 
 // Custom hook for managing navigation logic in the home view
 function useHomeNavigation() {
@@ -29,19 +30,17 @@ function useHomeNavigation() {
 function HomeActions({ actions }) {
     return (
         <div className={styles.buttonGroup}>
-            {/* TODO: Questo diventerà <UploadButton /> */}
-            <button className={styles.button} onClick={actions.handleLoadDevice}>
+            <UploadButton onFileSelect={actions.handleLoadDevice}>
                 Upload Device (JSON)
-            </button>
+            </UploadButton>
 
             <button className={styles.button} onClick={actions.handleCreateDevice}>
                 Create New Device
             </button>
 
-            {/* TODO: Questo diventerà <UploadButton /> */}
-            <button className={styles.button} onClick={actions.handleLoadPreviousSession}>
+            <UploadButton onFileSelect={actions.handleLoadPreviousSession}>
                 Upload Previous Session
-            </button>
+            </UploadButton>
         </div>
     )
 }

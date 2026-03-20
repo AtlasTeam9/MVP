@@ -54,7 +54,7 @@ describe('DeviceFormView — validation', () => {
         await waitFor(() => {
             expect(screen.getByText('Name is required')).toBeInTheDocument()
             expect(screen.getByText('OS is required')).toBeInTheDocument()
-            expect(screen.getByText('Firmware is required')).toBeInTheDocument()
+            expect(screen.getByText('Firmware version is required')).toBeInTheDocument()
             expect(screen.getByText('Functionality is required')).toBeInTheDocument()
         })
     })
@@ -72,7 +72,7 @@ describe('DeviceFormView — validation', () => {
         await waitFor(() => {
             expect(screen.queryByText('Name is required')).not.toBeInTheDocument()
             expect(screen.queryByText('OS is required')).not.toBeInTheDocument()
-            expect(screen.queryByText('Firmware is required')).not.toBeInTheDocument()
+            expect(screen.queryByText('Firmware version is required')).not.toBeInTheDocument()
             expect(screen.queryByText('Functionality is required')).not.toBeInTheDocument()
         })
     })
