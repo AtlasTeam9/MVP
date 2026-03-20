@@ -27,3 +27,8 @@ class ExportResultsRequest:
 @dataclass
 class ExportSessionRequest:
     session_id: str
+
+
+@dataclass
+class DeleteSessionRequest:
+    session_id: str
