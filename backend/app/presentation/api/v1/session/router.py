@@ -17,6 +17,7 @@ from app.application.use_cases.session.create_session_with_file import (
 from app.application.use_cases.session.delete_session import DeleteSessionUseCase
 from app.application.use_cases.session.dtos.requests import (
     AnswerRequest,
+    DeleteSessionRequest,
     ExportResultsRequest,
     ExportSessionRequest,
     GoBackRequest,
@@ -151,4 +152,4 @@ class SessionController:
         """
         Rimuove la sessione dalla memoria e cancella il file JSON dal server.
         """
-        await self.delete_session_use_case.execute(session_id)
+        await self.delete_session_use_case.execute(DeleteSessionRequest(session_id=session_id))
