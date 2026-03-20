@@ -31,3 +31,9 @@ class ExportResultsResponse:
     content: bytes
     media_type: str
     filename: str
+
+
+@dataclass
+class ExportSessionResponse:
+    content: bytes
+    filename: str
