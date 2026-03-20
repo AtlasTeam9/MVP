@@ -1,0 +1,111 @@
+{
+  "session_id": "69b2ea79-96e6-4a17-8819-a552da6c4436",
+  "device": {
+    "device_name": "Coffee Machine",
+    "assets": [
+      {
+        "id": "ASSET_01",
+        "name": "DHCP Client",
+        "type": "Network",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_02",
+        "name": "DHCP Client configuration",
+        "type": "Network",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_03",
+        "name": "DNS Client configuration",
+        "type": "Network",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_04",
+        "name": "Mosquitto broker",
+        "type": "Network",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_05",
+        "name": "Mosquitto broker configuration",
+        "type": "Network",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_06",
+        "name": "Mosquitto Client",
+        "type": "Security",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_07",
+        "name": "Mosquitto Client configuration",
+        "type": "Security",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_08",
+        "name": "wpa_supplicant",
+        "type": "Security",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_09",
+        "name": "wpa_supplicant configuration",
+        "type": "Security",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_10",
+        "name": "SSH client",
+        "type": "Security",
+        "sensitive": true
+      },
+      {
+        "id": "ASSET_11",
+        "name": "SSH client configuration",
+        "type": "Security",
+        "sensitive": true
+      }
+    ]
+  },
+  "position": {
+    "current_asset_index": 1,
+    "current_tree_index": 0,
+    "current_node_id": ""
+  },
+  "results": {
+    "ASSET_01": {
+      "ACM-1": "PASS",
+      "ACM-2": "FAIL",
+      "AUM-1-1": "FAIL",
+      "AUM-1-2": "FAIL",
+      "AUM-2-NI": "NOT_APPLICABLE",
+      "AUM-2-UI": "NOT_APPLICABLE",
+      "AUM-3-NI": "NOT_APPLICABLE",
+      "AUM-3-UI": "NOT_APPLICABLE",
+      "AUM-4-NI": "NOT_APPLICABLE",
+      "AUM-4-UI": "NOT_APPLICABLE",
+      "AUM-5-1-NI": "NOT_APPLICABLE",
+      "AUM-5-1-UI": "NOT_APPLICABLE",
+      "AUM-5-2-NI": "NOT_APPLICABLE",
+      "AUM-5-2-UI": "NOT_APPLICABLE",
+      "AUM-6-NI": "NOT_APPLICABLE",
+      "AUM-6-UI": "NOT_APPLICABLE"
+    },
+    "ASSET_02": {},
+    "ASSET_03": {},
+    "ASSET_04": {},
+    "ASSET_05": {},
+    "ASSET_06": {},
+    "ASSET_07": {},
+    "ASSET_08": {},
+    "ASSET_09": {},
+    "ASSET_10": {},
+    "ASSET_11": {}
+  },
+  "is_finished": false,
+  "saved_at": "2026-03-20T15:47:38.798516"
+}
