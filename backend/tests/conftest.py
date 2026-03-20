@@ -89,3 +89,16 @@ def sample_device_file(tmp_path, sample_device_data) -> Path:
     with open(file_path, "w") as f:
         json.dump(sample_device_data, f)
     return file_path
+
+
+def pytest_collection_modifyitems(items):
+    """
+    Assegna automaticamente i marker in base al path del test.
+    """
+    for item in items:
+        if "integration" in str(item.fspath):
+            item.add_marker(pytest.mark.integration)
+        elif "unit" in str(item.fspath):
+            item.add_marker(pytest.mark.unit)
+        elif "e2e" in str(item.fspath):
+            item.add_marker(pytest.mark.e2e)
