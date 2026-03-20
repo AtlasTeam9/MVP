@@ -13,3 +13,6 @@ class ISessionService(ABC):
 
     @abstractmethod
     def save_session(self, session: Session) -> None: ...
+
+    @abstractmethod
+    def delete_session(self, session_id: str) -> None: ...

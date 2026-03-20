@@ -14,17 +14,22 @@ from app.application.interfaces.go_back_use_case import IGoBackUseCase
 from app.application.use_cases.session.create_session_with_file import (
     CreateSessionWithFileRequest,
 )
+from app.application.use_cases.session.delete_session import DeleteSessionUseCase
 from app.application.use_cases.session.dtos.requests import (
     AnswerRequest,
     ExportResultsRequest,
+    ExportSessionRequest,
     GoBackRequest,
 )
 from app.application.use_cases.session.export_results import ExportResultsUseCase
+from app.application.use_cases.session.export_session import ExportSessionUseCase
 
 from ..dependencies import (
     get_answer_use_case,
     get_create_session_with_file_use_case,
+    get_delete_session_use_case,
     get_export_results_use_case,
+    get_export_session_use_case,
     get_go_back_use_case,
 )
 from .schema import (
@@ -48,6 +53,8 @@ class SessionController:
     answer_use_case: IAnswerUseCase = Depends(get_answer_use_case)
     go_back_use_case: IGoBackUseCase = Depends(get_go_back_use_case)
     export_results_use_case: ExportResultsUseCase = Depends(get_export_results_use_case)
+    export_session_use_case: ExportSessionUseCase = Depends(get_export_session_use_case)
+    delete_session_use_case: DeleteSessionUseCase = Depends(get_delete_session_use_case)
 
     @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
@@ -111,6 +118,20 @@ class SessionController:
             node_id=result.node_id,
         )
 
+    @router.get("/{session_id}/export", status_code=200)
+    async def export_session(self, session_id: str) -> Response:
+        """
+        Scarica la sessione completa come file JSON.
+        """
+        result = await self.export_session_use_case.execute(
+            ExportSessionRequest(session_id=session_id)
+        )
+        return Response(
+            content=result.content,
+            media_type="application/json",
+            headers={"Content-Disposition": f"attachment; filename={result.filename}"},
+        )
+
     @router.get("/{session_id}/export/results", status_code=200)
     async def export_results(self, session_id: str, format: str = "csv") -> Response:
         """
@@ -124,3 +145,10 @@ class SessionController:
             media_type=result.media_type,
             headers={"Content-Disposition": f"attachment; filename={result.filename}"},
         )
+
+    @router.delete("/{session_id}", status_code=204)
+    async def delete_session(self, session_id: str) -> None:
+        """
+        Rimuove la sessione dalla memoria e cancella il file JSON dal server.
+        """
+        await self.delete_session_use_case.execute(session_id)

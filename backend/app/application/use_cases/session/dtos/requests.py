@@ -22,3 +22,13 @@ class CreateSessionWithFileRequest:
 class ExportResultsRequest:
     session_id: str
     format: str  # "csv" | "pdf"
+
+
+@dataclass
+class ExportSessionRequest:
+    session_id: str
+
+
+@dataclass
+class DeleteSessionRequest:
+    session_id: str

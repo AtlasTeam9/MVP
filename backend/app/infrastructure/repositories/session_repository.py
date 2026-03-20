@@ -51,3 +51,6 @@ class SessionRepository(BaseRepository):
 
     def update(self, session: Session) -> None:
         self.save(session)
+
+    def delete(self, entity_id: str) -> None:
+        self._storage.delete_session(entity_id)
