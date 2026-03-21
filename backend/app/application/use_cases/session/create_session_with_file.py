@@ -17,7 +17,13 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
         device = Device(
             device_name=device_data["device_name"],
             assets=[
-                Asset(asset["id"], asset["name"], AssetType.from_string(asset["type"]), True)
+                Asset(
+                    asset["id"],
+                    asset["name"],
+                    AssetType.from_string(asset["type"]),
+                    asset["is_sensitive"],
+                    asset.get("description", None),
+                )
                 for asset in device_data["assets"]
             ],
         )
@@ -27,7 +33,13 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
             session_id=session.get_id,
             device_name=session.get_device.get_name,
             assets=[
-                {"id": asset.get_id, "name": asset.get_name, "type": asset.get_type.value}
+                {
+                    "id": asset.get_id,
+                    "name": asset.get_name,
+                    "type": asset.get_type.value,
+                    "is_sensitive": asset.get_sensitivity,
+                    "description": asset.get_description,
+                }
                 for asset in session.get_assets
             ],
             current_asset_index=session.state.current_asset_index,

@@ -79,7 +79,13 @@ class SessionController:
             device=DeviceSchema(
                 device_name=result.device_name,
                 assets=[
-                    AssetSchema(id=asset["id"], name=asset["name"], type=asset["type"])
+                    AssetSchema(
+                        id=asset["id"],
+                        name=asset["name"],
+                        type=asset["type"],
+                        is_sensitive=asset["is_sensitive"],
+                        description=asset["description"],
+                    )
                     for asset in result.assets
                 ],
             ),

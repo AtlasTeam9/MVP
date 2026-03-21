@@ -34,7 +34,8 @@ class SessionService(ISessionService):
                     asset["id"],
                     asset["name"],
                     AssetType.from_string(asset["type"]),
-                    asset["sensitive"],
+                    asset["is_sensitive"],
+                    asset.get("description", None),
                 )
                 for asset in device_dict["assets"]
             ],

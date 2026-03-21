@@ -1,5 +1,5 @@
 {
-    "session_id": "6ea2aac1-3017-4371-a750-dbf1587296c7",
+    "session_id": "a725654b-27bd-41de-be0d-acd35f30a5da",
     "device": {
         "device_name": "Coffee Machine",
         "assets": [
@@ -7,67 +7,67 @@
                 "id": "ASSET_01",
                 "name": "DHCP Client",
                 "type": "Network",
-                "sensitive": true
+                "is_sensitive": "false"
             },
             {
                 "id": "ASSET_02",
                 "name": "DHCP Client configuration",
                 "type": "Network",
-                "sensitive": true
+                "is_sensitive": "true"
             },
             {
                 "id": "ASSET_03",
                 "name": "DNS Client configuration",
                 "type": "Network",
-                "sensitive": true
+                "is_sensitive": "true"
             },
             {
                 "id": "ASSET_04",
                 "name": "Mosquitto broker",
                 "type": "Network",
-                "sensitive": true
+                "is_sensitive": "false"
             },
             {
                 "id": "ASSET_05",
                 "name": "Mosquitto broker configuration",
                 "type": "Network",
-                "sensitive": true
+                "is_sensitive": "true"
             },
             {
                 "id": "ASSET_06",
                 "name": "Mosquitto Client",
                 "type": "Security",
-                "sensitive": true
+                "is_sensitive": "false"
             },
             {
                 "id": "ASSET_07",
                 "name": "Mosquitto Client configuration",
                 "type": "Security",
-                "sensitive": true
+                "is_sensitive": "true"
             },
             {
                 "id": "ASSET_08",
                 "name": "wpa_supplicant",
                 "type": "Security",
-                "sensitive": true
+                "is_sensitive": "false"
             },
             {
                 "id": "ASSET_09",
                 "name": "wpa_supplicant configuration",
                 "type": "Security",
-                "sensitive": true
+                "is_sensitive": "true"
             },
             {
                 "id": "ASSET_10",
                 "name": "SSH client",
                 "type": "Security",
-                "sensitive": true
+                "is_sensitive": "false"
             },
             {
                 "id": "ASSET_11",
                 "name": "SSH client configuration",
                 "type": "Security",
-                "sensitive": true
+                "is_sensitive": "true"
             }
         ]
     },
@@ -90,5 +90,5 @@
         "ASSET_11": {}
     },
     "is_finished": false,
-    "saved_at": "2026-03-18T20:38:58.217289"
+    "saved_at": "2026-03-21T11:55:56.714057"
 }

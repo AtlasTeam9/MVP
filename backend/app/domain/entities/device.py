@@ -52,7 +52,7 @@ class Asset:
         self._type = AssetType.from_string(type)
 
     @property
-    def get_sensitivity(self) -> bool | str:
+    def get_sensitivity(self) -> bool:
         return self._is_sensitive
 
     def set_sensitivity(self, is_sensitive: bool) -> None:
@@ -70,7 +70,7 @@ class Asset:
             "id": self.get_id,
             "name": self.get_name,
             "type": self.get_type.value,
-            "sensitive": self.get_sensitivity,
+            "is_sensitive": self.get_sensitivity,
         }
 
 

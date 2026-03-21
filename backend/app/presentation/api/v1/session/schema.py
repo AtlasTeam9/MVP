@@ -8,9 +8,11 @@ class AssetSchema(BaseModel):
     Singolo asset
     """
 
-    id: str
-    name: str
-    type: str
+    id: str = Field(..., description="Id dell'asset")
+    name: str = Field(..., description="Nome dell'asset")
+    type: str = Field(..., description="Tipo dell'asset")
+    is_sensitive: bool = Field(..., description="Sensibilità dell'asset")
+    description: str | None = Field(..., description="Descrizione dell'asset")
 
 
 class DeviceSchema(BaseModel):
@@ -58,7 +60,13 @@ class SessionResponseSchema(BaseModel):
                 "device": {
                     "device_name": "Dispositivo Medico XYZ",
                     "assets": [
-                        {"id": "ASSET_01", "name": "DHCP Client", "type": "Network Function"},
+                        {
+                            "id": "ASSET_01",
+                            "name": "DHCP Client",
+                            "type": "Network Function",
+                            "is_sensitive": "false",
+                            "description": "description",
+                        },
                     ],
                 },
                 "position": {

@@ -1,4 +1,13 @@
 from dataclasses import dataclass
+from typing import TypedDict
+
+
+class AssetResponse(TypedDict):
+    id: str
+    name: str
+    type: str
+    is_sensitive: bool
+    description: str | None
 
 
 @dataclass
@@ -20,7 +29,7 @@ class GoBackResponse:
 class CreateSessionWithFileResponse:
     session_id: str
     device_name: str
-    assets: list[dict[str, str]]
+    assets: list[AssetResponse]
     current_asset_index: int
     current_tree_index: int
     current_node_id: str
