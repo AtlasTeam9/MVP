@@ -2,13 +2,21 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './HomeView.module.css'
 import UploadButton from '../components/UploadButton'
+import DeviceService from '../services/DeviceService'
 
 // Custom hook for managing navigation logic in the home view
 function useHomeNavigation() {
     const navigate = useNavigate()
 
-    const handleLoadDevice = async () => {
-        // TODO: inserire logica per caricare il file JSON del dispositivo
+    const handleLoadDevice = async (file) => {
+        try {
+            const deviceData = await DeviceService.receiveFile(file)
+            console.log('Device data loaded:', deviceData)
+            //TODO: navigare alla pagina successiva
+        } catch (err) {
+            console.error('Error loading device:', err.message)
+            alert('Failed to load device: ' + err.message)
+        }
     }
 
     const handleCreateDevice = () => {

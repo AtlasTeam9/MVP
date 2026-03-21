@@ -8,7 +8,7 @@ describe('Device — constructor and default values', () => {
         const dev = new Device('Firewall', [], 'Linux', '2.1.0', 'filtering', 'A firewall device')
         expect(dev.name).toBe('Firewall')
         expect(dev.assets).toEqual([])
-        expect(dev.operativeSystem).toBe('Linux')
+        expect(dev.operatingSystem).toBe('Linux')
         expect(dev.firmwareVersion).toBe('2.1.0')
         expect(dev.functionalities).toBe('filtering')
         expect(dev.description).toBe('A firewall device')
@@ -18,7 +18,7 @@ describe('Device — constructor and default values', () => {
         const dev = new Device('Router', [], 'Linux', '1.0', 'routing')
         expect(dev.name).toBe('Router')
         expect(dev.assets).toEqual([])
-        expect(dev.operativeSystem).toBe('Linux')
+        expect(dev.operatingSystem).toBe('Linux')
         expect(dev.firmwareVersion).toBe('1.0')
         expect(dev.functionalities).toBe('routing')
         expect(dev.description).toBe('Description not inserted')
@@ -43,7 +43,7 @@ describe('Device — toDict() without assets or description', () => {
         expect(dict).toEqual({
             deviceName: 'Router',
             assets: [],
-            operativeSystem: 'Linux',
+            operatingSystem: 'Linux',
             firmwareVersion: '1.0',
             functionalities: 'routing',
             description: 'Desc',
