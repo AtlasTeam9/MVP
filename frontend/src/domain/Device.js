@@ -2,10 +2,10 @@ export default class Device {
     constructor(name, assets = [], os, firmware, funcs, desc = null) {
         this._name = name
         this._assets = assets
-        this._os = os
-        this._firmware = firmware
-        this._funcs = funcs
-        this._desc = desc
+        this._operatingSystem = os
+        this._firmwareVersion = firmware
+        this._functionality = funcs
+        this._description = desc
     }
 
     get name() {
@@ -16,27 +16,27 @@ export default class Device {
         return [...this._assets]
     }
 
-    get operativeSystem() {
-        return this._os
+    get operatingSystem() {
+        return this._operatingSystem
     }
 
     get firmwareVersion() {
-        return this._firmware
+        return this._firmwareVersion
     }
 
     get functionalities() {
-        return this._funcs
+        return this._functionality
     }
 
     get description() {
-        return this._desc || 'Description not inserted'
+        return this._description || 'Description not inserted'
     }
 
     toDict() {
         return {
             deviceName: this.name,
             assets: this.assets.map((asset) => asset.toDict()),
-            operativeSystem: this.operativeSystem,
+            operatingSystem: this.operatingSystem,
             firmwareVersion: this.firmwareVersion,
             functionalities: this.functionalities,
             description: this.description,
