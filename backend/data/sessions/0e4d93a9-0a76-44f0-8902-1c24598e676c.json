@@ -1,5 +1,5 @@
 {
-  "session_id": "8ae04e2a-a03e-4041-b051-140ed17c2fd8",
+  "session_id": "0e4d93a9-0a76-44f0-8902-1c24598e676c",
   "device": {
     "device_name": "Coffee Machine",
     "assets": [
@@ -7,77 +7,77 @@
         "id": "ASSET_01",
         "name": "DHCP Client",
         "type": "Network",
-        "is_sensitive": "false",
+        "is_sensitive": false,
         "description": "Handles automatic IP address assignment and network configuration from a DHCP server."
       },
       {
         "id": "ASSET_02",
         "name": "DHCP Client configuration",
         "type": "Network",
-        "is_sensitive": "true",
+        "is_sensitive": true,
         "description": "Defines parameters for DHCP operation such as hostname and request options"
       },
       {
         "id": "ASSET_03",
         "name": "DNS Client configuration",
         "type": "Network",
-        "is_sensitive": "true",
+        "is_sensitive": true,
         "description": "Specifies DNS servers and resolution settings used to translate domain names into IP addresses."
       },
       {
         "id": "ASSET_04",
         "name": "Mosquitto broker",
         "type": "Network",
-        "is_sensitive": "false",
+        "is_sensitive": false,
         "description": "MQTT message broker that manages communication between connected clients and devices."
       },
       {
         "id": "ASSET_05",
         "name": "Mosquitto broker configuration",
         "type": "Network",
-        "is_sensitive": "true",
+        "is_sensitive": true,
         "description": "Contains settings for broker operation including ports, authentication, access control, and persistence."
       },
       {
         "id": "ASSET_06",
         "name": "Mosquitto Client",
         "type": "Security",
-        "is_sensitive": "false",
+        "is_sensitive": false,
         "description": "MQTT client used to publish and subscribe to messages via the broker."
       },
       {
         "id": "ASSET_07",
         "name": "Mosquitto Client configuration",
         "type": "Security",
-        "is_sensitive": "true",
+        "is_sensitive": true,
         "description": "Defines client connection details such as broker address, credentials, topics, and security options."
       },
       {
         "id": "ASSET_08",
         "name": "wpa_supplicant",
         "type": "Security",
-        "is_sensitive": "false",
+        "is_sensitive": false,
         "description": "Manages Wi-Fi authentication and secure connection to wireless networks."
       },
       {
         "id": "ASSET_09",
         "name": "wpa_supplicant configuration",
         "type": "Security",
-        "is_sensitive": "true",
+        "is_sensitive": true,
         "description": "Stores wireless network credentials and security settings such as SSIDs, passwords, and encryption methods."
       },
       {
         "id": "ASSET_10",
         "name": "SSH client",
         "type": "Security",
-        "is_sensitive": "false",
+        "is_sensitive": false,
         "description": "Provides secure remote access and command execution over encrypted connections."
       },
       {
         "id": "ASSET_11",
         "name": "SSH client configuration",
         "type": "Security",
-        "is_sensitive": "true",
+        "is_sensitive": true,
         "description": "Includes SSH settings such as keys, known hosts, and connection preferences for secure communication."
       }
     ]
@@ -101,5 +101,5 @@
     "ASSET_11": {}
   },
   "is_finished": false,
-  "saved_at": "2026-03-21T14:23:03.498258"
+  "saved_at": "2026-03-21T14:38:49.205812"
 }
