@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import styles from '../pages/HomeView.module.css'
+import styles from '../../pages/HomeView.module.css'
 
 function UploadButton({ onFileSelect, children }) {
     const fileInputRef = useRef(null)

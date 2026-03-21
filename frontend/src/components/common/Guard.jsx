@@ -1,6 +1,6 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-import useDeviceStore from '../store/DeviceStore'
+import useDeviceStore from '../../store/DeviceStore'
 
 /* Guard component for protect the routes if a user tries to access a protected route without
 the required data

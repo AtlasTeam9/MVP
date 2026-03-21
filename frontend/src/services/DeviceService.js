@@ -4,6 +4,18 @@ import { deviceSchema } from '../domain/schemas/DeviceSchema'
 import useDeviceStore from '../store/DeviceStore'
 
 class DeviceService {
+    // Converts snake_case JSON data to camelCase for internal use
+    normalizeDeviceData(data) {
+        return {
+            name: data.device_name,
+            operatingSystem: data.operating_system,
+            firmwareVersion: data.firmware_version,
+            functionalities: data.functionalities,
+            assets: data.assets,
+            description: data.description,
+        }
+    }
+
     // Upload of a device file (JSON)
     async receiveFile(file) {
         if (!this.validateFile(file)) throw new Error('Invalid file type')
@@ -13,17 +25,20 @@ class DeviceService {
             reader.onload = async (env) => {
                 try {
                     const data = JSON.parse(env.target.result)
-                    if (this.validateDeviceData(data)) {
+                    const normalizedData = this.normalizeDeviceData(data)
+                    if (this.validateDeviceData(normalizedData)) {
                         const device = new Device(
-                            data.name,
-                            data.assets || [],
-                            data.operatingSystem,
-                            data.firmwareVersion,
-                            data.functionalities,
-                            data.description
+                            normalizedData.name,
+                            normalizedData.assets || [],
+                            normalizedData.operatingSystem,
+                            normalizedData.firmwareVersion,
+                            normalizedData.functionalities,
+                            normalizedData.description
                         )
-                        useDeviceStore.setDevice(device)
+                        useDeviceStore.getState().setDevice(device)
                         resolve(device)
+                    } else {
+                        reject(new Error('Device data validation failed'))
                     }
                 } catch (err) {
                     console.error('Error parsing JSON:', err.message)
@@ -41,7 +56,6 @@ class DeviceService {
 
     // Validates the device data structure
     validateDeviceData(data) {
-        // TODO: che controlli devono venire fatti sul file del dispositivo in ingresso?
         const result = deviceSchema.safeParse(data)
         return result.success
     }

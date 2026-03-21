@@ -4,7 +4,7 @@ export default class Device {
         this._assets = assets
         this._operatingSystem = os
         this._firmwareVersion = firmware
-        this._functionality = funcs
+        this._functionalities = funcs
         this._description = desc
     }
 
@@ -25,7 +25,7 @@ export default class Device {
     }
 
     get functionalities() {
-        return this._functionality
+        return this._functionalities
     }
 
     get description() {
