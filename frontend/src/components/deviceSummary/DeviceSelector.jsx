@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { AssetListView } from './AssetListView'
 import styles from '../../pages/DeviceSummaryView.module.css'
 
+// Component to display the device name as a dropdown button. When clicked, it shows the
+// list of assets of the device.
 export function DeviceSelector({ device }) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 

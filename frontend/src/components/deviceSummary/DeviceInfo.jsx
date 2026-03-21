@@ -1,33 +1,33 @@
 import React from 'react'
 
-// Component to display asset information in the overlay when an asset is selected in
-// the device summary view.
-export function AssetInfo({ asset }) {
+// Component to display device information in the overlay when device details are shown
+// in the device summary view.
+export function DeviceInfo({ device }) {
     return (
         <div style={styles.content}>
             <div style={styles.field}>
-                <span style={styles.label}>ID:</span>
-                <span style={styles.value}>{asset.id}</span>
-            </div>
-
-            <div style={styles.field}>
                 <span style={styles.label}>Name:</span>
-                <span style={styles.value}>{asset.name}</span>
+                <span style={styles.value}>{device.name}</span>
             </div>
 
             <div style={styles.field}>
-                <span style={styles.label}>Type:</span>
-                <span style={styles.value}>{asset.type}</span>
+                <span style={styles.label}>Operating system:</span>
+                <span style={styles.value}>{device.operatingSystem}</span>
             </div>
 
             <div style={styles.field}>
-                <label style={styles.label}>Sensibile:</label>
-                <span style={styles.value}>{asset.isSensitive ? 'Yes' : 'No'}</span>
+                <span style={styles.label}>Firmware version:</span>
+                <span style={styles.value}>{device.firmwareVersion}</span>
+            </div>
+
+            <div style={styles.field}>
+                <span style={styles.label}>Functionalities:</span>
+                <span style={styles.value}>{device.functionalities}</span>
             </div>
 
             <div style={styles.field}>
                 <span style={styles.label}>Description:</span>
-                <span style={styles.value}>{asset.description || '—'}</span>
+                <span style={styles.value}>{device.description || '—'}</span>
             </div>
         </div>
     )
@@ -41,7 +41,7 @@ const styles = {
     },
     field: {
         display: 'flex',
-        gap: '0.5rem',
+        gap: '1.5rem',
         alignItems: 'flex-start',
         padding: '0.75rem',
         background: '#f5f5f5',
@@ -51,7 +51,7 @@ const styles = {
     label: {
         fontWeight: '600',
         color: '#333',
-        minWidth: '110px',
+        minWidth: '160px',
         flexShrink: 0,
         textAlign: 'left',
     },

@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { AssetInfoOverlay } from './AssetInfoOverlay'
 
+// Component to display an asset item in the list of assets of a device in the device summary view.
+// When clicked, it shows the asset information in an overlay.
+// If the showDeleteIcon prop is true, it also shows a delete icon that allows to delete the asset.
 export function AssetItemView({ asset, showDeleteIcon = false, onDelete }) {
     const [showInfo, setShowInfo] = useState(false)
 

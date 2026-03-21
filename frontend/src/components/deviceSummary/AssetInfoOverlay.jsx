@@ -1,6 +1,7 @@
 import React from 'react'
 import { AssetInfo } from './AssetInfo'
 
+// Component to display an overlay when an asset is selected in the device summary view.
 export function AssetInfoOverlay({ asset, onClose }) {
     return (
         <div style={styles.overlay} onClick={onClose}>
@@ -11,7 +12,7 @@ export function AssetInfoOverlay({ asset, onClose }) {
                         ✕
                     </button>
                 </div>
-                <AssetInfo asset={asset} isSensitive={asset.is_sensitive || false} />
+                <AssetInfo asset={asset} />
             </div>
         </div>
     )

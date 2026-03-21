@@ -1,5 +1,7 @@
 import { AssetItemView } from './AssetItemView'
 
+// Component to display the list of assets of a device in the dropdown when the device name is
+// clicked in the device summary view.
 export function AssetListView({
     assets,
     isEditable = false,
