@@ -64,7 +64,7 @@ class SessionResponseSchema(BaseModel):
                             "id": "ASSET_01",
                             "name": "DHCP Client",
                             "type": "Network Function",
-                            "is_sensitive": "false",
+                            "is_sensitive": False,
                             "description": "description",
                         },
                     ],

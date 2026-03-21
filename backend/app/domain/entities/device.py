@@ -30,7 +30,7 @@ class Asset:
         self._asset_id: str = asset_id
         self._name: str = name
         self._type: AssetType = type
-        self._is_sensitive = is_sensitive
+        self._is_sensitive: bool = is_sensitive
         self._desc = desc
 
     @property
@@ -71,6 +71,7 @@ class Asset:
             "name": self.get_name,
             "type": self.get_type.value,
             "is_sensitive": self.get_sensitivity,
+            "description": self.get_description,
         }
 
 

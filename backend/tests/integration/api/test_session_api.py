@@ -22,8 +22,20 @@ from app.main import app
 DEVICE_JSON = {
     "device_name": "Test Device",
     "assets": [
-        {"id": "ASSET_01", "name": "DHCP Client", "type": "Network Function"},
-        {"id": "ASSET_02", "name": "SSH Client", "type": "Security Function"},
+        {
+            "id": "ASSET_01",
+            "name": "DHCP Client",
+            "type": "Network Function",
+            "is_sensitive": True,
+            "description": "description",
+        },
+        {
+            "id": "ASSET_02",
+            "name": "SSH Client",
+            "type": "Security Function",
+            "is_sensitive": False,
+            "description": "description",
+        },
     ],
 }
 
