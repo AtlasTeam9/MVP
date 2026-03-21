@@ -57,8 +57,16 @@
 }
 
 .btnPrimary {
-    background-color: var(--primary-color);
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
     color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
 }
 
 .btnPrimary:hover {
@@ -66,10 +74,18 @@
 }
 
 .btnSecondary {
-    background-color: #e0e0e0;
-    color: #333;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
 }
 
 .btnSecondary:hover {
-    background-color: #d0d0d0;
+    background-color: var(--primary-hover);
 }

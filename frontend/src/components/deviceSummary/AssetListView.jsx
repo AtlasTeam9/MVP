@@ -25,11 +25,18 @@ export function AssetListView({
 
 const styles = {
     assetListContainer: {
-        marginTop: '0.75rem',
+        position: 'absolute',
+        top: '100%',
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        marginTop: '4px',
         background: 'white',
         borderRadius: '8px',
         padding: '1rem',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.15)',
+        maxHeight: '320px',
+        overflowY: 'auto',
     },
     assetListTitle: {
         margin: '0 0 0.75rem 0',
