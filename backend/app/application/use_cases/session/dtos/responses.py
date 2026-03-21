@@ -29,6 +29,10 @@ class GoBackResponse:
 class CreateSessionWithFileResponse:
     session_id: str
     device_name: str
+    device_os: str
+    device_firmw_v: str
+    device_funcs: str
+    device_desc: str
     assets: list[AssetResponse]
     current_asset_index: int
     current_tree_index: int

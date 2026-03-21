@@ -17,6 +17,10 @@ class AssetSchema(BaseModel):
 
 class DeviceSchema(BaseModel):
     device_name: str = Field(..., description="Nome del dispositivo")
+    os: str = Field(..., description="Sistema operativo del dispositivo")
+    firmware_version: str = Field(..., description="Firmware version del dispositivo")
+    functionalities: str = Field(..., description="Funzionalità del dispositivo")
+    description: str = Field(..., description="Descrizione del dispositivo")
     assets: list[AssetSchema] = Field(..., description="Lista degli asset del dispositivo")
 
 
@@ -68,6 +72,10 @@ class SessionResponseSchema(BaseModel):
                             "description": "description",
                         },
                     ],
+                    "operative_system": "Linux-based embedded system",
+                    "firmware_version": "1.0.0",
+                    "functionalities": "MQTT-based IoT device with network and security capabilities",
+                    "description": "A smart coffee machine that can be controlled remotely via MQTT protocol, allowing users to brew coffee from their smartphones. It includes network functions for connectivity and security functions to protect against unauthorized access.",
                 },
                 "position": {
                     "current_asset_index": 0,

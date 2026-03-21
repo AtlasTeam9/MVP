@@ -1,5 +1,5 @@
 {
-  "session_id": "0e4d93a9-0a76-44f0-8902-1c24598e676c",
+  "session_id": "09258922-5ea1-4d17-b408-2d1e36da4841",
   "device": {
     "device_name": "Coffee Machine",
     "assets": [
@@ -80,7 +80,11 @@
         "is_sensitive": true,
         "description": "Includes SSH settings such as keys, known hosts, and connection preferences for secure communication."
       }
-    ]
+    ],
+    "operative_system": "Linux-based embedded system",
+    "firmware_version": "1.0.0",
+    "functionalities": "MQTT-based IoT device with network and security capabilities",
+    "description": "A smart coffee machine that can be controlled remotely via MQTT protocol, allowing users to brew coffee from their smartphones. It includes network functions for connectivity and security functions to protect against unauthorized access."
   },
   "position": {
     "current_asset_index": 0,
@@ -101,5 +105,5 @@
     "ASSET_11": {}
   },
   "is_finished": false,
-  "saved_at": "2026-03-21T14:38:49.205812"
+  "saved_at": "2026-03-21T19:42:22.971175"
 }

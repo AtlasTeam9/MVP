@@ -28,6 +28,10 @@ class SessionRepository(BaseRepository):
                 "device": {
                     "device_name": device["device_name"],
                     "assets": [asset for asset in device["assets"]],
+                    "operative_system": device["operative_system"],
+                    "firmware_version": device["firmware_version"],
+                    "functionalities": device["functionalities"],
+                    "description": device["description"],
                 },
                 "position": {
                     "current_asset_index": entity.state.current_asset_index,

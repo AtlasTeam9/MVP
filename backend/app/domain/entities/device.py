@@ -135,5 +135,9 @@ class Device:
     def to_dict(self) -> dict[str, Any]:
         return {
             "device_name": self._device_name,
+            "operative_system": self.get_operative_sys,
+            "firmware_version": self.get_firmware_vers,
+            "functionalities": self.get_funcionalities,
+            "description": self.get_description,
             "assets": [asset.to_dict() for asset in self._assets],
         }
