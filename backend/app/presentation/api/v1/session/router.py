@@ -78,6 +78,10 @@ class SessionController:
             session_id=result.session_id,
             device=DeviceSchema(
                 device_name=result.device_name,
+                os=result.device_os,
+                firmware_version=result.device_firmw_v,
+                functionalities=result.device_funcs,
+                description=result.device_desc,
                 assets=[
                     AssetSchema(
                         id=asset["id"],

@@ -39,6 +39,10 @@ class SessionService(ISessionService):
                 )
                 for asset in device_dict["assets"]
             ],
+            operative_sys=device_dict["operative_system"],
+            firm_vers=device_dict["firmware_version"],
+            funcs=device_dict["functionalities"],
+            desc=device_dict["description"],
         )
 
         session = Session(
