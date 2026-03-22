@@ -84,7 +84,7 @@ class TestDevice:
         device = Device(
             device_name="Core Switch",
             assets=sample_assets,
-            operative_sys="Cisco IOS",
+            operating_sys="Cisco IOS",
             firm_vers="15.2",
             funcs="Routing and Switching",
             desc="Main building switch",
@@ -92,7 +92,7 @@ class TestDevice:
 
         assert device.get_name == "Core Switch"
         assert len(device.get_assets) == 2
-        assert device.get_operative_sys == "Cisco IOS"
+        assert device.get_operating_sys == "Cisco IOS"
         assert device.get_firmware_vers == "15.2"
         assert device.get_funcionalities == "Routing and Switching"
         assert device.get_description == "Main building switch"
@@ -100,7 +100,7 @@ class TestDevice:
     def test_device_default_properties(self, sample_assets):
         device = Device("Basic Device", sample_assets)
 
-        assert device.get_operative_sys == "Operative System not inserted"
+        assert device.get_operating_sys == "operating System not inserted"
         assert device.get_firmware_vers == "Firmware version not inserted"
         assert device.get_funcionalities == "Functionalities not inserted"
         assert device.get_description == "Description not inserted"
@@ -111,8 +111,8 @@ class TestDevice:
         device.set_name("New Name")
         assert device.get_name == "New Name"
 
-        device.set_operative_sys("Linux")
-        assert device.get_operative_sys == "Linux"
+        device.set_operating_sys("Linux")
+        assert device.get_operating_sys == "Linux"
 
         device.set_firmware_vers("v2.0")
         assert device.get_firmware_vers == "v2.0"
