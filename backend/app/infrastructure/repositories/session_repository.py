@@ -28,7 +28,7 @@ class SessionRepository(BaseRepository):
                 "device": {
                     "device_name": device["device_name"],
                     "assets": [asset for asset in device["assets"]],
-                    "operative_system": device["operative_system"],
+                    "operating_system": device["operating_system"],
                     "firmware_version": device["firmware_version"],
                     "functionalities": device["functionalities"],
                     "description": device["description"],

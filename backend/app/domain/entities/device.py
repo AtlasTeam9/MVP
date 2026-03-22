@@ -81,14 +81,14 @@ class Device:
         self,
         device_name: str,
         assets: list[Asset],
-        operative_sys: str | None = None,
+        operating_sys: str | None = None,
         firm_vers: str | None = None,
         funcs: str | None = None,
         desc: str | None = None,
     ):
         self._device_name = device_name
         self._assets = assets
-        self._os = operative_sys
+        self._os = operating_sys
         self._firm_vers = firm_vers
         self._funcs = funcs
         self._desc = desc
@@ -105,10 +105,10 @@ class Device:
         return list(self._assets)
 
     @property
-    def get_operative_sys(self) -> str:
-        return self._os or "Operative System not inserted"
+    def get_operating_sys(self) -> str:
+        return self._os or "operating System not inserted"
 
-    def set_operative_sys(self, op_sys: str) -> None:
+    def set_operating_sys(self, op_sys: str) -> None:
         self._os = op_sys
 
     @property
@@ -135,7 +135,7 @@ class Device:
     def to_dict(self) -> dict[str, Any]:
         return {
             "device_name": self._device_name,
-            "operative_system": self.get_operative_sys,
+            "operating_system": self.get_operating_sys,
             "firmware_version": self.get_firmware_vers,
             "functionalities": self.get_funcionalities,
             "description": self.get_description,
