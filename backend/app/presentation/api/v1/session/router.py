@@ -1,7 +1,7 @@
 import json
 from typing import Annotated
 
-from fastapi import Depends, File, HTTPException, UploadFile
+from fastapi import Depends, File, UploadFile
 from fastapi.responses import Response
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
@@ -24,6 +24,7 @@ from app.application.use_cases.session.dtos.requests import (
 )
 from app.application.use_cases.session.export_results import ExportResultsUseCase
 from app.application.use_cases.session.export_session import ExportSessionUseCase
+from app.domain.exceptions import InvalidDeviceFileException
 
 from ..dependencies import (
     get_answer_use_case,
@@ -68,7 +69,7 @@ class SessionController:
             content = await file.read()
             device_data = json.loads(content)
         except json.JSONDecodeError:
-            raise HTTPException(400, "File JSON non valido.")
+            raise InvalidDeviceFileException("Il file caricato non è un JSON valido.")
 
         result = await self.create_session_use_case.execute(
             CreateSessionWithFileRequest(device_data=device_data)

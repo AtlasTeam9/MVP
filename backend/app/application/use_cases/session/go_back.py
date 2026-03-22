@@ -1,9 +1,8 @@
-from fastapi import HTTPException
-
 from app.application.interfaces.go_back_use_case import IGoBackUseCase
 from app.application.interfaces.session_service import ISessionService
 from app.application.use_cases.session.dtos.requests import GoBackRequest
 from app.application.use_cases.session.dtos.responses import GoBackResponse
+from app.domain.exceptions import SessionNotFoundException
 
 
 class GoBackUseCase(IGoBackUseCase):
@@ -13,7 +12,7 @@ class GoBackUseCase(IGoBackUseCase):
     async def execute(self, request: GoBackRequest) -> GoBackResponse:
         session = self._session_service.get_session(request.session_id)
         if session is None:
-            raise HTTPException(status_code=404, detail="Session not found")
+            raise SessionNotFoundException(request.session_id)
 
         # Cerca il nodo target nella navigation_stack corrente
         target_node = None

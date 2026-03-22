@@ -1,9 +1,8 @@
-from fastapi import HTTPException
-
 from app.application.interfaces.answer_use_case import IAnswerUseCase
 from app.application.interfaces.session_service import ISessionService
 from app.application.use_cases.session.dtos.requests import AnswerRequest
 from app.application.use_cases.session.dtos.responses import AnswerResponse
+from app.domain.exceptions import SessionNotFoundException
 
 
 class AnswerUseCase(IAnswerUseCase):
@@ -14,7 +13,7 @@ class AnswerUseCase(IAnswerUseCase):
         session = self._session_service.get_session(request.session_id)
 
         if session is None:
-            raise HTTPException(status_code=404, detail="Session not find")
+            raise SessionNotFoundException(session_id=request.session_id)
 
         answer_result = session.answer(request.answer)
 
