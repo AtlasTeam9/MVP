@@ -27,8 +27,8 @@ class TestSessionRepository:
         device = Device(
             device_name="Test Device",
             assets=[
-                Asset("ASSET_01", "DHCP Client", AssetType.NETWORK, True),
-                Asset("ASSET_02", "SSH Client", AssetType.SECURITY, True),
+                Asset("ASSET_01", "DHCP Client", AssetType.NETWORK_FUN, True),
+                Asset("ASSET_02", "SSH Client", AssetType.SECURITY_FUN, True),
             ],
         )
         return Session(
