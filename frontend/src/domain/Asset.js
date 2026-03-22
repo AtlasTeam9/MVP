@@ -1,12 +1,19 @@
 export const AssetType = {
-    // TODO: sistemare i tipi di asset
-    NETWORK: 'Network',
-    SECURITY: 'Security',
+    NETWORK_FUN: "Network function",
+    NETWORK_FUN_CONFIG: "Network function configuration",
+    SECURITY_FUN: "Security function",
+    SECURITY_PARAM: "Security parameter",
 
     fromString(value) {
         const val = value.toLowerCase()
-        if (val.startsWith('network')) return AssetType.NETWORK
-        if (val.startsWith('security')) return AssetType.SECURITY
+
+        for (const key in this) {
+            if (typeof this[key] === "string" &&
+                this[key].toLowerCase() === val) {
+                return this[key]
+            }
+        }
+
         throw new Error(`Unknown asset type: ${value}`)
     },
 }
