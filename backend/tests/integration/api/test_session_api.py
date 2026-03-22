@@ -116,7 +116,7 @@ class TestCreateSessionWithFile:
 
     @pytest.mark.integration
     async def test_create_session_invalid_json(self, client, mock_storage, tmp_path):
-        """Restituisce 400 se il file non è JSON valido."""
+        """Restituisce 422 se il file non è JSON valido."""
         bad_file = tmp_path / "bad.json"
         bad_file.write_text("not a json {{{", encoding="utf-8")
 
@@ -126,7 +126,7 @@ class TestCreateSessionWithFile:
                 files={"file": ("bad.json", f, "application/json")},
             )
 
-        assert response.status_code == 400
+        assert response.status_code == 422
 
     @pytest.mark.integration
     async def test_create_session_saves_to_storage(self, client, mock_storage, device_file):
@@ -193,13 +193,13 @@ class TestAnswer:
 
     @pytest.mark.integration
     async def test_answer_session_not_found(self, client, mock_storage):
-        """Restituisce 404 per session_id inesistente."""
+        """Restituisce 400 per session_id inesistente."""
         response = await client.post(
             "/api/v1/session/session-inesistente/answer",
             json={"answer": True},
         )
 
-        assert response.status_code == 404
+        assert response.status_code == 400
 
     @pytest.mark.integration
     async def test_answer_saves_session_after_each_answer(self, client, mock_storage, device_file):
@@ -307,13 +307,13 @@ class TestGoBack:
 
     @pytest.mark.integration
     async def test_go_back_session_not_found(self, client, mock_storage):
-        """Restituisce 404 per session_id inesistente."""
+        """Restituisce 400 per session_id inesistente."""
         response = await client.post(
             "/api/v1/session/sessione-falsa/go_back",
             json={"target_node_id": "node1"},
         )
 
-        assert response.status_code == 404
+        assert response.status_code == 400
 
     @pytest.mark.integration
     async def test_go_back_resets_current_node(self, client, mock_storage, device_file):
@@ -365,9 +365,9 @@ class TestExportSession:
 
     @pytest.mark.integration
     async def test_export_session_not_found(self, client, mock_storage):
-        """Restituisce 404 per session_id inesistente."""
+        """Restituisce 400 per session_id inesistente."""
         response = await client.get("/api/v1/session/sessione-falsa/export")
-        assert response.status_code == 404
+        assert response.status_code == 400
 
 
 class TestExportResults:
@@ -433,12 +433,12 @@ class TestExportResults:
 
     @pytest.mark.integration
     async def test_export_results_session_not_found(self, client, mock_storage):
-        """Restituisce 404 per session_id inesistente."""
+        """Restituisce 400 per session_id inesistente."""
         response = await client.get(
             "/api/v1/session/sessione-falsa/export/results",
             params={"format": "csv"},
         )
-        assert response.status_code == 404
+        assert response.status_code == 400
 
 
 class TestDeleteSession:
@@ -464,9 +464,9 @@ class TestDeleteSession:
 
     @pytest.mark.integration
     async def test_delete_session_not_found(self, client, mock_storage):
-        """Restituisce 404 per session_id inesistente."""
+        """Restituisce 400 per session_id inesistente."""
         response = await client.delete("/api/v1/session/sessione-falsa")
-        assert response.status_code == 404
+        assert response.status_code == 400
 
 
 class TestTrees:
