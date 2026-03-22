@@ -1,28 +1,20 @@
-# app/presentation/api/v1/health/router.py
-
+from fastapi import Depends
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
-from app.application.state import AppState
+from app.application.interfaces.get_trees_use_case import IGetTreesUseCase
+from app.presentation.api.v1.dependencies import get_trees_use_case
 
 router = InferringRouter(prefix="/trees", tags=["trees"])
 
 
 @cbv(router)
 class TreesController:
+    get_trees_use_case: IGetTreesUseCase = Depends(get_trees_use_case)
+
     @router.get("/", status_code=201)
     async def get_trees(self) -> list[dict]:
-        return [
-            {
-                "id": t.get_id,
-                "title": t.get_title,
-                "dependencies": t.get_dependencies,
-                "nodes": {
-                    node.get_id: {
-                        "question": node.get_question,
-                    }
-                    for node in t.nodes
-                },
-            }
-            for t in AppState.trees
-        ]
+
+        result = await self.get_trees_use_case.execute()
+
+        return result
