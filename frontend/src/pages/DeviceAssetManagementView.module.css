@@ -1,0 +1,163 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 100svh;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.header h1 {
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+}
+
+.deviceName {
+    margin: 0;
+    color: var(--secondary-color);
+    font-size: 0.95rem;
+}
+
+.content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.assetSection {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border: 1px solid #efefef;
+    min-height: 200px;
+}
+
+.emptyAssets {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.assetListDisplay {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.assetListTitle {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.assetItems {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.assetItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.assetName {
+    font-weight: 500;
+    color: #333;
+}
+
+.deleteBtn {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px 8px;
+    transition: color 0.2s ease;
+}
+
+.deleteBtn:hover {
+    color: #d9534f;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btnPrimary {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.btnPrimary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btnSecondary {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.btnSecondary:hover {
+    background-color: var(--primary-hover);
+}
+
+.navigationIcons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.iconBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--border-radius);
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.iconBtn:hover {
+    background-color: var(--primary-hover);
+}

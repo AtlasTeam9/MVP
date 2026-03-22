@@ -6,13 +6,14 @@ import { deviceSchema } from '../domain/schemas/DeviceSchema'
 
 import styles from './DeviceFormView.module.css'
 import Device from '../domain/Device'
+import useDeviceStore from '../store/DeviceStore'
 
 // Standard form data structure for a Device, used for both creation and editing
 const initialData = {
     name: '',
     operatingSystem: '',
     firmwareVersion: '',
-    functionality: '',
+    functionalities: '',
     description: '',
 }
 
@@ -23,13 +24,14 @@ const buildDevice = (data) =>
         [],
         data.operatingSystem,
         data.firmwareVersion,
-        data.functionality,
+        data.functionalities,
         data.description
     )
 
 // Custom hook to manage form state and navigation logic
 function useDeviceForm() {
     const navigate = useNavigate()
+    const setDevice = useDeviceStore((state) => state.setDevice)
 
     const {
         register,
@@ -44,7 +46,8 @@ function useDeviceForm() {
     const onSave = (data) => {
         const dev = buildDevice(data)
         console.log('Salvato con Zod:', dev.toDict()) //TODO: da eliminare, è solo per testare
-        navigate('/') // TODO: sostituire con logica salvataggio
+        setDevice(dev)
+        navigate('/device/assets')
     }
 
     return {
@@ -89,9 +92,9 @@ function RequiredFields({ register, errors }) {
                 error={errors?.firmwareVersion}
             />
             <InputField
-                label="Functionality *"
-                registration={register('functionality')}
-                error={errors?.functionality}
+                label="Functionalities *"
+                registration={register('functionalities')}
+                error={errors?.functionalities}
             />
         </>
     )

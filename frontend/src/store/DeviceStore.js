@@ -1,7 +1,20 @@
 import { create } from 'zustand'
+import Device from '../domain/Device'
+
+// Helper function to create a copy of a device
+const copyDevice = (device) =>
+    new Device(
+        device.name,
+        [...device.assets],
+        device.operatingSystem,
+        device.firmwareVersion,
+        device.functionalities,
+        device.description
+    )
 
 // Custom hook for managing device state across the application
 const useDeviceStore = create((set) => ({
+    // The current device being edited or viewed
     currentDevice: null,
 
     // Set the current device
@@ -10,16 +23,30 @@ const useDeviceStore = create((set) => ({
     // Clear the current device
     clearDevice: () => set({ currentDevice: null }),
 
+    // Add a new asset to the current device
+    addAsset: (asset) => {
+        set((state) => {
+            if (!state.currentDevice) return { currentDevice: null }
+            const updatedDevice = copyDevice(state.currentDevice)
+            updatedDevice.addAsset(asset)
+            return { currentDevice: updatedDevice }
+        })
+        useDeviceStore.getState().showDevice() // TODO: da eliminare, è solo per testare
+    },
+
     // Remove a specific asset from the current device
-    deleteAsset: (assetId) =>
-        set((state) => ({
-            currentDevice: state.currentDevice
-                ? {
-                      ...state.currentDevice,
-                      assets: state.currentDevice.assets.filter((aaa) => aaa.id !== assetId),
-                  }
-                : null,
-        })),
+    deleteAsset: (assetName) =>
+        set((state) => {
+            if (!state.currentDevice) return { currentDevice: null }
+            const updatedDevice = copyDevice(state.currentDevice)
+            updatedDevice.deleteAsset(assetName)
+            return { currentDevice: updatedDevice }
+        }),
+
+    // TODO: da eliminare, è solo per testare (mostra il dispositivo attuale in console)
+    showDevice: () => {
+        console.log('Current Device:', useDeviceStore.getState().currentDevice.toDict())
+    },
 }))
 
 export default useDeviceStore

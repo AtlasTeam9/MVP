@@ -1,6 +1,6 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-import useDeviceStore from '../../store/DeviceStore'
+import { useCurrentDevice } from '../../services/DeviceService'
 
 /* Guard component for protect the routes if a user tries to access a protected route without
 the required data
@@ -9,7 +9,7 @@ the required data
  * routeConfig: { isProtected: boolean } - Configuration for the route protection
  */
 function Guard({ children, routeConfig }) {
-    const currentDevice = useDeviceStore((state) => state.currentDevice)
+    const currentDevice = useCurrentDevice()
 
     if (routeConfig.isProtected) {
         const hasData = !!currentDevice

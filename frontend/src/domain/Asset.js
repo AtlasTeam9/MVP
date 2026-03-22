@@ -1,18 +1,16 @@
 export const AssetType = {
-    NETWORK_FUN: "Network function",
-    NETWORK_FUN_CONFIG: "Network function configuration",
-    SECURITY_FUN: "Security function",
-    SECURITY_PARAM: "Security parameter",
+    NETWORK_FUNCTION: 'Network Function',
+    NETWORK_FUNCTION_CONFIGURATION: 'Network Function Configuration',
+    SECURITY_FUNCTION: 'Security Function',
+    SECURITY_PARAMETER: 'Security Parameter',
 
     fromString(value) {
         const val = value.toLowerCase()
-
-        for (const key in this) {
-            if (typeof this[key] === "string" &&
-                this[key].toLowerCase() === val) {
-                return this[key]
-            }
-        }
+        if (val.startsWith('network function')) return AssetType.NETWORK_FUNCTION
+        if (val.startsWith('network function configuration'))
+            return AssetType.NETWORK_FUNCTION_CONFIGURATION
+        if (val.startsWith('security function')) return AssetType.SECURITY_FUNCTION
+        if (val.startsWith('security parameter')) return AssetType.SECURITY_PARAMETER
 
         throw new Error(`Unknown asset type: ${value}`)
     },

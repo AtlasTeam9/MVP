@@ -32,6 +32,15 @@ export default class Device {
         return this._description || 'Description not inserted'
     }
 
+    addAsset(asset) {
+        this._assets.push(asset)
+    }
+
+    // TODO: capire se eliminare l'asset per ID o per nome. Attualmente è per nome.
+    deleteAsset(assetName) {
+        this._assets = this._assets.filter((ass) => ass.name !== assetName)
+    }
+
     toDict() {
         return {
             deviceName: this.name,

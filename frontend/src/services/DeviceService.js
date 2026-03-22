@@ -3,6 +3,11 @@ import Device from '../domain/Device'
 import { deviceSchema } from '../domain/schemas/DeviceSchema'
 import useDeviceStore from '../store/DeviceStore'
 
+// Custom hook to get the current device from the store (with reactivity)
+export function useCurrentDevice() {
+    return useDeviceStore((state) => state.currentDevice)
+}
+
 class DeviceService {
     // Converts snake_case JSON data to camelCase for internal use
     normalizeDeviceData(data) {
@@ -69,17 +74,27 @@ class DeviceService {
         return response
     }
 
+    // Get the current device from the store
+    getCurrentDevice() {
+        return useDeviceStore.getState().currentDevice
+    }
+
     // Methods for asset management
-    async addAssetToDevice(assetData) {
-        /* Logic to add asset */
-        console.log('Aggiunta asset al dispositivo:', assetData.name)
+    addAssetToDevice(asset) {
+        useDeviceStore.getState().addAsset(asset)
     }
-    async removeAsset(assetId) {
-        console.log('Rimozione asset con ID:', assetId)
-        /* Logic to remove asset */
+
+    removeAsset(assetId) {
+        useDeviceStore.getState().deleteAsset(assetId)
     }
+
     async persistToFile() {
         /* Logic for local download if needed */
+    }
+
+    // Clear the current device from the store
+    clearDevice() {
+        useDeviceStore.getState().clearDevice()
     }
 }
 
