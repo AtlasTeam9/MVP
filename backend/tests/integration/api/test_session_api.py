@@ -21,6 +21,10 @@ from app.main import app
 
 DEVICE_JSON = {
     "device_name": "Test Device",
+    "operative_system": "Linux-based embedded system",
+    "firmware_version": "1.0.0",
+    "functionalities": "MQTT-based IoT device with network and security capabilities",
+    "description": "description",
     "assets": [
         {
             "id": "ASSET_01",
