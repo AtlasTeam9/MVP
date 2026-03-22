@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import Depends
 
 from app.application.interfaces.answer_use_case import IAnswerUseCase
@@ -17,10 +19,19 @@ from app.application.use_cases.session.export_session import ExportSessionUseCas
 from app.application.use_cases.session.go_back import GoBackUseCase
 from app.application.use_cases.trees.get_trees import GetTreesUseCase
 from app.domain.entities.tree import DecisionTree
+from app.domain.exceptions import InvalidSessionIdException
 from app.domain.interfaces.tree_provider import TreeProvider
 from app.domain.services.session_service import SessionService
 from app.infrastructure.persistence.file_storage import FileStorage
 from app.infrastructure.repositories.session_repository import SessionRepository
+
+
+def validate_session_id(session_id: str) -> str:
+    try:
+        uuid.UUID(session_id, version=4)
+    except ValueError:
+        raise InvalidSessionIdException()
+    return session_id
 
 
 def get_trees() -> list[DecisionTree]:

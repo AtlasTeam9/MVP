@@ -33,6 +33,7 @@ from ..dependencies import (
     get_export_results_use_case,
     get_export_session_use_case,
     get_go_back_use_case,
+    validate_session_id,
 )
 from .schema import (
     AnswerRequestSchema,
@@ -102,7 +103,11 @@ class SessionController:
         )
 
     @router.post("/{session_id}/answer", status_code=200)
-    async def answer(self, session_id: str, body: AnswerRequestSchema) -> AnswerResponseSchema:
+    async def answer(
+        self,
+        body: AnswerRequestSchema,
+        session_id: str = Depends(validate_session_id),
+    ) -> AnswerResponseSchema:
         """
         Risponde al nodo corrente con true (sì) o false (no).
         """
@@ -118,7 +123,9 @@ class SessionController:
         )
 
     @router.post("/{session_id}/go_back", status_code=200)
-    async def go_back(self, session_id: str, body: GoBackRequestSchema) -> GoBackResponseSchema:
+    async def go_back(
+        self, body: GoBackRequestSchema, session_id: str = Depends(validate_session_id)
+    ) -> GoBackResponseSchema:
         """
         Torna a un nodo precedente nella history del tree corrente.
         """
@@ -131,7 +138,7 @@ class SessionController:
         )
 
     @router.get("/{session_id}/export", status_code=200)
-    async def export_session(self, session_id: str) -> Response:
+    async def export_session(self, session_id: str = Depends(validate_session_id)) -> Response:
         """
         Scarica la sessione completa come file JSON.
         """
@@ -145,7 +152,9 @@ class SessionController:
         )
 
     @router.get("/{session_id}/export/results", status_code=200)
-    async def export_results(self, session_id: str, format: str = "csv") -> Response:
+    async def export_results(
+        self, session_id: str = Depends(validate_session_id), format: str = "csv"
+    ) -> Response:
         """
         Scarica i risultati della sessione in CSV o PDF.
         """
@@ -159,7 +168,7 @@ class SessionController:
         )
 
     @router.delete("/{session_id}", status_code=204)
-    async def delete_session(self, session_id: str) -> None:
+    async def delete_session(self, session_id: str = Depends(validate_session_id)) -> None:
         """
         Rimuove la sessione dalla memoria e cancella il file JSON dal server.
         """
