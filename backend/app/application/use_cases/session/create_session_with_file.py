@@ -1,10 +1,14 @@
+from pydantic import ValidationError
+
 from app.application.interfaces.create_session_with_file_use_case import (
     ICreateSessionWithFileUseCase,
 )
 from app.application.interfaces.session_service import ISessionService
 from app.application.use_cases.session.dtos.requests import CreateSessionWithFileRequest
 from app.application.use_cases.session.dtos.responses import CreateSessionWithFileResponse
+from app.application.use_cases.session.validators.device_schema import DeviceInput
 from app.domain.entities.device import Asset, AssetType, Device
+from app.domain.exceptions import InvalidDeviceFileException
 
 
 class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
@@ -12,24 +16,29 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
         self._session_service = session_service
 
     async def execute(self, request: CreateSessionWithFileRequest) -> CreateSessionWithFileResponse:
-        device_data = request.device_data
+        try:
+            validated = DeviceInput(**request.device_data)
+        except ValidationError as e:
+            raise InvalidDeviceFileException(f"File dispositivo non valido: {e.errors()}")
+
+        device_data = validated
 
         device = Device(
-            device_name=device_data["device_name"],
+            device_name=device_data.device_name,
             assets=[
                 Asset(
-                    asset["id"],
-                    asset["name"],
-                    AssetType.from_string(asset["type"]),
-                    asset["is_sensitive"],
-                    asset.get("description", None),
+                    asset.id,
+                    asset.name,
+                    AssetType.from_string(asset.type),
+                    asset.is_sensitive,
+                    asset.description,
                 )
-                for asset in device_data["assets"]
+                for asset in device_data.assets
             ],
-            operating_sys=device_data["operating_system"],
-            firm_vers=device_data["firmware_version"],
-            funcs=device_data["functionalities"],
-            desc=device_data["description"],
+            operating_sys=device_data.operating_system,
+            firm_vers=device_data.firmware_version,
+            funcs=device_data.functionalities,
+            desc=device_data.description,
         )
         session = self._session_service.create_session(device)
 

@@ -79,7 +79,10 @@ class FileStorage:
             logger.info(f"Session file deleted: {session_id}")
 
     def _get_session_path(self, session_id: str) -> Path:
-        return self.sessions_dir / f"{session_id}.json"
+        path = (self.sessions_dir / f"{session_id}.json").resolve()
+        if not path.is_relative_to(self.sessions_dir):
+            raise ValueError(f"Invalid session_id: {session_id}")
+        return path
 
     def load_trees(self) -> dict:
         with open(self.trees_file, encoding="utf-8") as f:

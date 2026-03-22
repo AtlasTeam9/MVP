@@ -1,11 +1,10 @@
 import json
 
-from fastapi import HTTPException
-
 from app.application.interfaces.export_session_use_case import IExportSessionUseCase
 from app.application.interfaces.session_service import ISessionService
 from app.application.use_cases.session.dtos.requests import ExportSessionRequest
 from app.application.use_cases.session.dtos.responses import ExportSessionResponse
+from app.domain.exceptions import SessionNotFoundException
 
 
 class ExportSessionUseCase(IExportSessionUseCase):
@@ -15,7 +14,7 @@ class ExportSessionUseCase(IExportSessionUseCase):
     async def execute(self, request: ExportSessionRequest) -> ExportSessionResponse:
         session = self._session_service.get_session(request.session_id)
         if session is None:
-            raise HTTPException(status_code=404, detail="Sessione non trovata.")
+            raise SessionNotFoundException(request.session_id)
 
         data = {
             "session_id": session.get_id,

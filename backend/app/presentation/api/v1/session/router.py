@@ -1,7 +1,7 @@
 import json
 from typing import Annotated
 
-from fastapi import Depends, File, HTTPException, UploadFile
+from fastapi import Depends, File, UploadFile
 from fastapi.responses import Response
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
@@ -24,6 +24,7 @@ from app.application.use_cases.session.dtos.requests import (
 )
 from app.application.use_cases.session.export_results import ExportResultsUseCase
 from app.application.use_cases.session.export_session import ExportSessionUseCase
+from app.domain.exceptions import InvalidDeviceFileException
 
 from ..dependencies import (
     get_answer_use_case,
@@ -32,6 +33,7 @@ from ..dependencies import (
     get_export_results_use_case,
     get_export_session_use_case,
     get_go_back_use_case,
+    validate_session_id,
 )
 from .schema import (
     AnswerRequestSchema,
@@ -68,7 +70,7 @@ class SessionController:
             content = await file.read()
             device_data = json.loads(content)
         except json.JSONDecodeError:
-            raise HTTPException(400, "File JSON non valido.")
+            raise InvalidDeviceFileException("Il file caricato non è un JSON valido.")
 
         result = await self.create_session_use_case.execute(
             CreateSessionWithFileRequest(device_data=device_data)
@@ -101,7 +103,11 @@ class SessionController:
         )
 
     @router.post("/{session_id}/answer", status_code=200)
-    async def answer(self, session_id: str, body: AnswerRequestSchema) -> AnswerResponseSchema:
+    async def answer(
+        self,
+        body: AnswerRequestSchema,
+        session_id: str = Depends(validate_session_id),
+    ) -> AnswerResponseSchema:
         """
         Risponde al nodo corrente con true (sì) o false (no).
         """
@@ -117,7 +123,9 @@ class SessionController:
         )
 
     @router.post("/{session_id}/go_back", status_code=200)
-    async def go_back(self, session_id: str, body: GoBackRequestSchema) -> GoBackResponseSchema:
+    async def go_back(
+        self, body: GoBackRequestSchema, session_id: str = Depends(validate_session_id)
+    ) -> GoBackResponseSchema:
         """
         Torna a un nodo precedente nella history del tree corrente.
         """
@@ -130,7 +138,7 @@ class SessionController:
         )
 
     @router.get("/{session_id}/export", status_code=200)
-    async def export_session(self, session_id: str) -> Response:
+    async def export_session(self, session_id: str = Depends(validate_session_id)) -> Response:
         """
         Scarica la sessione completa come file JSON.
         """
@@ -144,7 +152,9 @@ class SessionController:
         )
 
     @router.get("/{session_id}/export/results", status_code=200)
-    async def export_results(self, session_id: str, format: str = "csv") -> Response:
+    async def export_results(
+        self, session_id: str = Depends(validate_session_id), format: str = "csv"
+    ) -> Response:
         """
         Scarica i risultati della sessione in CSV o PDF.
         """
@@ -158,7 +168,7 @@ class SessionController:
         )
 
     @router.delete("/{session_id}", status_code=204)
-    async def delete_session(self, session_id: str) -> None:
+    async def delete_session(self, session_id: str = Depends(validate_session_id)) -> None:
         """
         Rimuove la sessione dalla memoria e cancella il file JSON dal server.
         """
