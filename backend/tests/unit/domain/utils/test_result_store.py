@@ -10,8 +10,10 @@ class TestResultStore:
     def sample_assets(self):
         """Fixture per fornire una lista di Asset reali"""
         return [
-            Asset(asset_id="asset_1", name="Router", type=AssetType.NETWORK, is_sensitive=True),
-            Asset(asset_id="asset_2", name="Firewall", type=AssetType.SECURITY, is_sensitive=True),
+            Asset(asset_id="asset_1", name="Router", type=AssetType.NETWORK_FUN, is_sensitive=True),
+            Asset(
+                asset_id="asset_2", name="Firewall", type=AssetType.SECURITY_FUN, is_sensitive=True
+            ),
         ]
 
     def test_store_initialization(self, sample_assets):

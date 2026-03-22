@@ -13,12 +13,14 @@ from app.domain.entities.device import (
 
 class TestAssetType:
     def test_from_string_valid_network(self):
-        assert AssetType.from_string("network") == AssetType.NETWORK
-        assert AssetType.from_string("NetWork switch") == AssetType.NETWORK
+        assert AssetType.from_string("network function") == AssetType.NETWORK_FUN
+        assert (
+            AssetType.from_string("NetWork function configuration") == AssetType.NETWORK_FUN_CONFIG
+        )
 
     def test_from_string_valid_security(self):
-        assert AssetType.from_string("security") == AssetType.SECURITY
-        assert AssetType.from_string("SECURITY firewall") == AssetType.SECURITY
+        assert AssetType.from_string("security function") == AssetType.SECURITY_FUN
+        assert AssetType.from_string("SECURITY parameter") == AssetType.SECURITY_PARAM
 
     def test_from_string_invalid_raises_error(self):
         with pytest.raises(ValueError, match="Unknown asset type: unknown"):
@@ -30,29 +32,29 @@ class TestAsset:
         asset = Asset(
             asset_id="a1",
             name="Firewall",
-            type=AssetType.SECURITY,
+            type=AssetType.SECURITY_FUN,
             is_sensitive=True,
             desc="Main firewall",
         )
         assert asset.get_id == "a1"
         assert asset.get_name == "Firewall"
-        assert asset.get_type == AssetType.SECURITY
+        assert asset.get_type == AssetType.SECURITY_FUN
         assert asset.get_sensitivity is True
         assert asset.get_description == "Main firewall"
 
     def test_asset_default_properties(self):
         # Testiamo i fallback ("... not inserted") quando i valori opzionali sono None
-        asset = Asset("a2", "Switch", AssetType.NETWORK, True)
+        asset = Asset("a2", "Switch", AssetType.NETWORK_FUN, True)
         assert asset.get_description == "Description not inserted"
 
     def test_asset_setters(self):
-        asset = Asset("a3", "Router", AssetType.NETWORK, False)
+        asset = Asset("a3", "Router", AssetType.NETWORK_FUN, False)
 
         asset.set_name("Core Router")
         assert asset.get_name == "Core Router"
 
-        asset.set_type("security")
-        assert asset.get_type == AssetType.SECURITY
+        asset.set_type("security function")
+        assert asset.get_type == AssetType.SECURITY_FUN
 
         asset.set_sensitivity(True)
         assert asset.get_sensitivity is True
@@ -61,11 +63,11 @@ class TestAsset:
         assert asset.get_description == "Updated desc"
 
     def test_asset_to_dict(self):
-        asset = Asset("a4", "Server", AssetType.NETWORK, False)
+        asset = Asset("a4", "Server", AssetType.NETWORK_FUN, False)
         expected = {
             "id": "a4",
             "name": "Server",
-            "type": "Network",
+            "type": "Network function",
             "is_sensitive": False,
             "description": "Description not inserted",
         }
@@ -76,8 +78,8 @@ class TestDevice:
     @pytest.fixture
     def sample_assets(self):
         return [
-            Asset("1", "Asset 1", AssetType.NETWORK, True),
-            Asset("2", "Asset 2", AssetType.SECURITY, False),
+            Asset("1", "Asset 1", AssetType.NETWORK_FUN, True),
+            Asset("2", "Asset 2", AssetType.SECURITY_FUN, False),
         ]
 
     def test_device_initialization_and_getters(self, sample_assets):
@@ -132,14 +134,14 @@ class TestDevice:
         assert result["assets"][0] == {
             "id": "1",
             "name": "Asset 1",
-            "type": "Network",
+            "type": "Network function",
             "is_sensitive": True,
             "description": "Description not inserted",
         }
         assert result["assets"][1] == {
             "id": "2",
             "name": "Asset 2",
-            "type": "Security",
+            "type": "Security function",
             "is_sensitive": False,
             "description": "Description not inserted",
         }

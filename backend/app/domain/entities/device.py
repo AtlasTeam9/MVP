@@ -3,17 +3,18 @@ from typing import Any
 
 
 class AssetType(Enum):
-    NETWORK = "Network"
-    SECURITY = "Security"
+    NETWORK_FUN = "Network function"
+    NETWORK_FUN_CONFIG = "Network function configuration"
+    SECURITY_FUN = "Security function"
+    SECURITY_PARAM = "Security parameter"
 
-    @staticmethod
-    def from_string(value: str) -> "AssetType":
+    @classmethod
+    def from_string(cls, value: str) -> "AssetType":
         value = value.lower()
 
-        if value.startswith("network"):
-            return AssetType.NETWORK
-        if value.startswith("security"):
-            return AssetType.SECURITY
+        for member in cls:
+            if member.value.lower() == value:
+                return member
 
         raise ValueError(f"Unknown asset type: {value}")
 
