@@ -26,7 +26,7 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
                 )
                 for asset in device_data["assets"]
             ],
-            operative_sys=device_data["operative_system"],
+            operating_sys=device_data["operating_system"],
             firm_vers=device_data["firmware_version"],
             funcs=device_data["functionalities"],
             desc=device_data["description"],
@@ -46,7 +46,7 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
                 }
                 for asset in session.get_assets
             ],
-            device_os=session.get_device.get_operative_sys,
+            device_os=session.get_device.get_operating_sys,
             device_firmw_v=session.get_device.get_firmware_vers,
             device_funcs=session.get_device.get_funcionalities,
             device_desc=session.get_device.get_description,

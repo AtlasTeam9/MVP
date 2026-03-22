@@ -19,8 +19,8 @@ export default class Device {
         return [...this._assets]
     }
 
-    get operativeSystem() {
-        return this._os || 'Operative System not inserted'
+    get operatingSystem() {
+        return this._os || 'operating System not inserted'
     }
 
     get firmwareVersion() {
@@ -39,7 +39,7 @@ export default class Device {
         return {
             deviceName: this._name,
             assets: this._assets.map((asset) => asset.toDict()),
-            operativeSystem: this.operativeSystem,
+            operatingSystem: this.operatingSystem,
             firmwareVersion: this.firmwareVersion,
             functionalities: this.functionalities,
             description: this.description,
