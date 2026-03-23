@@ -117,7 +117,7 @@ class SessionNavigator:
         utile al frontend per costruire la breadcrumb / pulsanti "torna indietro".
         """
         return [
-            {"question": node._question, "answer": answer}
+            {"question": node.get_question, "answer": answer}
             for node, answer in self.state.navigation_stack
         ]
 
