@@ -18,6 +18,7 @@ from app.application.use_cases.session.export_results import ExportResultsUseCas
 from app.application.use_cases.session.export_session import ExportSessionUseCase
 from app.application.use_cases.session.go_back import GoBackUseCase
 from app.application.use_cases.trees.get_trees import GetTreesUseCase
+from app.domain.entities.session import Session
 from app.domain.entities.tree import DecisionTree
 from app.domain.exceptions import InvalidSessionIdException
 from app.domain.interfaces.tree_provider import TreeProvider
@@ -36,6 +37,10 @@ def validate_session_id(session_id: str) -> str:
 
 def get_trees() -> list[DecisionTree]:
     return AppState.trees
+
+
+def get_session() -> dict[str, Session]:
+    return AppState.sessions
 
 
 def get_file_storage() -> FileStorage:
@@ -57,8 +62,9 @@ def get_session_repository() -> SessionRepository:
 def get_session_service(
     repo: SessionRepository = Depends(get_session_repository),
     tree_provider: TreeProvider = Depends(get_tree_provider),
+    cache: dict[str, Session] = Depends(get_session),
 ) -> SessionService:
-    return SessionService(repo, tree_provider)
+    return SessionService(repo, tree_provider, cache)
 
 
 def get_create_session_with_file_use_case(
