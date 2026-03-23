@@ -7,6 +7,7 @@ import DeviceAssetManagementView from './pages/DeviceAssetManagementView'
 import AssetFormView from './pages/AssetFormView'
 import DeviceSummaryView from './pages/DeviceSummaryView'
 import SessionRunnerView from './pages/SessionRunnerView'
+import styles from './AppRouter.module.css'
 
 // Function to build a Route element from a route configuration
 const buildRoute = (route, index) => {
@@ -32,6 +33,8 @@ export default function AppRouter() {
 
     return (
         <BrowserRouter>
+            <div className={styles.waveLeft} aria-hidden="true" />
+            <div className={styles.waveRight} aria-hidden="true" />
             <Routes>{routes.map(buildRoute)}</Routes>
         </BrowserRouter>
     )
