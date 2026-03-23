@@ -26,7 +26,7 @@ from app.application.use_cases.session.export_results import ExportResultsUseCas
 from app.application.use_cases.session.export_session import ExportSessionUseCase
 from app.domain.exceptions import InvalidDeviceFileException
 
-from ..dependencies import (
+from .dependencies import (
     get_answer_use_case,
     get_create_session_with_file_use_case,
     get_delete_session_use_case,

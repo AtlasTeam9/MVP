@@ -3,7 +3,7 @@ from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
 from app.application.interfaces.get_trees_use_case import IGetTreesUseCase
-from app.presentation.api.v1.dependencies import get_trees_use_case
+from backend.app.presentation.api.v1.trees.dependencies import get_trees_use_case
 
 router = InferringRouter(prefix="/trees", tags=["trees"])
 
