@@ -10,11 +10,13 @@ from app.application.interfaces.answer_use_case import IAnswerUseCase
 from app.application.interfaces.create_session_with_file_use_case import (
     ICreateSessionWithFileUseCase,
 )
+from app.application.interfaces.delete_session_use_case import IDeleteSessionUseCase
+from app.application.interfaces.export_results_use_case import IExportResultsUseCase
+from app.application.interfaces.export_session_use_case import IExportSessionUseCase
 from app.application.interfaces.go_back_use_case import IGoBackUseCase
 from app.application.use_cases.session.create_session_with_file import (
     CreateSessionWithFileRequest,
 )
-from app.application.use_cases.session.delete_session import DeleteSessionUseCase
 from app.application.use_cases.session.dtos.requests import (
     AnswerRequest,
     DeleteSessionRequest,
@@ -22,8 +24,6 @@ from app.application.use_cases.session.dtos.requests import (
     ExportSessionRequest,
     GoBackRequest,
 )
-from app.application.use_cases.session.export_results import ExportResultsUseCase
-from app.application.use_cases.session.export_session import ExportSessionUseCase
 from app.domain.exceptions import InvalidDeviceFileException
 
 from .dependencies import (
@@ -55,9 +55,9 @@ class SessionController:
     )
     answer_use_case: IAnswerUseCase = Depends(get_answer_use_case)
     go_back_use_case: IGoBackUseCase = Depends(get_go_back_use_case)
-    export_results_use_case: ExportResultsUseCase = Depends(get_export_results_use_case)
-    export_session_use_case: ExportSessionUseCase = Depends(get_export_session_use_case)
-    delete_session_use_case: DeleteSessionUseCase = Depends(get_delete_session_use_case)
+    export_results_use_case: IExportResultsUseCase = Depends(get_export_results_use_case)
+    export_session_use_case: IExportSessionUseCase = Depends(get_export_session_use_case)
+    delete_session_use_case: IDeleteSessionUseCase = Depends(get_delete_session_use_case)
 
     @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
