@@ -21,7 +21,7 @@ export function AssetInfo({ asset }) {
             </div>
 
             <div style={styles.field}>
-                <label style={styles.label}>Sensibile:</label>
+                <label style={styles.label}>Sensitive:</label>
                 <span style={styles.value}>{asset.isSensitive ? 'Yes' : 'No'}</span>
             </div>
 
