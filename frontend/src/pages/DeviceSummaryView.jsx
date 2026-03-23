@@ -6,8 +6,8 @@ import { DeviceNavigationIcons } from '../components/deviceSummary/DeviceNavigat
 import styles from './DeviceSummaryView.module.css'
 
 // Page to display the summary of a device, including the possibility of viewing its assets.
-// It also includes the buttons for see the device details in an overlay,
-// and for start the test. There are also the modify and home icons.
+// It also includes a button for see the device details in an overlay,
+// and a button for start the test. There are also the modify and home icons.
 
 export default function DeviceSummaryView() {
     // Get the current device from the service

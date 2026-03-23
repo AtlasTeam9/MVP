@@ -18,8 +18,12 @@ class AxiosApiClient extends IApiClient {
         return response.data
     }
 
-    async post(url, data) {
-        const response = await this.axiosInstance.post(url, data)
+    async post(url, data, config = {}) {
+        const headers = data instanceof FormData ? {} : { 'Content-Type': 'application/json' }
+
+        const response = await this.axiosInstance.post(url, data, {
+            headers: { ...headers, ...config.headers },
+        })
         return response.data
     }
 }

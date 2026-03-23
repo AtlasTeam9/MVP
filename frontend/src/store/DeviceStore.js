@@ -42,11 +42,6 @@ const useDeviceStore = create((set) => ({
             updatedDevice.deleteAsset(assetName)
             return { currentDevice: updatedDevice }
         }),
-
-    // TODO: da eliminare, è solo per testare (mostra il dispositivo attuale in console)
-    showDevice: () => {
-        console.log('Current Device:', useDeviceStore.getState().currentDevice.toDict())
-    },
 }))
 
 export default useDeviceStore

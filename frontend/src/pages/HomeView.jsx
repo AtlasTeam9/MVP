@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './HomeView.module.css'
 import UploadButton from '../components/common/UploadButton'
-import DeviceService from '../services/DeviceService'
+import SessionService from '../services/SessionService'
 
 // Custom hook for managing navigation logic in the home view
 function useHomeNavigation() {
@@ -10,11 +10,10 @@ function useHomeNavigation() {
 
     const handleLoadDevice = async (file) => {
         try {
-            const deviceData = await DeviceService.receiveFile(file)
-            console.log('Device data loaded:', deviceData)
+            await SessionService.createSessionWithFile(file)
             navigate('/device/summary')
         } catch (err) {
-            console.error('Error loading device:', err.message)
+            console.error('Error loading device:', err.message) // TODO: da eliminare, solo per debug
             alert('Failed to load device: ' + err.message)
         }
     }

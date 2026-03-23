@@ -3,7 +3,7 @@ import Device from '../domain/Device'
 import { deviceSchema } from '../domain/schemas/DeviceSchema'
 import useDeviceStore from '../store/DeviceStore'
 
-// Custom hook to get the current device from the store (with reactivity)
+// Custom hook to get the current device from the store
 export function useCurrentDevice() {
     return useDeviceStore((state) => state.currentDevice)
 }
@@ -21,37 +21,12 @@ class DeviceService {
         }
     }
 
-    // Upload of a device file (JSON)
+    // Upload of a device file (JSON) - delega la logica al backend
     async receiveFile(file) {
         if (!this.validateFile(file)) throw new Error('Invalid file type')
-
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onload = async (env) => {
-                try {
-                    const data = JSON.parse(env.target.result)
-                    const normalizedData = this.normalizeDeviceData(data)
-                    if (this.validateDeviceData(normalizedData)) {
-                        const device = new Device(
-                            normalizedData.name,
-                            normalizedData.assets || [],
-                            normalizedData.operatingSystem,
-                            normalizedData.firmwareVersion,
-                            normalizedData.functionalities,
-                            normalizedData.description
-                        )
-                        useDeviceStore.getState().setDevice(device)
-                        resolve(device)
-                    } else {
-                        reject(new Error('Device data validation failed'))
-                    }
-                } catch (err) {
-                    console.error('Error parsing JSON:', err.message)
-                    reject(new Error('JSON parsing failed'))
-                }
-            }
-            reader.readAsText(file)
-        })
+        // La logica di caricamento e validazione è ora gestita dal SessionService e dal backend
+        // Questo metodo rimane per compatibilità
+        return file
     }
 
     // Validates that the file is a JSON file

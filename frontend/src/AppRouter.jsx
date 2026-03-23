@@ -6,6 +6,7 @@ import DeviceFormView from './pages/DeviceFormView'
 import DeviceAssetManagementView from './pages/DeviceAssetManagementView'
 import AssetFormView from './pages/AssetFormView'
 import DeviceSummaryView from './pages/DeviceSummaryView'
+import SessionRunnerView from './pages/SessionRunnerView'
 
 // Function to build a Route element from a route configuration
 const buildRoute = (route, index) => {
@@ -26,6 +27,7 @@ export default function AppRouter() {
         { path: '/device/assets', view: <DeviceAssetManagementView />, isProtected: true },
         { path: '/asset/new', view: <AssetFormView />, isProtected: true },
         { path: '/device/summary', view: <DeviceSummaryView />, isProtected: true },
+        { path: '/session/runner', view: <SessionRunnerView />, isProtected: true },
     ]
 
     return (
