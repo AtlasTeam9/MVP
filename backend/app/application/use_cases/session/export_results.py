@@ -1,30 +1,23 @@
 from app.application.interfaces.export_results_use_case import IExportResultsUseCase
-from app.application.interfaces.session_service import ISessionService
 from app.application.use_cases.session.dtos.requests import ExportResultsRequest
 from app.application.use_cases.session.dtos.responses import ExportResultsResponse
 from app.domain.exceptions import SessionNotFoundException, UnsupportedExportFormatException
 from app.domain.interfaces.export_strategy import ExportStrategy
-from app.domain.services.exporters.csv_exporter import CsvExporter
-from app.domain.services.exporters.pdf_exporter import PdfExporter
-
-_EXPORTERS: dict[str, ExportStrategy] = {
-    "csv": CsvExporter(),
-    "pdf": PdfExporter(),
-}
 
 
 class ExportResultsUseCase(IExportResultsUseCase):
-    def __init__(self, session_service: ISessionService):
+    def __init__(self, session_service, exporters: dict[str, ExportStrategy]):
         self._session_service = session_service
+        self._exporters = exporters
 
     async def execute(self, request: ExportResultsRequest) -> ExportResultsResponse:
         session = self._session_service.get_session(request.session_id)
         if session is None:
             raise SessionNotFoundException(request.session_id)
 
-        exporter = _EXPORTERS.get(request.format)
+        exporter = self._exporters.get(request.format)
         if exporter is None:
-            raise UnsupportedExportFormatException(request.format, list(_EXPORTERS.keys()))
+            raise UnsupportedExportFormatException(request.format, list(self._exporters.keys()))
 
         content = exporter.export(
             results=session.results.to_dict(),
