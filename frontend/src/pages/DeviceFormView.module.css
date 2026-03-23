@@ -3,10 +3,12 @@
     flex-direction: column;
     align-items: center;
     padding: 40px 20px;
+    border-radius: 20px;
     max-width: 600px;
-    margin: 0 auto;
-    height: 100svh;
+    margin: 50px auto;
+    height: fit-content;
     justify-content: center;
+    background: white;
 }
 
 .formGroup {
@@ -148,10 +150,10 @@ textarea {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.toggleSwitch input:checked + .toggleSlider {
+.toggleSwitch input:checked+.toggleSlider {
     background-color: var(--primary-color);
 }
 
-.toggleSwitch input:checked + .toggleSlider:before {
+.toggleSwitch input:checked+.toggleSlider:before {
     transform: translateX(22px);
 }
