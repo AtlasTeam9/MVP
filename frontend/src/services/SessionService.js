@@ -1,23 +1,67 @@
+/* eslint-disable camelcase */
 import useSessionStore from '../store/SessionStore'
 import useDeviceStore from '../store/DeviceStore'
 import apiClient from '../infrastructure/api/AxiosApiClient'
 import Device from '../domain/Device'
+import Asset from '../domain/Asset'
 
 class SessionService {
-    // Extract device data from API response and create a Device object
+    // Private method to extract device data from API response and create a Device object
     #createDeviceFromResponse(deviceData) {
+        // Convert asset dictionaries to Asset instances
+        const assetInstances = (deviceData.assets || []).map(
+            (asset) =>
+                new Asset(asset.id, asset.name, asset.type, asset.is_sensitive, asset.description)
+        )
         return new Device(
             deviceData.device_name,
-            deviceData.assets || [],
-            deviceData.os,
+            assetInstances,
+            deviceData.operating_system,
             deviceData.firmware_version,
             deviceData.functionalities,
             deviceData.description
         )
     }
 
+    // Private method to convert Device object to API payload (camelCase to snake_case)
+    #convertDeviceToPayload(device) {
+        const deviceDict = device.toDict()
+        return {
+            device_name: deviceDict.deviceName,
+            operating_system: deviceDict.operatingSystem,
+            firmware_version: deviceDict.firmwareVersion,
+            functionalities: deviceDict.functionalities,
+            description: deviceDict.description || null,
+            assets: deviceDict.assets.map((asset) => ({
+                id: asset.id,
+                name: asset.name,
+                type: asset.type,
+                is_sensitive: asset.isSensitive,
+                description: asset.desc || null,
+            })),
+        }
+    }
+
+    // Private method to initialize stores and return session data from API response
+    #initializeSessionFromResponse(response) {
+        const { session_id: sessionId, device, position } = response
+        const deviceObj = this.#createDeviceFromResponse(device)
+
+        // Initialize stores with the new session data
+        useSessionStore.getState().setSessionId(sessionId)
+        useDeviceStore.getState().setDevice(deviceObj)
+        useSessionStore
+            .getState()
+            .setDevicePosition(
+                position.current_asset_index,
+                position.current_tree_index,
+                position.current_node_id
+            )
+
+        return { sessionId, device: deviceObj, position }
+    }
+
     // Create a new session by uploading a device file (JSON)
-    // and initialize the store with the session data
     async createSessionWithFile(file) {
         try {
             const formData = new FormData()
@@ -28,27 +72,26 @@ class SessionService {
                 headers: { 'Content-Type': 'multipart/form-data' },
             })
 
-            const { session_id: sessionId, device, position } = response
-            const deviceObj = this.#createDeviceFromResponse(device)
-
-            // Initialize the SessionStore with the new session data and
-            // the DeviceStore with the  device data
-            useSessionStore.getState().setSessionId(sessionId)
-            useDeviceStore.getState().setDevice(deviceObj)
-            useSessionStore
-                .getState()
-                .setDevicePosition(
-                    position.current_asset_index,
-                    position.current_tree_index,
-                    position.current_node_id
-                )
-
-            // TODO: rimuovere i console.log dopo il debug
-            // console.log('SessionId salvato nello store:', useSessionStore.getState().sessionId)
-            // console.log('Device salvato nello store:', useDeviceStore.getState().currentDevice)
-            return { sessionId, device: deviceObj, position }
+            return this.#initializeSessionFromResponse(response)
         } catch (error) {
-            console.error('Errore nella creazione della sessione:', error) // TODO: da eliminare, solo per debug
+            console.error('Errore nella creazione della sessione:', error)
+            // TODO: mostrare messaggio di errore
+            throw error
+        }
+    }
+
+    // Create a new session from a Device object (direct API call without file)
+    async createSessionWithDevice(device) {
+        try {
+            const devicePayload = this.#convertDeviceToPayload(device)
+            console.log('Device Payload being sent:', JSON.stringify(devicePayload, null, 2))
+
+            // API call to create a session with the device object directly
+            const response = await apiClient.post('/session/create_session', devicePayload)
+
+            return this.#initializeSessionFromResponse(response)
+        } catch (error) {
+            console.error('Errore nella creazione della sessione:', error)
             // TODO: mostrare messaggio di errore
             throw error
         }

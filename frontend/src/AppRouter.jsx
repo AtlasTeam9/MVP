@@ -9,6 +9,16 @@ import DeviceSummaryView from './pages/DeviceSummaryView'
 import SessionRunnerView from './pages/SessionRunnerView'
 import styles from './AppRouter.module.css'
 
+// Route configuration
+const ROUTES = [
+    { path: '/', view: <HomeView />, isProtected: false },
+    { path: '/device/new', view: <DeviceFormView />, isProtected: false },
+    { path: '/device/assets', view: <DeviceAssetManagementView />, isProtected: true, requiresSessionId: false },
+    { path: '/asset/new', view: <AssetFormView />, isProtected: true, requiresSessionId: false },
+    { path: '/device/summary', view: <DeviceSummaryView />, isProtected: true, requiresSessionId: true },
+    { path: '/session/runner', view: <SessionRunnerView />, isProtected: true, requiresSessionId: true },
+]
+
 // Function to build a Route element from a route configuration
 const buildRoute = (route, index) => {
     return (
@@ -22,20 +32,11 @@ const buildRoute = (route, index) => {
 
 // Main App Router component
 export default function AppRouter() {
-    const routes = [
-        { path: '/', view: <HomeView />, isProtected: false },
-        { path: '/device/new', view: <DeviceFormView />, isProtected: false },
-        { path: '/device/assets', view: <DeviceAssetManagementView />, isProtected: true },
-        { path: '/asset/new', view: <AssetFormView />, isProtected: true },
-        { path: '/device/summary', view: <DeviceSummaryView />, isProtected: true },
-        { path: '/session/runner', view: <SessionRunnerView />, isProtected: true },
-    ]
-
     return (
         <BrowserRouter>
             <div className={styles.waveLeft} aria-hidden="true" />
             <div className={styles.waveRight} aria-hidden="true" />
-            <Routes>{routes.map(buildRoute)}</Routes>
+            <Routes>{ROUTES.map(buildRoute)}</Routes>
         </BrowserRouter>
     )
 }

@@ -3,10 +3,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { deviceSchema } from '../domain/schemas/DeviceSchema'
+import deviceService from '../services/DeviceService'
 
 import styles from './DeviceFormView.module.css'
 import Device from '../domain/Device'
-import useDeviceStore from '../store/DeviceStore'
 
 // Standard form data structure for a Device, used for both creation and editing
 const initialData = {
@@ -31,7 +31,6 @@ const buildDevice = (data) =>
 // Custom hook to manage form state and navigation logic
 function useDeviceForm() {
     const navigate = useNavigate()
-    const setDevice = useDeviceStore((state) => state.setDevice)
 
     const {
         register,
@@ -45,8 +44,7 @@ function useDeviceForm() {
 
     const onSave = (data) => {
         const dev = buildDevice(data)
-        console.log('Salvato con Zod:', dev.toDict()) //TODO: da eliminare, è solo per testare
-        setDevice(dev)
+        deviceService.createDevice(dev)
         navigate('/device/assets')
     }
 
@@ -82,7 +80,7 @@ function RequiredFields({ register, errors }) {
         <>
             <InputField label="Nome *" registration={register('name')} error={errors?.name} />
             <InputField
-                label="OS *"
+                label="Operating System *"
                 registration={register('operatingSystem')}
                 error={errors?.operatingSystem}
             />

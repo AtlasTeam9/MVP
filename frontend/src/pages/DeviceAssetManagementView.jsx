@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCurrentDevice } from '../services/DeviceService'
 import deviceService from '../services/DeviceService'
+import sessionService from '../services/SessionService'
 import styles from './DeviceAssetManagementView.module.css'
 import HomeIcon from '../components/common/HomeIcon'
 
@@ -12,10 +13,23 @@ function useAssetManagement() {
     // Get the currentDevice from the service
     const currentDevice = useCurrentDevice()
 
+    const onGoToSummary = async () => {
+        try {
+            const result = await sessionService.createSessionWithDevice(currentDevice)
+            console.log('Session created with ID:', result.sessionId) // TODO: rimuovere
+            console.log('Device:', result.device) // TODO: rimuovere
+            console.log('Position:', result.position) // TODO: rimuovere
+            navigate('/device/summary')
+        } catch (error) {
+            console.error('Failed to create session:', error) // TODO: rimuovere
+            // TODO: mostrare messaggio di errore all'utente
+        }
+    }
+
     return {
         currentDevice,
         onAddAsset: () => navigate('/asset/new'),
-        onGoToSummary: () => navigate('/device/summary'),
+        onGoToSummary,
         onDeleteAsset: deviceService.removeAsset,
     }
 }

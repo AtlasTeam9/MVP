@@ -31,7 +31,6 @@ const useDeviceStore = create((set) => ({
             updatedDevice.addAsset(asset)
             return { currentDevice: updatedDevice }
         })
-        useDeviceStore.getState().showDevice() // TODO: da eliminare, è solo per testare
     },
 
     // Remove a specific asset from the current device

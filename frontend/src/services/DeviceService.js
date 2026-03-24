@@ -1,4 +1,4 @@
-import apiClient from '../infrastructure/api/AxiosApiClient'
+// import apiClient from '../infrastructure/api/AxiosApiClient'
 import Device from '../domain/Device'
 import { deviceSchema } from '../domain/schemas/DeviceSchema'
 import useDeviceStore from '../store/DeviceStore'
@@ -40,13 +40,9 @@ class DeviceService {
         return result.success
     }
 
-    // API call to create a new device
-    async createDevice(device) {
-        const payload = device instanceof Device ? device.toDict() : device
-        const response = await apiClient.post('/devices/', payload)
-
+    // Create a new device and save it to the DeviceStore
+    createDevice(device) {
         useDeviceStore.getState().setDevice(device)
-        return response
     }
 
     // Get the current device from the store
