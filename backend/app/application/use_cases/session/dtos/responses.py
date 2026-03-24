@@ -26,7 +26,7 @@ class GoBackResponse:
 
 
 @dataclass
-class CreateSessionWithFileResponse:
+class CreateSessionResponse:
     session_id: str
     device_name: str
     device_os: str

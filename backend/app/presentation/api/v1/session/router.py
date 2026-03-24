@@ -7,15 +7,15 @@ from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
 from app.application.interfaces.answer_use_case import IAnswerUseCase
-from app.application.interfaces.create_session_with_file_use_case import (
-    ICreateSessionWithFileUseCase,
+from app.application.interfaces.create_session_use_case import (
+    ICreateSessionUseCase,
 )
 from app.application.interfaces.delete_session_use_case import IDeleteSessionUseCase
 from app.application.interfaces.export_results_use_case import IExportResultsUseCase
 from app.application.interfaces.export_session_use_case import IExportSessionUseCase
 from app.application.interfaces.go_back_use_case import IGoBackUseCase
-from app.application.use_cases.session.create_session_with_file import (
-    CreateSessionWithFileRequest,
+from app.application.use_cases.session.create_session import (
+    CreateSessionRequest,
 )
 from app.application.use_cases.session.dtos.requests import (
     AnswerRequest,
@@ -28,7 +28,7 @@ from app.domain.exceptions import InvalidDeviceFileException
 
 from .dependencies import (
     get_answer_use_case,
-    get_create_session_with_file_use_case,
+    get_create_session_use_case,
     get_delete_session_use_case,
     get_export_results_use_case,
     get_export_session_use_case,
@@ -50,9 +50,7 @@ router = InferringRouter(prefix="/session", tags=["session"])
 
 @cbv(router)
 class SessionController:
-    create_session_use_case: ICreateSessionWithFileUseCase = Depends(
-        get_create_session_with_file_use_case
-    )
+    create_session_use_case: ICreateSessionUseCase = Depends(get_create_session_use_case)
     answer_use_case: IAnswerUseCase = Depends(get_answer_use_case)
     go_back_use_case: IGoBackUseCase = Depends(get_go_back_use_case)
     export_results_use_case: IExportResultsUseCase = Depends(get_export_results_use_case)
@@ -73,14 +71,14 @@ class SessionController:
             raise InvalidDeviceFileException("Il file caricato non è un JSON valido.")
 
         result = await self.create_session_use_case.execute(
-            CreateSessionWithFileRequest(device_data=device_data)
+            CreateSessionRequest(device_data=device_data)
         )
 
         return SessionResponseSchema(
             session_id=result.session_id,
             device=DeviceSchema(
                 device_name=result.device_name,
-                os=result.device_os,
+                operating_system=result.device_os,
                 firmware_version=result.device_firmw_v,
                 functionalities=result.device_funcs,
                 description=result.device_desc,
@@ -108,14 +106,14 @@ class SessionController:
         body: DeviceSchema,
     ) -> SessionResponseSchema:
         result = await self.create_session_use_case.execute(
-            CreateSessionWithFileRequest(device_data=body.model_dump())
+            CreateSessionRequest(device_data=body.model_dump())
         )
 
         return SessionResponseSchema(
             session_id=result.session_id,
             device=DeviceSchema(
                 device_name=result.device_name,
-                os=result.device_os,
+                operating_system=result.device_os,
                 firmware_version=result.device_firmw_v,
                 functionalities=result.device_funcs,
                 description=result.device_desc,

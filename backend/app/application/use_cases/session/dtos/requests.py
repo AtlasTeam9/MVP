@@ -14,7 +14,7 @@ class GoBackRequest:
 
 
 @dataclass
-class CreateSessionWithFileRequest:
+class CreateSessionRequest:
     device_data: dict
 
 

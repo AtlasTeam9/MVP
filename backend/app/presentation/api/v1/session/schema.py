@@ -17,10 +17,10 @@ class AssetSchema(BaseModel):
 
 class DeviceSchema(BaseModel):
     device_name: str = Field(..., description="Nome del dispositivo")
-    os: str = Field(..., description="Sistema operativo del dispositivo")
+    operating_system: str = Field(..., description="Sistema operativo del dispositivo")
     firmware_version: str = Field(..., description="Firmware version del dispositivo")
     functionalities: str = Field(..., description="Funzionalità del dispositivo")
-    description: str = Field(..., description="Descrizione del dispositivo")
+    description: str | None = Field(..., description="Descrizione del dispositivo")
     assets: list[AssetSchema] = Field(..., description="Lista degli asset del dispositivo")
 
 
@@ -33,16 +33,18 @@ class GoBackRequestSchema(BaseModel):
 
 
 class GoBackResponseSchema(BaseModel):
-    found: bool = Field(...)
+    found: bool = Field(..., description="True se il nodo è stato creato False altrimenti")
     node_id: str | None = Field(None)
 
 
 class AnswerResponseSchema(BaseModel):
-    next_node_id: str | None = Field(None)
-    tree_completed: bool = Field(...)
-    tree_result: str | None = Field(None)
-    session_finished: bool = Field(...)
-    results: dict | None = Field(None)
+    next_node_id: str | None = Field(None, description="Id del prossimo nodo")
+    tree_completed: bool = Field(
+        ..., description="True se l'albero corrente è completato False altrimenti"
+    )
+    tree_result: str | None = Field(None, description="Risultato dell'albero completato")
+    session_finished: bool = Field(..., description="True se la sessione è finita False altrimenti")
+    results: dict | None = Field(None, description="Dizionario dei risultati del test")
 
 
 class SessionResponseSchema(BaseModel):
