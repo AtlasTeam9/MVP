@@ -34,7 +34,7 @@ class GoBackRequestSchema(BaseModel):
 
 class GoBackResponseSchema(BaseModel):
     found: bool = Field(..., description="True se il nodo è stato creato False altrimenti")
-    node_id: str | None = Field(None)
+    node_id: str | None = Field(None, description="Id del nodo trovato")
 
 
 class AnswerResponseSchema(BaseModel):
