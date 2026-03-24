@@ -24,6 +24,7 @@ from app.application.use_cases.session.dtos.requests import (
     ExportSessionRequest,
     GoBackRequest,
 )
+from app.application.use_cases.session.validators.device_schema import AssetInput, DeviceInput
 from app.domain.exceptions import InvalidDeviceFileException
 
 from .dependencies import (
@@ -38,8 +39,6 @@ from .dependencies import (
 from .schema import (
     AnswerRequestSchema,
     AnswerResponseSchema,
-    AssetSchema,
-    DeviceSchema,
     GoBackRequestSchema,
     GoBackResponseSchema,
     SessionResponseSchema,
@@ -76,14 +75,14 @@ class SessionController:
 
         return SessionResponseSchema(
             session_id=result.session_id,
-            device=DeviceSchema(
+            device=DeviceInput(
                 device_name=result.device_name,
                 operating_system=result.device_os,
                 firmware_version=result.device_firmw_v,
                 functionalities=result.device_funcs,
                 description=result.device_desc,
                 assets=[
-                    AssetSchema(
+                    AssetInput(
                         id=asset["id"],
                         name=asset["name"],
                         type=asset["type"],
@@ -103,7 +102,7 @@ class SessionController:
     @router.post("/create_session", status_code=201)
     async def create_session(
         self,
-        body: DeviceSchema,
+        body: DeviceInput,
     ) -> SessionResponseSchema:
         result = await self.create_session_use_case.execute(
             CreateSessionRequest(device_data=body.model_dump())
@@ -111,14 +110,14 @@ class SessionController:
 
         return SessionResponseSchema(
             session_id=result.session_id,
-            device=DeviceSchema(
+            device=DeviceInput(
                 device_name=result.device_name,
                 operating_system=result.device_os,
                 firmware_version=result.device_firmw_v,
                 functionalities=result.device_funcs,
                 description=result.device_desc,
                 assets=[
-                    AssetSchema(
+                    AssetInput(
                         id=asset["id"],
                         name=asset["name"],
                         type=asset["type"],

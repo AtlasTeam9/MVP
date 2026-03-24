@@ -2,26 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
-class AssetSchema(BaseModel):
-    """
-    Singolo asset
-    """
-
-    id: str = Field(..., description="Id dell'asset")
-    name: str = Field(..., description="Nome dell'asset")
-    type: str = Field(..., description="Tipo dell'asset")
-    is_sensitive: bool = Field(..., description="Sensibilità dell'asset")
-    description: str | None = Field(..., description="Descrizione dell'asset")
-
-
-class DeviceSchema(BaseModel):
-    device_name: str = Field(..., description="Nome del dispositivo")
-    operating_system: str = Field(..., description="Sistema operativo del dispositivo")
-    firmware_version: str = Field(..., description="Firmware version del dispositivo")
-    functionalities: str = Field(..., description="Funzionalità del dispositivo")
-    description: str | None = Field(..., description="Descrizione del dispositivo")
-    assets: list[AssetSchema] = Field(..., description="Lista degli asset del dispositivo")
+from app.application.use_cases.session.validators.device_schema import DeviceInput
 
 
 class AnswerRequestSchema(BaseModel):
@@ -54,7 +35,7 @@ class SessionResponseSchema(BaseModel):
     """
 
     session_id: str = Field(..., description="ID univoco della sessione")
-    device: DeviceSchema = Field(..., description="Oggetto del dispositivo")
+    device: DeviceInput = Field(..., description="Oggetto del dispositivo")
     position: dict[str, Any] = Field(
         ..., description="Dizionario che mostra lo stato di avanzamento del test nella sessione"
     )
