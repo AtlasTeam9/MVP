@@ -102,6 +102,41 @@ class SessionController:
             },
         )
 
+    @router.post("/create_session", status_code=201)
+    async def create_session(
+        self,
+        body: DeviceSchema,
+    ) -> SessionResponseSchema:
+        result = await self.create_session_use_case.execute(
+            CreateSessionWithFileRequest(device_data=body.model_dump())
+        )
+
+        return SessionResponseSchema(
+            session_id=result.session_id,
+            device=DeviceSchema(
+                device_name=result.device_name,
+                os=result.device_os,
+                firmware_version=result.device_firmw_v,
+                functionalities=result.device_funcs,
+                description=result.device_desc,
+                assets=[
+                    AssetSchema(
+                        id=asset["id"],
+                        name=asset["name"],
+                        type=asset["type"],
+                        is_sensitive=asset["is_sensitive"],
+                        description=asset["description"],
+                    )
+                    for asset in result.assets
+                ],
+            ),
+            position={
+                "current_asset_index": result.current_asset_index,
+                "current_tree_index": result.current_tree_index,
+                "current_node_id": result.current_node_id,
+            },
+        )
+
     @router.post("/{session_id}/answer", status_code=200)
     async def answer(
         self,
