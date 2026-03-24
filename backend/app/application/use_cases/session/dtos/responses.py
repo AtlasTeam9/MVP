@@ -23,6 +23,9 @@ class AnswerResponse:
 class GoBackResponse:
     found: bool
     node_id: str | None
+    tree_completed: bool = False
+    tree_result: str | None = None
+    session_finished: bool = False
 
 
 @dataclass

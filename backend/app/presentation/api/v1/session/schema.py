@@ -11,6 +11,7 @@ class AnswerRequestSchema(BaseModel):
 
 class GoBackRequestSchema(BaseModel):
     target_node_id: str = Field(..., description="ID del nodo a cui tornare")
+    new_answer: bool = Field(..., description="Nuova risposta per il nodo target")
 
 
 class GoBackResponseSchema(BaseModel):

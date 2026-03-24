@@ -11,6 +11,7 @@ class AnswerRequest:
 class GoBackRequest:
     session_id: str
     target_node_id: str
+    new_answer: bool
 
 
 @dataclass
