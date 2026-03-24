@@ -27,8 +27,8 @@ class TestNode:
         expected_dict = {
             "id": "node1",
             "question": "Simple question?",
-            "yes": Result.PASS,
-            "no": Result.NOT_APPLICABLE,
+            "yes": "PASS",
+            "no": "NOT_APPLICABLE",
         }
 
         assert node.to_dict() == expected_dict

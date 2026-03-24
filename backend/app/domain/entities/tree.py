@@ -9,7 +9,12 @@ class Node:
         self._no: Node | Result = n_res
 
     def to_dict(self) -> dict:
-        return {"id": self._id, "question": self._question, "yes": self._yes, "no": self._no}
+        return {
+            "id": self._id,
+            "question": self._question,
+            "yes": self._yes.get_id if isinstance(self._yes, Node) else self._yes.value,
+            "no": self._no.get_id if isinstance(self._no, Node) else self._no.value,
+        }
 
     @property
     def get_id(self) -> str:
