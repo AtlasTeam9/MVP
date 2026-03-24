@@ -11,10 +11,11 @@ class AnswerRequest:
 class GoBackRequest:
     session_id: str
     target_node_id: str
+    new_answer: bool
 
 
 @dataclass
-class CreateSessionWithFileRequest:
+class CreateSessionRequest:
     device_data: dict
 
 

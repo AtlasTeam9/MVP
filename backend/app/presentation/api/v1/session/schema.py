@@ -2,26 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
-class AssetSchema(BaseModel):
-    """
-    Singolo asset
-    """
-
-    id: str = Field(..., description="Id dell'asset")
-    name: str = Field(..., description="Nome dell'asset")
-    type: str = Field(..., description="Tipo dell'asset")
-    is_sensitive: bool = Field(..., description="Sensibilità dell'asset")
-    description: str | None = Field(..., description="Descrizione dell'asset")
-
-
-class DeviceSchema(BaseModel):
-    device_name: str = Field(..., description="Nome del dispositivo")
-    os: str = Field(..., description="Sistema operativo del dispositivo")
-    firmware_version: str = Field(..., description="Firmware version del dispositivo")
-    functionalities: str = Field(..., description="Funzionalità del dispositivo")
-    description: str = Field(..., description="Descrizione del dispositivo")
-    assets: list[AssetSchema] = Field(..., description="Lista degli asset del dispositivo")
+from app.application.use_cases.session.validators.device_schema import DeviceInput
 
 
 class AnswerRequestSchema(BaseModel):
@@ -30,19 +11,22 @@ class AnswerRequestSchema(BaseModel):
 
 class GoBackRequestSchema(BaseModel):
     target_node_id: str = Field(..., description="ID del nodo a cui tornare")
+    new_answer: bool = Field(..., description="Nuova risposta per il nodo target")
 
 
 class GoBackResponseSchema(BaseModel):
-    found: bool = Field(...)
-    node_id: str | None = Field(None)
+    found: bool = Field(..., description="True se il nodo è stato creato False altrimenti")
+    node_id: str | None = Field(None, description="Id del nodo trovato")
 
 
 class AnswerResponseSchema(BaseModel):
-    next_node_id: str | None = Field(None)
-    tree_completed: bool = Field(...)
-    tree_result: str | None = Field(None)
-    session_finished: bool = Field(...)
-    results: dict | None = Field(None)
+    next_node_id: str | None = Field(None, description="Id del prossimo nodo")
+    tree_completed: bool = Field(
+        ..., description="True se l'albero corrente è completato False altrimenti"
+    )
+    tree_result: str | None = Field(None, description="Risultato dell'albero completato")
+    session_finished: bool = Field(..., description="True se la sessione è finita False altrimenti")
+    results: dict | None = Field(None, description="Dizionario dei risultati del test")
 
 
 class SessionResponseSchema(BaseModel):
@@ -52,7 +36,7 @@ class SessionResponseSchema(BaseModel):
     """
 
     session_id: str = Field(..., description="ID univoco della sessione")
-    device: DeviceSchema = Field(..., description="Oggetto del dispositivo")
+    device: DeviceInput = Field(..., description="Oggetto del dispositivo")
     position: dict[str, Any] = Field(
         ..., description="Dizionario che mostra lo stato di avanzamento del test nella sessione"
     )

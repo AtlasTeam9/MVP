@@ -1,21 +1,19 @@
 from pydantic import ValidationError
 
-from app.application.interfaces.create_session_with_file_use_case import (
-    ICreateSessionWithFileUseCase,
-)
+from app.application.interfaces.create_session_use_case import ICreateSessionUseCase
 from app.application.interfaces.session_service import ISessionService
-from app.application.use_cases.session.dtos.requests import CreateSessionWithFileRequest
-from app.application.use_cases.session.dtos.responses import CreateSessionWithFileResponse
+from app.application.use_cases.session.dtos.requests import CreateSessionRequest
+from app.application.use_cases.session.dtos.responses import CreateSessionResponse
 from app.application.use_cases.session.validators.device_schema import DeviceInput
 from app.domain.entities.device import Asset, AssetType, Device
 from app.domain.exceptions import InvalidDeviceFileException
 
 
-class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
+class CreateSessionUseCase(ICreateSessionUseCase):
     def __init__(self, session_service: ISessionService):
         self._session_service = session_service
 
-    async def execute(self, request: CreateSessionWithFileRequest) -> CreateSessionWithFileResponse:
+    async def execute(self, request: CreateSessionRequest) -> CreateSessionResponse:
         try:
             validated = DeviceInput(**request.device_data)
         except ValidationError as e:
@@ -42,7 +40,7 @@ class CreateSessionWithFileUseCase(ICreateSessionWithFileUseCase):
         )
         session = self._session_service.create_session(device)
 
-        return CreateSessionWithFileResponse(
+        return CreateSessionResponse(
             session_id=session.get_id,
             device_name=session.get_device.get_name,
             assets=[

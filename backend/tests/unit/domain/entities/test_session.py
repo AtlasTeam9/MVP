@@ -11,7 +11,7 @@ from app.domain.entities.tree import Node
 class TestSession:
     """Test suite per Session entity"""
 
-    def test_session_creation(self, mock_tree_provider):
+    def test_session_creation(self, session_factory):
         """Test creazione sessione base"""
         device = Device(
             device_name="Test Device",
@@ -20,8 +20,7 @@ class TestSession:
             ],
         )
 
-        session = Session(
-            tree_provider=mock_tree_provider,
+        session = session_factory.create(
             device=device,
             session_id="fd74b30b-8888-43ec-b265-01b2d702d9a3",
         )
@@ -30,21 +29,19 @@ class TestSession:
         assert session.get_device.to_dict() == device.to_dict()
         assert session.current_asset == device.get_assets[0]
 
-    def test_add_result(self, mock_tree_provider):
+    def test_add_result(self, session_factory):
         """Test per l'aggiunta di un risultato"""
-        session = self._create_test_session(mock_tree_provider)
-
+        session = self._create_test_session(session_factory)
         asset_id = session.current_asset.get_id if session.current_asset else None
         tree_id = session.current_tree.get_id if session.current_tree else None
 
         session.record_result(Result.PASS)
 
         if asset_id and tree_id:
-            result = session.results.get(asset_id, tree_id)
-            assert result == Result.PASS
+            assert session.results.get(asset_id, tree_id) == Result.PASS
 
-    def test_current_node(self, mock_tree_provider):
-        session = self._create_test_session(mock_tree_provider)
+    def test_current_node(self, session_factory):
+        session = self._create_test_session(session_factory)
 
         if session.current_node:
             assert session.current_node.get_question == "Q1?"
@@ -55,8 +52,8 @@ class TestSession:
                 assert no_node.get_yes == Result.PASS
                 assert no_node.get_no == Result.FAIL
 
-    def test_answer(self, mock_tree_provider):
-        session = self._create_test_session(mock_tree_provider)
+    def test_answer(self, session_factory):
+        session = self._create_test_session(session_factory)
 
         result = session.answer(True)
 
@@ -65,12 +62,12 @@ class TestSession:
         assert result.tree_completed is True
         assert result.tree_result == Result.NOT_APPLICABLE
 
-    def test_auto_skip_dependent_trees_on_answer(self, mock_tree_provider):
+    def test_auto_skip_dependent_trees_on_answer(self, session_factory):
         """
         Verifica che completando un albero con esito NOT_APPLICABLE (o FAIL),
         gli alberi dipendenti vengano saltati e l'esito N/A venga propagato.
         """
-        session = self._create_test_session(mock_tree_provider)
+        session = self._create_test_session(session_factory)
         asset1_id = ""
         if session.current_asset:
             asset1_id = session.current_asset.get_id
@@ -90,12 +87,12 @@ class TestSession:
         skipped_tree_result = session.results.get(asset1_id, "tree_02")
         assert skipped_tree_result == Result.NOT_APPLICABLE
 
-    def test_auto_skip_finishes_session(self, mock_tree_provider):
+    def test_auto_skip_finishes_session(self, session_factory):
         """
         Verifica che se l'ultimo albero dell'ultimo asset fallisce/N/A
         e i restanti alberi vengono saltati, la sessione si chiuda correttamente.
         """
-        session = self._create_test_session(mock_tree_provider)
+        session = self._create_test_session(session_factory)
 
         session.navigator.state.current_asset_index = 1
 
@@ -108,21 +105,15 @@ class TestSession:
         assert result.session_finished is True
         assert session.state.is_finished is True
 
-    def _create_test_session(self, mock_tree_provider) -> Session:
-        """Helper per creare sessione di test"""
-
+    def _create_test_session(self, session_factory) -> Session:
         device = Device(
             device_name="Test Device",
             assets=[
-                Asset(asset_id="a1", name="Asset 1", type=AssetType.NETWORK_FUN, is_sensitive=True),
-                Asset(
-                    asset_id="a2", name="Asset 2", type=AssetType.SECURITY_FUN, is_sensitive=True
-                ),
+                Asset("a1", "Asset 1", AssetType.NETWORK_FUN, True),
+                Asset("a2", "Asset 2", AssetType.SECURITY_FUN, True),
             ],
         )
-
-        return Session(
-            tree_provider=mock_tree_provider,
+        return session_factory.create(
             device=device,
             session_id="fd74b30b-8888-43ec-b265-01b2d702d9a3",
         )

@@ -23,10 +23,13 @@ class AnswerResponse:
 class GoBackResponse:
     found: bool
     node_id: str | None
+    tree_completed: bool = False
+    tree_result: str | None = None
+    session_finished: bool = False
 
 
 @dataclass
-class CreateSessionWithFileResponse:
+class CreateSessionResponse:
     session_id: str
     device_name: str
     device_os: str

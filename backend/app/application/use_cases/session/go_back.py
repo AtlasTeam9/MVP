@@ -25,8 +25,16 @@ class GoBackUseCase(IGoBackUseCase):
             return GoBackResponse(found=False, node_id=None)
 
         go_back_result = session.go_back(target_node)
+        if not go_back_result.found:
+            return GoBackResponse(found=False, node_id=None)
+
+        answer_result = session.answer(request.new_answer)
+        self._session_service.save_session(session)
 
         return GoBackResponse(
-            found=go_back_result.found,
-            node_id=go_back_result.node.get_id if go_back_result.node else None,
+            found=True,
+            node_id=answer_result.next_node.get_id if answer_result.next_node else None,
+            tree_completed=answer_result.tree_completed,
+            tree_result=answer_result.tree_result.value if answer_result.tree_result else None,
+            session_finished=answer_result.session_finished,
         )

@@ -67,7 +67,7 @@ async def client():
 @pytest.fixture
 def mock_storage():
     """Mock di FileStorage per evitare operazioni su disco."""
-    with patch("app.presentation.api.v1.dependencies.get_file_storage") as mock_get_storage:
+    with patch("app.presentation.api.v1.shared_dependencies.get_file_storage") as mock_get_storage:
         storage = MagicMock()
         storage.save_session.return_value = None
         storage.load_session.return_value = None

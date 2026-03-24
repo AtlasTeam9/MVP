@@ -7,14 +7,16 @@ from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
 from app.application.interfaces.answer_use_case import IAnswerUseCase
-from app.application.interfaces.create_session_with_file_use_case import (
-    ICreateSessionWithFileUseCase,
+from app.application.interfaces.create_session_use_case import (
+    ICreateSessionUseCase,
 )
+from app.application.interfaces.delete_session_use_case import IDeleteSessionUseCase
+from app.application.interfaces.export_results_use_case import IExportResultsUseCase
+from app.application.interfaces.export_session_use_case import IExportSessionUseCase
 from app.application.interfaces.go_back_use_case import IGoBackUseCase
-from app.application.use_cases.session.create_session_with_file import (
-    CreateSessionWithFileRequest,
+from app.application.use_cases.session.create_session import (
+    CreateSessionRequest,
 )
-from app.application.use_cases.session.delete_session import DeleteSessionUseCase
 from app.application.use_cases.session.dtos.requests import (
     AnswerRequest,
     DeleteSessionRequest,
@@ -22,13 +24,12 @@ from app.application.use_cases.session.dtos.requests import (
     ExportSessionRequest,
     GoBackRequest,
 )
-from app.application.use_cases.session.export_results import ExportResultsUseCase
-from app.application.use_cases.session.export_session import ExportSessionUseCase
+from app.application.use_cases.session.validators.device_schema import AssetInput, DeviceInput
 from app.domain.exceptions import InvalidDeviceFileException
 
-from ..dependencies import (
+from .dependencies import (
     get_answer_use_case,
-    get_create_session_with_file_use_case,
+    get_create_session_use_case,
     get_delete_session_use_case,
     get_export_results_use_case,
     get_export_session_use_case,
@@ -38,8 +39,6 @@ from ..dependencies import (
 from .schema import (
     AnswerRequestSchema,
     AnswerResponseSchema,
-    AssetSchema,
-    DeviceSchema,
     GoBackRequestSchema,
     GoBackResponseSchema,
     SessionResponseSchema,
@@ -50,14 +49,12 @@ router = InferringRouter(prefix="/session", tags=["session"])
 
 @cbv(router)
 class SessionController:
-    create_session_use_case: ICreateSessionWithFileUseCase = Depends(
-        get_create_session_with_file_use_case
-    )
+    create_session_use_case: ICreateSessionUseCase = Depends(get_create_session_use_case)
     answer_use_case: IAnswerUseCase = Depends(get_answer_use_case)
     go_back_use_case: IGoBackUseCase = Depends(get_go_back_use_case)
-    export_results_use_case: ExportResultsUseCase = Depends(get_export_results_use_case)
-    export_session_use_case: ExportSessionUseCase = Depends(get_export_session_use_case)
-    delete_session_use_case: DeleteSessionUseCase = Depends(get_delete_session_use_case)
+    export_results_use_case: IExportResultsUseCase = Depends(get_export_results_use_case)
+    export_session_use_case: IExportSessionUseCase = Depends(get_export_session_use_case)
+    delete_session_use_case: IDeleteSessionUseCase = Depends(get_delete_session_use_case)
 
     @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
@@ -73,19 +70,54 @@ class SessionController:
             raise InvalidDeviceFileException("Il file caricato non è un JSON valido.")
 
         result = await self.create_session_use_case.execute(
-            CreateSessionWithFileRequest(device_data=device_data)
+            CreateSessionRequest(device_data=device_data)
         )
 
         return SessionResponseSchema(
             session_id=result.session_id,
-            device=DeviceSchema(
+            device=DeviceInput(
                 device_name=result.device_name,
-                os=result.device_os,
+                operating_system=result.device_os,
                 firmware_version=result.device_firmw_v,
                 functionalities=result.device_funcs,
                 description=result.device_desc,
                 assets=[
-                    AssetSchema(
+                    AssetInput(
+                        id=asset["id"],
+                        name=asset["name"],
+                        type=asset["type"],
+                        is_sensitive=asset["is_sensitive"],
+                        description=asset["description"],
+                    )
+                    for asset in result.assets
+                ],
+            ),
+            position={
+                "current_asset_index": result.current_asset_index,
+                "current_tree_index": result.current_tree_index,
+                "current_node_id": result.current_node_id,
+            },
+        )
+
+    @router.post("/create_session", status_code=201)
+    async def create_session(
+        self,
+        body: DeviceInput,
+    ) -> SessionResponseSchema:
+        result = await self.create_session_use_case.execute(
+            CreateSessionRequest(device_data=body.model_dump())
+        )
+
+        return SessionResponseSchema(
+            session_id=result.session_id,
+            device=DeviceInput(
+                device_name=result.device_name,
+                operating_system=result.device_os,
+                firmware_version=result.device_firmw_v,
+                functionalities=result.device_funcs,
+                description=result.device_desc,
+                assets=[
+                    AssetInput(
                         id=asset["id"],
                         name=asset["name"],
                         type=asset["type"],
@@ -127,10 +159,14 @@ class SessionController:
         self, body: GoBackRequestSchema, session_id: str = Depends(validate_session_id)
     ) -> GoBackResponseSchema:
         """
-        Torna a un nodo precedente nella history del tree corrente.
+        Torna a un nodo precedente nella history del tree corrente e aggiorna la nuova risposta
         """
         result = await self.go_back_use_case.execute(
-            GoBackRequest(session_id=session_id, target_node_id=body.target_node_id)
+            GoBackRequest(
+                session_id=session_id,
+                target_node_id=body.target_node_id,
+                new_answer=body.new_answer,
+            )
         )
         return GoBackResponseSchema(
             found=result.found,

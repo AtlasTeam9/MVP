@@ -1,0 +1,15 @@
+services:
+  backend:
+    container_name: mvp-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_sessions:/app/data/sessions
+    restart: unless-stopped
+
+volumes:
+  backend_sessions:

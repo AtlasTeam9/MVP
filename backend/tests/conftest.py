@@ -11,6 +11,7 @@ import pytest
 
 from app.domain.entities.result import Result
 from app.domain.entities.tree import DecisionTree, Node
+from app.domain.factories.session_factory import SessionFactory
 from app.domain.interfaces.tree_provider import TreeProvider
 from app.infrastructure.persistence.file_storage import FileStorage
 from app.infrastructure.persistence.file_tree_provider import FileTreeProvider
@@ -89,6 +90,11 @@ def sample_device_file(tmp_path, sample_device_data) -> Path:
     with open(file_path, "w") as f:
         json.dump(sample_device_data, f)
     return file_path
+
+
+@pytest.fixture
+def session_factory(mock_tree_provider) -> SessionFactory:
+    return SessionFactory(mock_tree_provider)
 
 
 def pytest_collection_modifyitems(items):

@@ -1,6 +1,3 @@
-from uuid import uuid4
-
-from app.domain.interfaces.tree_provider import TreeProvider
 from app.domain.utils.dependency_evaluator import DependencyEvaluator
 from app.domain.utils.result_store import ResultStore
 from app.domain.utils.session_navigator import AnswerResult, GoBackResult, SessionNavigator
@@ -17,19 +14,23 @@ class Session:
     Contiene lo stato e la logica per l'avanzamento.
     """
 
-    def __init__(self, tree_provider: TreeProvider, device: Device, session_id: str | None = None):
-        self._id: str = session_id or str(uuid4())
-        self._trees = tree_provider.get_all()
-
-        self._device: Device = device
-
-        self.state = SessionState()
-
-        self.results = ResultStore(self.get_assets)
-
-        self.navigator = SessionNavigator(self.state, self.get_assets, self._trees)
-
-        self.dependencies = DependencyEvaluator(self.results)
+    def __init__(
+        self,
+        id: str,
+        device: Device,
+        trees: list[DecisionTree],
+        state: SessionState,
+        results: ResultStore,
+        navigator: SessionNavigator,
+        dependency_evaluator: DependencyEvaluator,
+    ):
+        self._id = id
+        self._device = device
+        self._trees = trees
+        self.state = state
+        self.results = results
+        self.navigator = navigator
+        self.dependencies = dependency_evaluator
 
     @property
     def get_id(self) -> str:
