@@ -4,9 +4,9 @@ from app.application.interfaces.create_session_use_case import ICreateSessionUse
 from app.application.interfaces.session_service import ISessionService
 from app.application.use_cases.session.dtos.requests import CreateSessionRequest
 from app.application.use_cases.session.dtos.responses import CreateSessionResponse
-from app.application.use_cases.session.validators.device_schema import DeviceInput
 from app.domain.entities.device import Asset, AssetType, Device
 from app.domain.exceptions import InvalidDeviceFileException
+from app.presentation.api.v1.session.schema import DeviceSchema
 
 
 class CreateSessionUseCase(ICreateSessionUseCase):
@@ -15,7 +15,7 @@ class CreateSessionUseCase(ICreateSessionUseCase):
 
     async def execute(self, request: CreateSessionRequest) -> CreateSessionResponse:
         try:
-            validated = DeviceInput(**request.device_data)
+            validated = DeviceSchema(**request.device_data)
         except ValidationError as e:
             raise InvalidDeviceFileException(f"File dispositivo non valido: {e.errors()}")
 

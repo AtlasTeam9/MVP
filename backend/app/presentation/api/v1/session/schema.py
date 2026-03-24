@@ -1,8 +1,45 @@
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.application.use_cases.session.validators.device_schema import DeviceInput
+
+class AssetSchema(BaseModel):
+    """
+    Singolo asset
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = Field(..., description="Id dell'asset", min_length=1)
+    name: str = Field(..., description="Nome dell'asset", min_length=1)
+    type: str = Field(..., description="Tipo dell'asset")
+    is_sensitive: bool = Field(..., description="Sensibilità dell'asset")
+    description: str | None = Field(..., description="Descrizione dell'asset")
+
+    @field_validator("type")
+    def type_must_be_valid(cls, v):
+        valid = [
+            "network function",
+            "network function configuration",
+            "security function",
+            "security parameter",
+        ]
+        if v.lower() not in valid:
+            raise ValueError(f"Tipo asset non valido: {v}")
+        return v
+
+
+class DeviceSchema(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    device_name: str = Field(..., description="Nome del dispositivo", min_length=1)
+    operating_system: str = Field(..., description="Sistema operativo del dispositivo")
+    firmware_version: str = Field(..., description="Firmware version del dispositivo")
+    functionalities: str = Field(..., description="Funzionalità del dispositivo")
+    description: str | None = Field(..., description="Descrizione del dispositivo")
+    assets: list[AssetSchema] = Field(
+        ..., description="Lista degli asset del dispositivo", min_length=1
+    )
 
 
 class AnswerRequestSchema(BaseModel):
@@ -36,7 +73,7 @@ class SessionResponseSchema(BaseModel):
     """
 
     session_id: str = Field(..., description="ID univoco della sessione")
-    device: DeviceInput = Field(..., description="Oggetto del dispositivo")
+    device: DeviceSchema = Field(..., description="Oggetto del dispositivo")
     position: dict[str, Any] = Field(
         ..., description="Dizionario che mostra lo stato di avanzamento del test nella sessione"
     )

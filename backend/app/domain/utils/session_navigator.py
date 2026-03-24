@@ -39,18 +39,18 @@ class GoBackResult:
 class SessionNavigator:
     def __init__(self, state: SessionState, assets: list[Asset], trees: list[DecisionTree]):
         self.state = state
-        self.assets = assets
-        self.trees = trees
+        self._assets = assets
+        self._trees = trees
 
     def current_asset(self) -> Asset | None:
-        if self.state.current_asset_index >= len(self.assets):
+        if self.state.current_asset_index >= len(self._assets):
             return None
-        return self.assets[self.state.current_asset_index]
+        return self._assets[self.state.current_asset_index]
 
     def current_tree(self) -> DecisionTree | None:
-        if self.state.current_tree_index >= len(self.trees):
+        if self.state.current_tree_index >= len(self._trees):
             return None
-        return self.trees[self.state.current_tree_index]
+        return self._trees[self.state.current_tree_index]
 
     def current_node(self) -> Node | None:
         """Nodo corrente all'interno del tree attivo."""
@@ -128,10 +128,10 @@ class SessionNavigator:
 
         self.state.next_tree()
 
-        if self.state.current_tree_index >= len(self.trees):
+        if self.state.current_tree_index >= len(self._trees):
             self.state.next_asset()
 
-        if self.state.current_asset_index >= len(self.assets):
+        if self.state.current_asset_index >= len(self._assets):
             self.state.is_finished = True
 
     def next(self) -> None:

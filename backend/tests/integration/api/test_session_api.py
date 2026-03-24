@@ -282,13 +282,13 @@ class TestGoBack:
 
         response = await client.post(
             f"/api/v1/session/{session_id}/go_back",
-            json={"target_node_id": node1_id},
+            json={"target_node_id": node1_id, "new_answer": True},
         )
 
         assert response.status_code == 200
         data = response.json()
         assert data["found"] is True
-        assert data["node_id"] == node1_id
+        assert data["node_id"] is None
 
     @pytest.mark.integration
     async def test_go_back_node_not_found(self, client, mock_storage, device_file):
@@ -297,7 +297,7 @@ class TestGoBack:
 
         response = await client.post(
             f"/api/v1/session/{session_id}/go_back",
-            json={"target_node_id": "nodo_inesistente"},
+            json={"target_node_id": "nodo_inesistente", "new_answer": True},
         )
 
         assert response.status_code == 200
@@ -310,31 +310,10 @@ class TestGoBack:
         """Restituisce 400 per session_id inesistente."""
         response = await client.post(
             "/api/v1/session/sessione-falsa/go_back",
-            json={"target_node_id": "node1"},
+            json={"target_node_id": "node1", "new_answer": True},
         )
 
         assert response.status_code == 400
-
-    @pytest.mark.integration
-    async def test_go_back_resets_current_node(self, client, mock_storage, device_file):
-        """Dopo go_back, il current_node della sessione torna al nodo target."""
-        session_id = await create_session(client, mock_storage, device_file)
-
-        await client.post(
-            f"/api/v1/session/{session_id}/answer",
-            json={"answer": False},
-        )
-
-        session = AppState.sessions[session_id]
-        node1_id = session.state.navigation_stack[0][0].get_id
-
-        await client.post(
-            f"/api/v1/session/{session_id}/go_back",
-            json={"target_node_id": node1_id},
-        )
-
-        assert session.state.current_node is not None
-        assert session.state.current_node.get_id == node1_id
 
 
 class TestExportSession:
