@@ -1,5 +1,9 @@
 {
+<<<<<<<< HEAD:backend/data/sessions/2ebd1326-82c8-4ff3-8671-c3c8ec730fd5.json
   "session_id": "2ebd1326-82c8-4ff3-8671-c3c8ec730fd5",
+========
+  "session_id": "91f4daa8-1db1-4d3a-a0bb-3b3204255a3c",
+>>>>>>>> main:backend/data/sessions/91f4daa8-1db1-4d3a-a0bb-3b3204255a3c.json
   "device": {
     "device_name": "Coffee Machine",
     "assets": [
@@ -89,7 +93,7 @@
   "position": {
     "current_asset_index": 1,
     "current_tree_index": 0,
-    "current_node_id": ""
+    "current_node_id": "node1"
   },
   "results": {
     "ASSET_01": {
@@ -122,5 +126,9 @@
     "ASSET_11": {}
   },
   "is_finished": false,
+<<<<<<<< HEAD:backend/data/sessions/2ebd1326-82c8-4ff3-8671-c3c8ec730fd5.json
   "saved_at": "2026-03-25T15:54:14.950679"
+========
+  "saved_at": "2026-03-25T16:16:31.464088"
+>>>>>>>> main:backend/data/sessions/91f4daa8-1db1-4d3a-a0bb-3b3204255a3c.json
 }

@@ -18,6 +18,7 @@ class SessionRepository(BaseRepository):
 
         try:
             device = entity.get_device.to_dict()
+            node = entity.navigator.current_node()
             session_dict = {
                 "session_id": entity.get_id,
                 "device": {
@@ -31,7 +32,7 @@ class SessionRepository(BaseRepository):
                 "position": {
                     "current_asset_index": entity.state.current_asset_index,
                     "current_tree_index": entity.state.current_tree_index,
-                    "current_node_id": entity.state.current_node_id,
+                    "current_node_id": node.get_id if node is not None else "",
                 },
                 "results": entity.results.to_dict(),
                 "is_finished": entity.state.is_finished,

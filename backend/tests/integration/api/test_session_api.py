@@ -288,7 +288,7 @@ class TestGoBack:
         assert response.status_code == 200
         data = response.json()
         assert data["found"] is True
-        assert data["node_id"] is None
+        assert data["node_id"] == "node1"
 
     @pytest.mark.integration
     async def test_go_back_node_not_found(self, client, mock_storage, device_file):
