@@ -39,6 +39,7 @@ class CreateSessionUseCase(ICreateSessionUseCase):
             desc=device_data.description,
         )
         session = self._session_service.create_session(device)
+        first_node = session.current_node
 
         return CreateSessionResponse(
             session_id=session.get_id,
@@ -59,5 +60,5 @@ class CreateSessionUseCase(ICreateSessionUseCase):
             device_desc=session.get_device.get_description,
             current_asset_index=session.state.current_asset_index,
             current_tree_index=session.state.current_tree_index,
-            current_node_id=session.state.current_node_id,
+            current_node_id=first_node.get_id if first_node else "",
         )
