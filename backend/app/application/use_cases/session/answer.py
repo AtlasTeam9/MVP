@@ -25,4 +25,6 @@ class AnswerUseCase(IAnswerUseCase):
             tree_result=answer_result.tree_result.value if answer_result.tree_result else None,
             session_finished=answer_result.session_finished,
             results=session.results.to_dict() if answer_result.session_finished else None,
+            current_asset_index=session.state.current_asset_index,
+            current_tree_index=session.state.current_tree_index,
         )

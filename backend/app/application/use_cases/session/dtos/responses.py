@@ -17,6 +17,8 @@ class AnswerResponse:
     tree_result: str | None
     session_finished: bool
     results: dict | None
+    current_asset_index: int
+    current_tree_index: int
 
 
 @dataclass
@@ -26,6 +28,8 @@ class GoBackResponse:
     tree_completed: bool = False
     tree_result: str | None = None
     session_finished: bool = False
+    current_asset_index: int | None = None
+    current_tree_index: int | None = None
 
 
 @dataclass

@@ -38,4 +38,6 @@ class GoBackUseCase(IGoBackUseCase):
             tree_completed=answer_result.tree_completed,
             tree_result=answer_result.tree_result.value if answer_result.tree_result else None,
             session_finished=answer_result.session_finished,
+            current_asset_index=session.state.current_asset_index,
+            current_tree_index=session.state.current_tree_index,
         )

@@ -153,6 +153,8 @@ class SessionController:
             tree_result=result.tree_result,
             session_finished=result.session_finished,
             results=result.results,
+            current_asset_index=result.current_asset_index,
+            current_tree_index=result.current_tree_index,
         )
 
     @router.post("/{session_id}/go_back", status_code=200)
@@ -173,6 +175,8 @@ class SessionController:
         return GoBackResponseSchema(
             found=result.found,
             node_id=result.node_id,
+            current_asset_index=result.current_asset_index,
+            current_tree_index=result.current_tree_index,
         )
 
     @router.get("/{session_id}/export", status_code=200)
