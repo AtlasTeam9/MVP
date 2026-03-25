@@ -34,3 +34,9 @@ class ExportSessionRequest:
 @dataclass
 class DeleteSessionRequest:
     session_id: str
+
+
+@dataclass
+class ModifyDeviceRequest:
+    session_id: str
+    device_data: dict

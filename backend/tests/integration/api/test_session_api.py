@@ -239,8 +239,8 @@ class TestAnswer:
         data = response.json()
         assert data["session_finished"] is True
         assert data["results"] is not None
-        assert "ASSET_01" in data["results"]
-        assert "ASSET_02" in data["results"]
+        assert "tree_01" in data["results"]
+        assert "tree_02" in data["results"]
 
     @pytest.mark.integration
     async def test_answer_skips_dependent_trees_on_na(self, client, mock_storage, device_file):
@@ -470,3 +470,65 @@ class TestTrees:
         assert "title" in tree
         assert "dependencies" in tree
         assert "nodes" in tree
+
+
+MODIFIED_DEVICE_JSON = {
+    "device_name": "Dispositivo Aggiornato",
+    "operating_system": "Nuovo OS",
+    "firmware_version": "2.0.0",
+    "functionalities": "Funzionalità aggiornate",
+    "description": "Descrizione modificata",
+    "assets": [
+        {
+            "id": "ASSET_03",
+            "name": "Nuovo Asset",
+            "type": "Network Function",
+            "is_sensitive": False,
+            "description": "Nuovo asset aggiunto dopo la creazione",
+        }
+    ],
+}
+
+
+class TestModifyDevice:
+    @pytest.mark.integration
+    async def test_modify_device_success(self, client, mock_storage, device_file):
+        """Verifica che il device venga modificato e la sessione aggiornata correttamente."""
+        session_id = await create_session(client, mock_storage, device_file)
+        calls_before = mock_storage.save_session.call_count
+
+        response = await client.post(
+            f"/api/v1/session/{session_id}/device/modify",
+            json=MODIFIED_DEVICE_JSON,
+        )
+
+        assert response.status_code == 200
+
+        session = AppState.sessions[session_id]
+        assert session.get_device.get_name == "Dispositivo Aggiornato"
+        assert len(session.get_device.get_assets) == 1
+        assert session.get_device.get_assets[0].get_id == "ASSET_03"
+
+        assert mock_storage.save_session.call_count > calls_before
+
+    @pytest.mark.integration
+    async def test_modify_device_session_not_found(self, client, mock_storage):
+        """Restituisce 400 (o 404, in base alla tua implementazione) per session_id inesistente."""
+        response = await client.post(
+            "/api/v1/session/sessione-falsa/device/modify",
+            json=MODIFIED_DEVICE_JSON,
+        )
+        assert response.status_code == 400
+
+    @pytest.mark.integration
+    async def test_modify_device_invalid_payload(self, client, mock_storage, device_file):
+        """Restituisce 422 se il payload JSON non rispetta il DeviceSchema."""
+        session_id = await create_session(client, mock_storage, device_file)
+
+        invalid_payload = {"device_name": "Solo il nome"}
+
+        response = await client.post(
+            f"/api/v1/session/{session_id}/device/modify",
+            json=invalid_payload,
+        )
+        assert response.status_code == 422

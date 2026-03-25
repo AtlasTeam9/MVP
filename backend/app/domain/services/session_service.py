@@ -55,6 +55,7 @@ class SessionService(ISessionService):
         return session
 
     def save_session(self, session: Session) -> None:
+        self._cache[session.get_id] = session
         self._repo.save(session)
 
     def delete_session(self, session_id: str) -> None:
