@@ -60,6 +60,10 @@ class Session:
     def navigation_history(self) -> list[dict]:
         return self.navigator.navigation_history()
 
+    @property
+    def get_trees(self) -> list[DecisionTree]:
+        return self._trees
+
     def record_result(self, result: Result) -> None:
 
         asset = self.current_asset
