@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import useSessionStore from '../store/SessionStore'
 import useDeviceStore from '../store/DeviceStore'
+import useTreeStore from '../store/TreeStore'
 import apiClient from '../infrastructure/api/AxiosApiClient'
 import Device from '../domain/Device'
 import Asset from '../domain/Asset'
@@ -42,12 +43,32 @@ class SessionService {
         }
     }
 
+    // Private helper method to set the current node from response or TreeStore
+    #setCurrentNodeFromResponse(response, position) {
+        if (response.current_node) {
+            useSessionStore.getState().setCurrentNode(response.current_node)
+            return
+        }
+
+        const nodeFromStore = useTreeStore
+            .getState()
+            .getNodeByTreeIndexAndNodeId(position.current_tree_index, position.current_node_id)
+
+        if (nodeFromStore) {
+            useSessionStore.getState().setCurrentNode(nodeFromStore)
+        } else {
+            useSessionStore.getState().setCurrentNode({
+                id: position.current_node_id,
+                text: 'Loading question...',
+            })
+        }
+    }
+
     // Private method to initialize stores and return session data from API response
     #initializeSessionFromResponse(response) {
         const { session_id: sessionId, device, position } = response
         const deviceObj = this.#createDeviceFromResponse(device)
 
-        // Initialize stores with the new session data
         useSessionStore.getState().setSessionId(sessionId)
         useDeviceStore.getState().setDevice(deviceObj)
         useSessionStore
@@ -58,16 +79,7 @@ class SessionService {
                 position.current_node_id
             )
 
-        // If the API returns the current node data, use it; otherwise, set it from position
-        if (response.current_node) {
-            useSessionStore.getState().setCurrentNode(response.current_node)
-        } else {
-            // Set node with just the ID - the view will need to fetch details or have them cached
-            useSessionStore.getState().setCurrentNode({
-                id: position.current_node_id,
-                text: 'Loading question...',
-            })
-        }
+        this.#setCurrentNodeFromResponse(response, position)
 
         return { sessionId, device: deviceObj, position }
     }
@@ -81,6 +93,16 @@ class SessionService {
             // API call to create a session with the uploaded file
             const response = await apiClient.post('/session/create_session_with_file', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
+            })
+
+            // TODO: eliminare
+            console.log('createSessionWithFile - Struttura risposta:', {
+                sessionId: response.session_id,
+                position: response.position,
+                device: response.device
+                    ? { name: response.device.device_name, assets: response.device.assets?.length }
+                    : null,
+                currentNode: response.current_node,
             })
 
             return this.#initializeSessionFromResponse(response)
@@ -99,6 +121,16 @@ class SessionService {
             // API call to create a session with the device object directly
             const response = await apiClient.post('/session/create_session', devicePayload)
 
+            // TODO: eliminare
+            console.log('createSessionWithDevice - Struttura risposta:', {
+                sessionId: response.session_id,
+                position: response.position,
+                device: response.device
+                    ? { name: response.device.device_name, assets: response.device.assets?.length }
+                    : null,
+                currentNode: response.current_node,
+            })
+
             return this.#initializeSessionFromResponse(response)
         } catch (error) {
             console.error('Errore nella creazione della sessione:', error)
@@ -106,13 +138,6 @@ class SessionService {
             throw error
         }
     }
-
-    // Function to start a new session for a given device
-    // async startSession(deviceId) {
-    //     // TODO: chiamata API per avviare la sessione e ottenere il sessionId e il nodo iniziale
-    //     // const response = await apiClient.post('/sessions/start', { deviceId })
-    //     useSessionStore.getState().clearStore()
-    // }
 
     resumeSession(requirementId, assetId) {
         console.log(`Ripresa sessione: req=${requirementId}, asset=${assetId}`)
@@ -124,21 +149,72 @@ class SessionService {
         // TODO: Validazione file JSON e popolamento dello store
     }
 
-    // Helper to create a Node object from API response data
-    // #createNodeFromResponse(nodeData) {
-    //     if (!nodeData) return null
+    // Private helper to get the first node of a tree by index
+    #getFirstNodeOfTree(treeIndex) {
+        const node = useTreeStore.getState().getNodeByTreeIndexAndNodeId(treeIndex, 'node1')
+        return node
+    }
 
-    //     // Handle both camelCase (frontend) and snake_case (backend)
-    //     return {
-    //         id: nodeData.id || nodeData._id,
-    //         text: nodeData.text || nodeData._text || nodeData.question,
-    //         description: nodeData.description || nodeData._description || null,
-    //         type: nodeData.type || 'QUESTION',
-    //     }
-    // }
+    // Private helper to handle next node in same tree
+    #handleNextNodeSameTree(response, currentTreeIndex, currentAssetIndex) {
+        const nextNode = useTreeStore
+            .getState()
+            .getNodeByTreeIndexAndNodeId(currentTreeIndex, response.next_node_id)
+
+        if (!nextNode) {
+            console.error('Next node not found in TreeStore') // TODO: sistemare
+            return
+        }
+
+        useSessionStore
+            .getState()
+            .setDevicePosition(currentAssetIndex, currentTreeIndex, response.next_node_id)
+        useSessionStore.getState().setCurrentNode(nextNode)
+    }
+
+    // Private helper to handle tree completion
+    #handleTreeCompleted(response, currentTreeIndex, currentAssetIndex) {
+        if (response.session_finished) {
+            console.log('Sessione terminata', response.results) // TODO: mostrare view risultati finali
+            useSessionStore.getState().setTestFinished(true)
+            return
+        }
+
+        const nextTreeIndex = currentTreeIndex + 1
+        const nextNode = this.#getFirstNodeOfTree(nextTreeIndex)
+
+        if (!nextNode) {
+            console.error('First node of next tree not found') // TODO: sistemare
+            return
+        }
+
+        useSessionStore.getState().setDevicePosition(currentAssetIndex, nextTreeIndex, 'node1')
+        useSessionStore.getState().setCurrentNode(nextNode)
+    }
 
     // Answer the current question and move to the next node
-    async sendAnswer() {}
+    async sendAnswer(answer) {
+        try {
+            const sessionId = useSessionStore.getState().sessionId
+            const currentTreeIndex = useSessionStore.getState().currentTreeIndex
+            const currentAssetIndex = useSessionStore.getState().currentAssetIndex
+
+            const response = await apiClient.post(`/session/${sessionId}/answer`, {
+                answer,
+            })
+
+            console.log('Answer response:', response)
+
+            if (response.tree_completed) {
+                this.#handleTreeCompleted(response, currentTreeIndex, currentAssetIndex)
+            } else {
+                this.#handleNextNodeSameTree(response, currentTreeIndex, currentAssetIndex)
+            }
+        } catch (error) {
+            console.error('Errore nel sending answer:', error) // TODO: mostrare messaggio di errore
+            throw error
+        }
+    }
 
     // Go back to a previous node and change answer
     async previousStep() {}
