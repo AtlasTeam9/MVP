@@ -48,6 +48,7 @@ class AnswerRequestSchema(BaseModel):
 
 class GoBackRequestSchema(BaseModel):
     target_node_id: str = Field(..., description="ID del nodo a cui tornare")
+    target_tree_index: int = Field(..., description="ID dell'albero a cui tornare")
     new_answer: bool = Field(..., description="Nuova risposta per il nodo target")
 
 

@@ -165,6 +165,7 @@ class SessionController:
         result = await self.go_back_use_case.execute(
             GoBackRequest(
                 session_id=session_id,
+                target_tree_index=body.target_tree_index,
                 target_node_id=body.target_node_id,
                 new_answer=body.new_answer,
             )
