@@ -16,11 +16,13 @@ from app.application.use_cases.session.delete_session import DeleteSessionUseCas
 from app.application.use_cases.session.export_results import ExportResultsUseCase
 from app.application.use_cases.session.export_session import ExportSessionUseCase
 from app.application.use_cases.session.go_back import GoBackUseCase
+from app.application.use_cases.session.modify_device import ModifyDeviceUseCase
 from app.domain.exceptions import InvalidSessionIdException
+from app.domain.factories.session_factory import SessionFactory
 from app.domain.services.exporters.csv_exporter import CsvExporter
 from app.domain.services.exporters.pdf_exporter import PdfExporter
 
-from ..shared_dependencies import get_session_service
+from ..shared_dependencies import get_session_factory, get_session_service
 
 
 def validate_session_id(session_id: str) -> str:
@@ -57,6 +59,13 @@ def get_export_results_use_case(service=Depends(get_session_service)) -> IExport
             "pdf": PdfExporter(),
         },
     )
+
+
+def get_modify_device_use_case(
+    session_service: ISessionService = Depends(get_session_service),
+    session_factory: SessionFactory = Depends(get_session_factory),
+) -> ModifyDeviceUseCase:
+    return ModifyDeviceUseCase(session_service, session_factory)
 
 
 def get_export_session_use_case(

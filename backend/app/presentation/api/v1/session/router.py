@@ -14,6 +14,7 @@ from app.application.interfaces.delete_session_use_case import IDeleteSessionUse
 from app.application.interfaces.export_results_use_case import IExportResultsUseCase
 from app.application.interfaces.export_session_use_case import IExportSessionUseCase
 from app.application.interfaces.go_back_use_case import IGoBackUseCase
+from app.application.interfaces.modify_device import IModifyDeviceUseCase
 from app.application.use_cases.session.create_session import (
     CreateSessionRequest,
 )
@@ -23,6 +24,7 @@ from app.application.use_cases.session.dtos.requests import (
     ExportResultsRequest,
     ExportSessionRequest,
     GoBackRequest,
+    ModifyDeviceRequest,
 )
 from app.domain.exceptions import InvalidDeviceFileException
 
@@ -33,6 +35,7 @@ from .dependencies import (
     get_export_results_use_case,
     get_export_session_use_case,
     get_go_back_use_case,
+    get_modify_device_use_case,
     validate_session_id,
 )
 from .schema import (
@@ -56,6 +59,7 @@ class SessionController:
     export_results_use_case: IExportResultsUseCase = Depends(get_export_results_use_case)
     export_session_use_case: IExportSessionUseCase = Depends(get_export_session_use_case)
     delete_session_use_case: IDeleteSessionUseCase = Depends(get_delete_session_use_case)
+    modify_device_use_case: IModifyDeviceUseCase = Depends(get_modify_device_use_case)
 
     @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
@@ -215,3 +219,16 @@ class SessionController:
         Rimuove la sessione dalla memoria e cancella il file JSON dal server.
         """
         await self.delete_session_use_case.execute(DeleteSessionRequest(session_id=session_id))
+
+    @router.post("/{session_id}/device/modify", status_code=200)
+    async def modify_device(
+        self, body: DeviceSchema, session_id: str = Depends(validate_session_id)
+    ) -> None:
+        """
+        Modifica il device della Sessione (usato prima dell'inizio del test)
+        """
+
+        # Chiamiamo il nostro caso d'uso passando l'id e i nuovi dati (convertiti in dizionario)
+        await self.modify_device_use_case.execute(
+            ModifyDeviceRequest(session_id=session_id, device_data=body.model_dump())
+        )
