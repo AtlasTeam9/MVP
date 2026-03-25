@@ -11,13 +11,17 @@ class CsvExporter:
     def filename(self) -> str:
         return "results.csv"
 
-    def export(self, results: dict[str, dict[str, str]], device_name: str) -> bytes:
+    def export(self, results: dict[str, str], device_name: str) -> bytes:
         output = io.StringIO()
         writer = csv.writer(output)
 
-        writer.writerow(["Device", "Asset ID", "Tree ID", "Result"])
-        for asset_id, trees in results.items():
-            for tree_id, result in trees.items():
-                writer.writerow([device_name, asset_id, tree_id, result])
+        writer.writerow([f"EN18031 Compliance Results - {device_name}"])
+        writer.writerow(["Device", device_name])
+        writer.writerow([])
+
+        writer.writerow(["Requirement", "Final Result"])
+
+        for tree, result in results.items():
+            writer.writerow([tree, result])
 
         return output.getvalue().encode("utf-8")

@@ -1,5 +1,5 @@
 """
-Unit tests per CsvExporter e PdfExporter.
+Unit tests per CsvExporter e PdfExporter aggiornati alla logica sintetica.
 """
 
 import csv
@@ -10,16 +10,8 @@ import pytest
 from app.domain.services.exporters.csv_exporter import CsvExporter
 from app.domain.services.exporters.pdf_exporter import PdfExporter
 
-SAMPLE_RESULTS = {
-    "ASSET_01": {
-        "ACM-1": "PASS",
-        "ACM-2": "NOT_APPLICABLE",
-    },
-    "ASSET_02": {
-        "ACM-1": "FAIL",
-    },
-}
-
+# Risultati già aggregati (Requisito -> Esito)
+SAMPLE_RESULTS = {"Autenticazione": "PASS", "Cifratura": "FAIL"}
 DEVICE_NAME = "Coffee Machine"
 
 
@@ -38,64 +30,57 @@ class TestCsvExporter:
         result = exporter.export(SAMPLE_RESULTS, DEVICE_NAME)
         assert isinstance(result, bytes)
 
-    def test_export_contains_header(self, exporter):
+    def test_export_structure(self, exporter):
+        """Verifica la struttura del CSV: intestazione, device e tabella."""
         result = exporter.export(SAMPLE_RESULTS, DEVICE_NAME)
         content = result.decode("utf-8")
-        reader = csv.reader(io.StringIO(content))
-        header = next(reader)
-        assert header == ["Device", "Asset ID", "Tree ID", "Result"]
+        lines = content.splitlines()
 
-    def test_export_contains_device_name(self, exporter):
-        result = exporter.export(SAMPLE_RESULTS, DEVICE_NAME)
-        content = result.decode("utf-8")
-        assert DEVICE_NAME in content
+        # Verifica righe descrittive iniziali
+        assert "EN18031 Compliance Results - Coffee Machine" in lines[0]
+        assert f"Device,{DEVICE_NAME}" in lines[1]
+        assert lines[2] == ""  # riga vuota di separazione
+
+        # Verifica header della tabella (riga 4)
+        reader = csv.reader(io.StringIO(lines[3]))
+        header = next(reader)
+        assert header == ["Requirement", "Final Result"]
 
     def test_export_contains_all_rows(self, exporter):
+        """Verifica che ci sia una riga per ogni requisito nel dizionario."""
         result = exporter.export(SAMPLE_RESULTS, DEVICE_NAME)
         content = result.decode("utf-8")
         reader = csv.reader(io.StringIO(content))
         rows = list(reader)
 
-        # 1 header + 3 righe di dati
-        assert len(rows) == 4
+        # Righe totali: 1(Title) + 1(Device) + 1(Empty) + 1(Header) + 2(Data) = 6
+        assert len(rows) == 6
 
     def test_export_row_values(self, exporter):
+        """Verifica i valori esatti nelle righe dei dati."""
         result = exporter.export(SAMPLE_RESULTS, DEVICE_NAME)
         content = result.decode("utf-8")
         reader = csv.reader(io.StringIO(content))
-        next(reader)  # skip header
         rows = list(reader)
 
-        asset_ids = {row[1] for row in rows}
-        tree_ids = {row[2] for row in rows}
-        results = {row[3] for row in rows}
+        # Saltiamo le prime 4 righe (metadata + header)
+        data_rows = rows[4:]
 
-        assert "ASSET_01" in asset_ids
-        assert "ASSET_02" in asset_ids
-        assert "ACM-1" in tree_ids
-        assert "ACM-2" in tree_ids
-        assert "PASS" in results
-        assert "FAIL" in results
-        assert "NOT_APPLICABLE" in results
+        # Creiamo un dizionario dai dati del CSV per il confronto
+        results_map = {row[0]: row[1] for row in data_rows}
+
+        assert results_map["Autenticazione"] == "PASS"
+        assert results_map["Cifratura"] == "FAIL"
 
     def test_export_empty_results(self, exporter):
+        """Verifica che con risultati vuoti stampi solo l'impalcatura del CSV."""
         result = exporter.export({}, DEVICE_NAME)
         content = result.decode("utf-8")
         reader = csv.reader(io.StringIO(content))
         rows = list(reader)
 
-        # solo header
-        assert len(rows) == 1
-
-    def test_export_asset_with_no_trees(self, exporter):
-        results = {"ASSET_01": {}}
-        result = exporter.export(results, DEVICE_NAME)
-        content = result.decode("utf-8")
-        reader = csv.reader(io.StringIO(content))
-        rows = list(reader)
-
-        # solo header, nessuna riga dati
-        assert len(rows) == 1
+        # 4 righe di intestazione/header, 0 righe dati
+        assert len(rows) == 4
 
 
 class TestPdfExporter:
@@ -119,15 +104,14 @@ class TestPdfExporter:
         assert result.startswith(b"%PDF")
 
     def test_export_empty_results(self, exporter):
-        """Verifica che non lanci eccezioni con risultati vuoti."""
+        """Verifica che non lanci eccezioni con risultati vuoti (stampa 'No results recorded')."""
         result = exporter.export({}, DEVICE_NAME)
         assert isinstance(result, bytes)
         assert result.startswith(b"%PDF")
 
     def test_export_many_results_no_crash(self, exporter):
-        """Verifica che il cambio pagina non causi crash."""
-        many_results = {
-            f"ASSET_{i:02d}": {f"TREE_{j:02d}": "PASS" for j in range(20)} for i in range(10)
-        }
+        """Verifica la gestione di molti requisiti (paginazione) senza crash."""
+        many_results = {f"REQUISITO_{i:03d}": "PASS" for i in range(100)}
         result = exporter.export(many_results, DEVICE_NAME)
         assert result.startswith(b"%PDF")
+        assert len(result) > 1000  # Verifica che il file abbia contenuto

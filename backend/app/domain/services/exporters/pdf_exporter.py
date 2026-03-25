@@ -31,7 +31,7 @@ class PdfExporter:
     def filename(self) -> str:
         return "results.pdf"
 
-    def export(self, results: dict[str, dict[str, str]], device_name: str) -> bytes:
+    def export(self, results: dict[str, str], device_name: str) -> bytes:
         buffer = io.BytesIO()
 
         doc = SimpleDocTemplate(
@@ -49,27 +49,35 @@ class PdfExporter:
         styles = getSampleStyleSheet()
         story = []
 
+        # Titolo del Documento
         title_style = styles["Title"]
         story.append(Paragraph(f"EN18031 Compliance Results - {device_name}", title_style))
         story.append(Spacer(1, 0.5 * cm))
 
-        for asset_id, trees in results.items():
-            heading_style = styles["Heading2"]
-            story.append(Paragraph(f"Asset: {asset_id}", heading_style))
-            story.append(Spacer(1, 0.2 * cm))
+        # Descrizione introduttiva
+        story.append(Paragraph("Global Compliance Summary Report", styles["Heading2"]))
+        story.append(
+            Paragraph(
+                "The following table summarizes the compliance status of each requirement for the entire device.",
+                styles["Normal"],
+            )
+        )
+        story.append(Spacer(1, 0.6 * cm))
 
-            if not trees:
-                story.append(Paragraph("No results recorded.", styles["Normal"]))
-                story.append(Spacer(1, 0.4 * cm))
-                continue
+        if not results:
+            story.append(Paragraph("No results recorded.", styles["Normal"]))
+        else:
+            # Prepariamo i dati della tabella unica
+            table_data = [["Requirement / Tree ID", "Final Result"]]
 
-            table_data = [["Tree ID", "Result"]]
-            for tree_id, result in trees.items():
+            for tree_id, result in results.items():
                 table_data.append([tree_id, result])
 
+            # Larghezza colonne (distribuzione bilanciata per A4)
             col_widths = [11 * cm, 5 * cm]
             table = Table(table_data, colWidths=col_widths)
 
+            # Definizione dello stile della tabella
             table_style = [
                 ("BACKGROUND", (0, 0), (-1, 0), HEADER_BG),
                 ("TEXTCOLOR", (0, 0), (-1, 0), HEADER_FG),
@@ -89,18 +97,19 @@ class PdfExporter:
                 ("ALIGN", (1, 1), (1, -1), "CENTER"),
             ]
 
-            # Righe alternate + colore risultato
-            for row_idx, (tree_id, result) in enumerate(trees.items(), start=1):
+            # Logica per righe alternate e colori degli stati
+            for row_idx, (tree_id, result) in enumerate(results.items(), start=1):
+                # Sfondo alternato
                 bg = ROW_ALT_BG if row_idx % 2 == 0 else ROW_BG
                 table_style.append(("BACKGROUND", (0, row_idx), (-1, row_idx), bg))
 
+                # Colore del testo in base all'esito (PASS=verde, FAIL=rosso, ecc.)
                 result_color = RESULT_COLORS.get(result, NA_FG)
                 table_style.append(("TEXTCOLOR", (1, row_idx), (1, row_idx), result_color))
                 table_style.append(("FONTNAME", (1, row_idx), (1, row_idx), "Helvetica-Bold"))
 
             table.setStyle(TableStyle(table_style))
             story.append(table)
-            story.append(Spacer(1, 0.6 * cm))
 
         doc.build(story)
         buffer.seek(0)
