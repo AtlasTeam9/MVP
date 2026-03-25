@@ -16,11 +16,11 @@ class AnswerUseCase(IAnswerUseCase):
             raise SessionNotFoundException(session_id=request.session_id)
 
         answer_result = session.answer(request.answer)
-
+        current_node = session.current_node
         self._session_service.save_session(session=session)
 
         return AnswerResponse(
-            next_node_id=answer_result.next_node.get_id if answer_result.next_node else None,
+            next_node_id=current_node.get_id if current_node else None,
             tree_completed=answer_result.tree_completed,
             tree_result=answer_result.tree_result.value if answer_result.tree_result else None,
             session_finished=answer_result.session_finished,
