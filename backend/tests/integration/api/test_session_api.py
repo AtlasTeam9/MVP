@@ -239,8 +239,8 @@ class TestAnswer:
         data = response.json()
         assert data["session_finished"] is True
         assert data["results"] is not None
-        assert "ASSET_01" in data["results"]
-        assert "ASSET_02" in data["results"]
+        assert "tree_01" in data["results"]
+        assert "tree_02" in data["results"]
 
     @pytest.mark.integration
     async def test_answer_skips_dependent_trees_on_na(self, client, mock_storage, device_file):
