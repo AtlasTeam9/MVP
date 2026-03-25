@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
 
-class GetTreesSchema(BaseModel):
+class TreesSchema(BaseModel):
     id: str = Field(..., description="Id dell'albero")
     title: str = Field(..., description="Titolo dell'albero")
     dependencies: list[str] = Field(..., description="Dipendenze dell'albero")
