@@ -15,11 +15,11 @@ class CsvExporter:
         output = io.StringIO()
         writer = csv.writer(output)
 
-        writer.writerow(["REPORT SINTETICO DI CONFORMITA"])
+        writer.writerow([f"EN18031 Compliance Results - {device_name}"])
         writer.writerow(["Device", device_name])
         writer.writerow([])
 
-        writer.writerow(["ID Requisito", "Esito Finale"])
+        writer.writerow(["Requirement", "Final Result"])
 
         for tree, result in results.items():
             writer.writerow([tree, result])

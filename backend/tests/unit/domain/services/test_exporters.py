@@ -37,14 +37,14 @@ class TestCsvExporter:
         lines = content.splitlines()
 
         # Verifica righe descrittive iniziali
-        assert "REPORT SINTETICO DI CONFORMITA" in lines[0]
+        assert "EN18031 Compliance Results - Coffee Machine" in lines[0]
         assert f"Device,{DEVICE_NAME}" in lines[1]
         assert lines[2] == ""  # riga vuota di separazione
 
         # Verifica header della tabella (riga 4)
         reader = csv.reader(io.StringIO(lines[3]))
         header = next(reader)
-        assert header == ["ID Requisito", "Esito Finale"]
+        assert header == ["Requirement", "Final Result"]
 
     def test_export_contains_all_rows(self, exporter):
         """Verifica che ci sia una riga per ogni requisito nel dizionario."""
