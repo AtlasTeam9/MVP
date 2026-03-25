@@ -95,7 +95,7 @@ async def create_session(client, mock_storage, device_file) -> str:
     return response.json()["session_id"]
 
 
-class TestCreateSessionWithFile:
+class TestCreateSession:
     @pytest.mark.integration
     async def test_create_session_success(self, client, mock_storage, device_file):
         """Crea una sessione con file JSON valido."""
@@ -278,11 +278,11 @@ class TestGoBack:
 
         # Il nodo Q1 deve essere nello stack — recuperiamo il suo id
         session = AppState.sessions[session_id]
-        node1_id = session.state.navigation_stack[0][0].get_id
+        node1_id = session.state.navigation_stack[0][1].get_id
 
         response = await client.post(
             f"/api/v1/session/{session_id}/go_back",
-            json={"target_node_id": node1_id, "new_answer": True},
+            json={"target_node_id": node1_id, "target_tree_index": 0, "new_answer": True},
         )
 
         assert response.status_code == 200
@@ -297,7 +297,7 @@ class TestGoBack:
 
         response = await client.post(
             f"/api/v1/session/{session_id}/go_back",
-            json={"target_node_id": "nodo_inesistente", "new_answer": True},
+            json={"target_node_id": "nodo_inesistente", "target_tree_index": 0, "new_answer": True},
         )
 
         assert response.status_code == 200

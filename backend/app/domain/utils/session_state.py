@@ -7,22 +7,26 @@ class SessionState:
         self.current_tree_index: int = 0
         self.current_node: Node | None = None
         self.is_finished = False
-        self.navigation_stack: list[tuple[Node, bool]] = []
+        self.navigation_stack: list[tuple[int, Node, bool]] = []  # indice_albero, Nodo, riposta
 
     @property
     def current_node_id(self) -> str:
         return self.current_node.get_id if self.current_node else ""
 
     def push(self, node: Node, answer: bool) -> None:
-        self.navigation_stack.append((node, answer))
+        self.navigation_stack.append((self.current_tree_index, node, answer))
 
     def pop_until(self, target_node: Node) -> bool:
         """
         Rimuove dallo stack tutte le entry dal fondo fino a target_node (incluso).
-        Restituisce True se il nodo è stato trovato, False se non era nello stack.
+        Ripristina anche l'albero corrente se torniamo a un albero precedente.
         """
         for i in range(len(self.navigation_stack) - 1, -1, -1):
-            if self.navigation_stack[i][0] is target_node:
+            tree_index, node, _ = self.navigation_stack[i]
+            if node is target_node:
+                # Ripristiniamo l'indice dell'albero a quello del nodo target
+                self.current_tree_index = tree_index
+                self.is_finished = False
                 self.navigation_stack = self.navigation_stack[:i]
                 return True
         return False
@@ -33,7 +37,6 @@ class SessionState:
     def next_tree(self) -> None:
         self.current_tree_index += 1
         self.current_node = None
-        self.clear_stack()
 
     def next_asset(self) -> None:
         self.current_asset_index += 1

@@ -114,11 +114,16 @@ class SessionNavigator:
     def navigation_history(self) -> list[dict]:
         """
         Restituisce la lista dei nodi già risposti nel tree corrente,
-        utile al frontend per costruire la breadcrumb / pulsanti "torna indietro".
         """
         return [
-            {"question": node.get_question, "answer": answer}
-            for node, answer in self.state.navigation_stack
+            {
+                "tree_index": tree_index,
+                "node_id": node.get_id,
+                "question": node.get_question,
+                "answer": answer,
+            }
+            # Ora non usiamo più l'underscore, ci serve anche il tree_index!
+            for tree_index, node, answer in self.state.navigation_stack
         ]
 
     def _advance_tree(self) -> None:

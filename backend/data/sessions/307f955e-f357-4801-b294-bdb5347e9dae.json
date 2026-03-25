@@ -1,5 +1,9 @@
 {
+<<<<<<<< HEAD:backend/data/sessions/307f955e-f357-4801-b294-bdb5347e9dae.json
   "session_id": "307f955e-f357-4801-b294-bdb5347e9dae",
+========
+  "session_id": "28eda48e-8cfd-4043-8a66-a1e9790e0e23",
+>>>>>>>> main:backend/data/sessions/28eda48e-8cfd-4043-8a66-a1e9790e0e23.json
   "device": {
     "device_name": "Coffee Machine",
     "assets": [
@@ -105,5 +109,9 @@
     "ASSET_11": {}
   },
   "is_finished": false,
+<<<<<<<< HEAD:backend/data/sessions/307f955e-f357-4801-b294-bdb5347e9dae.json
   "saved_at": "2026-03-25T14:08:41.046215"
+========
+  "saved_at": "2026-03-25T15:00:48.943441"
+>>>>>>>> main:backend/data/sessions/28eda48e-8cfd-4043-8a66-a1e9790e0e23.json
 }
