@@ -204,7 +204,9 @@ class SessionService {
             })
 
             console.log('Answer response:', response)
-
+            // TODO:"Andrea" il backend se un albero era NA o FAIL saltava tutti gli alberi,
+            // TODO: ma il frontend non lo capiva perchè non c'erano abbastanza informazioni
+            // TODO: ora la risposta ha l'indice dell'albero e dell'asset a cui si è
             if (response.tree_completed) {
                 this.#handleTreeCompleted(response, currentTreeIndex, currentAssetIndex)
             } else {
@@ -217,19 +219,19 @@ class SessionService {
     }
 
     // Go back to a previous node and change answer
-    async previousStep() {}
+    async previousStep() { }
 
     // Go forward in the future history (if user went back previously)
-    async forwardStep() {}
+    async forwardStep() { }
 
     // Modify a previous answer by going back and re-answering
-    async modifyPreviousAnswer() {}
+    async modifyPreviousAnswer() { }
 
     // Delete session and clear stores
-    async saveAndExit() {}
+    async saveAndExit() { }
 
     // Fetch final results after session is finished
-    async fetchFinalResults() {}
+    async fetchFinalResults() { }
 }
 
 export default new SessionService() // Esportato come Singleton
