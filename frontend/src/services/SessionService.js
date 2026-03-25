@@ -81,6 +81,11 @@ class SessionService {
 
         this.#setCurrentNodeFromResponse(response, position)
 
+        console.log(
+            'Sessione salvata nel SessionStore, device salvato nel DeviceStore, posizione inizializzata: ',
+            position
+        ) // TODO: eliminare
+
         return { sessionId, device: deviceObj, position }
     }
 
@@ -93,16 +98,6 @@ class SessionService {
             // API call to create a session with the uploaded file
             const response = await apiClient.post('/session/create_session_with_file', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
-            })
-
-            // TODO: eliminare
-            console.log('createSessionWithFile - Struttura risposta:', {
-                sessionId: response.session_id,
-                position: response.position,
-                device: response.device
-                    ? { name: response.device.device_name, assets: response.device.assets?.length }
-                    : null,
-                currentNode: response.current_node,
             })
 
             return this.#initializeSessionFromResponse(response)
@@ -120,16 +115,6 @@ class SessionService {
 
             // API call to create a session with the device object directly
             const response = await apiClient.post('/session/create_session', devicePayload)
-
-            // TODO: eliminare
-            console.log('createSessionWithDevice - Struttura risposta:', {
-                sessionId: response.session_id,
-                position: response.position,
-                device: response.device
-                    ? { name: response.device.device_name, assets: response.device.assets?.length }
-                    : null,
-                currentNode: response.current_node,
-            })
 
             return this.#initializeSessionFromResponse(response)
         } catch (error) {
@@ -156,10 +141,12 @@ class SessionService {
     }
 
     // Private helper to handle next node in same tree
-    #handleNextNodeSameTree(response, currentTreeIndex, currentAssetIndex) {
+    #handleNextNodeSameTree(response) {
+        const { current_asset_index, current_tree_index, next_node_id } = response
+
         const nextNode = useTreeStore
             .getState()
-            .getNodeByTreeIndexAndNodeId(currentTreeIndex, response.next_node_id)
+            .getNodeByTreeIndexAndNodeId(current_tree_index, next_node_id)
 
         if (!nextNode) {
             console.error('Next node not found in TreeStore') // TODO: sistemare
@@ -168,49 +155,61 @@ class SessionService {
 
         useSessionStore
             .getState()
-            .setDevicePosition(currentAssetIndex, currentTreeIndex, response.next_node_id)
+            .setDevicePosition(current_asset_index, current_tree_index, next_node_id)
+        useSessionStore.getState().setCurrentNode(nextNode)
+    }
+
+    // Private helper to navigate to a node and update device position
+    #navigateToNode(treeIndex, assetIndex, nodeId) {
+        const nextNode = this.#getFirstNodeOfTree(treeIndex)
+        if (!nextNode) {
+            console.error('First node of tree not found') // TODO: sistemare
+            return
+        }
+        useSessionStore.getState().setDevicePosition(assetIndex, treeIndex, nodeId)
         useSessionStore.getState().setCurrentNode(nextNode)
     }
 
     // Private helper to handle tree completion
-    #handleTreeCompleted(response, currentTreeIndex, currentAssetIndex) {
+    #handleTreeCompleted(response, previousAssetIndex) {
         if (response.session_finished) {
             console.log('Sessione terminata', response.results) // TODO: mostrare view risultati finali
             useSessionStore.getState().setTestFinished(true)
             return
         }
 
-        const nextTreeIndex = currentTreeIndex + 1
-        const nextNode = this.#getFirstNodeOfTree(nextTreeIndex)
+        const { current_asset_index, current_tree_index, next_node_id } = response
+        const assetChanged = current_asset_index !== previousAssetIndex
+        const nodeId = assetChanged ? next_node_id : 'node1'
 
-        if (!nextNode) {
-            console.error('First node of next tree not found') // TODO: sistemare
-            return
+        // TODO: eliminare
+        if (assetChanged) {
+            console.log(
+                `Asset cambiato: da ${previousAssetIndex} a ${current_asset_index},
+                saltati gli alberi intermedi`
+            )
         }
 
-        useSessionStore.getState().setDevicePosition(currentAssetIndex, nextTreeIndex, 'node1')
-        useSessionStore.getState().setCurrentNode(nextNode)
+        this.#navigateToNode(current_tree_index, current_asset_index, nodeId)
     }
 
     // Answer the current question and move to the next node
     async sendAnswer(answer) {
         try {
             const sessionId = useSessionStore.getState().sessionId
-            const currentTreeIndex = useSessionStore.getState().currentTreeIndex
             const currentAssetIndex = useSessionStore.getState().currentAssetIndex
 
             const response = await apiClient.post(`/session/${sessionId}/answer`, {
                 answer,
             })
 
-            console.log('Answer response:', response)
-            // TODO:"Andrea" il backend se un albero era NA o FAIL saltava tutti gli alberi,
-            // TODO: ma il frontend non lo capiva perchè non c'erano abbastanza informazioni
-            // TODO: ora la risposta ha l'indice dell'albero e dell'asset a cui si è
+            // Backend provides current position information:
+            // current_asset_index, current_tree_index, next_node_id
+            // This allows proper navigation when trees are skipped due to NA/FAIL results
             if (response.tree_completed) {
-                this.#handleTreeCompleted(response, currentTreeIndex, currentAssetIndex)
+                this.#handleTreeCompleted(response, currentAssetIndex)
             } else {
-                this.#handleNextNodeSameTree(response, currentTreeIndex, currentAssetIndex)
+                this.#handleNextNodeSameTree(response)
             }
         } catch (error) {
             console.error('Errore nel sending answer:', error) // TODO: mostrare messaggio di errore
@@ -219,19 +218,19 @@ class SessionService {
     }
 
     // Go back to a previous node and change answer
-    async previousStep() { }
+    async previousStep() {}
 
     // Go forward in the future history (if user went back previously)
-    async forwardStep() { }
+    async forwardStep() {}
 
     // Modify a previous answer by going back and re-answering
-    async modifyPreviousAnswer() { }
+    async modifyPreviousAnswer() {}
 
     // Delete session and clear stores
-    async saveAndExit() { }
+    async saveAndExit() {}
 
     // Fetch final results after session is finished
-    async fetchFinalResults() { }
+    async fetchFinalResults() {}
 }
 
 export default new SessionService() // Esportato come Singleton

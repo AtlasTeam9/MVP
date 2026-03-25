@@ -6,8 +6,6 @@ import { useSessionHandlers } from '../hooks/sessionHooks/useSessionHandlers'
 import { CompletionScreen } from '../components/sessionRunner/CompletionScreen'
 import { SessionContentAdapter } from '../components/sessionRunner/SessionContentAdapter'
 
-import { useEffect } from 'react'
-
 // Main view component for the session runner, which manages the session state
 // and renders the appropriate content based on the current state of the session
 export default function SessionRunnerView() {
@@ -15,11 +13,6 @@ export default function SessionRunnerView() {
     const state = useSessionState()
     useSessionRedirect(state.sessionId, device)
     const handlers = useSessionHandlers()
-
-    // TODO: per debug, da rimuovere
-    useEffect(() => {
-        console.log('Store state:', { sessionId: state.sessionId, currentNode: state.currentNode })
-    }, [state])
 
     if (state.isTestFinished) return <CompletionScreen onHomeClick={handlers.handleHomeClick} />
 
