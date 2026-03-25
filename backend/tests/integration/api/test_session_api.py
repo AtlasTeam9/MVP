@@ -505,9 +505,9 @@ class TestModifyDevice:
         assert response.status_code == 200
 
         session = AppState.sessions[session_id]
-        assert session.get_device.get_name == "Test Device"
-        assert len(session.get_device.get_assets) == 2
-        assert session.get_device.get_assets[0].get_id == "ASSET_01"
+        assert session.get_device.get_name == "Dispositivo Aggiornato"
+        assert len(session.get_device.get_assets) == 1
+        assert session.get_device.get_assets[0].get_id == "ASSET_03"
 
         assert mock_storage.save_session.call_count > calls_before
 
