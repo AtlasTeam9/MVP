@@ -58,6 +58,17 @@ class SessionService {
                 position.current_node_id
             )
 
+        // If the API returns the current node data, use it; otherwise, set it from position
+        if (response.current_node) {
+            useSessionStore.getState().setCurrentNode(response.current_node)
+        } else {
+            // Set node with just the ID - the view will need to fetch details or have them cached
+            useSessionStore.getState().setCurrentNode({
+                id: position.current_node_id,
+                text: 'Loading question...',
+            })
+        }
+
         return { sessionId, device: deviceObj, position }
     }
 
@@ -84,7 +95,6 @@ class SessionService {
     async createSessionWithDevice(device) {
         try {
             const devicePayload = this.#convertDeviceToPayload(device)
-            console.log('Device Payload being sent:', JSON.stringify(devicePayload, null, 2))
 
             // API call to create a session with the device object directly
             const response = await apiClient.post('/session/create_session', devicePayload)
@@ -114,36 +124,36 @@ class SessionService {
         // TODO: Validazione file JSON e popolamento dello store
     }
 
-    async sendAnswer(choice) {
-        console.log(`Risposta inviata: ${choice}`)
-        useSessionStore.getState().selectAnswer(choice) // Aggiorna lo store
-        // TODO: Chiamata API per inviare la risposta e ottenere il prossimo nodo
-    }
+    // Helper to create a Node object from API response data
+    // #createNodeFromResponse(nodeData) {
+    //     if (!nodeData) return null
 
-    async previousStep() {
-        console.log('Torno al passo precedente')
-        // TODO: Logica per recuperare il nodo precedente dalla cronologia o dall'API
-    }
+    //     // Handle both camelCase (frontend) and snake_case (backend)
+    //     return {
+    //         id: nodeData.id || nodeData._id,
+    //         text: nodeData.text || nodeData._text || nodeData.question,
+    //         description: nodeData.description || nodeData._description || null,
+    //         type: nodeData.type || 'QUESTION',
+    //     }
+    // }
 
-    async forwardStep() {
-        console.log('Vado al passo successivo (se già risposto)')
-        // TODO: Logica per navigare in avanti nella futureHistory
-    }
+    // Answer the current question and move to the next node
+    async sendAnswer() {}
 
-    async modifyPreviousAnswer(nodeId, newChoice) {
-        console.log(`Modifico risposta per nodo ${nodeId} in ${newChoice}`)
-        // TODO: Aggiornare pastHistory troncando il futuro e inviare all'API
-    }
+    // Go back to a previous node and change answer
+    async previousStep() {}
 
-    async saveAndExit() {
-        console.log('Salvataggio e uscita')
-        // TODO: Chiamata API per salvare lo stato persistente
-    }
+    // Go forward in the future history (if user went back previously)
+    async forwardStep() {}
 
-    async fetchFinalResults() {
-        console.log('Recupero risultati finali')
-        // TODO: Recuperare i risultati e chiamare setResults() nello store
-    }
+    // Modify a previous answer by going back and re-answering
+    async modifyPreviousAnswer() {}
+
+    // Delete session and clear stores
+    async saveAndExit() {}
+
+    // Fetch final results after session is finished
+    async fetchFinalResults() {}
 }
 
 export default new SessionService() // Esportato come Singleton

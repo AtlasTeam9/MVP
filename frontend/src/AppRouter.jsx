@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Guard from './components/common/Guard'
 import HomeView from './pages/HomeView'
@@ -7,16 +7,32 @@ import DeviceAssetManagementView from './pages/DeviceAssetManagementView'
 import AssetFormView from './pages/AssetFormView'
 import DeviceSummaryView from './pages/DeviceSummaryView'
 import SessionRunnerView from './pages/SessionRunnerView'
+import TreeService from './services/TreeService'
 import styles from './AppRouter.module.css'
 
 // Route configuration
 const ROUTES = [
     { path: '/', view: <HomeView />, isProtected: false },
     { path: '/device/new', view: <DeviceFormView />, isProtected: false },
-    { path: '/device/assets', view: <DeviceAssetManagementView />, isProtected: true, requiresSessionId: false },
+    {
+        path: '/device/assets',
+        view: <DeviceAssetManagementView />,
+        isProtected: true,
+        requiresSessionId: false,
+    },
     { path: '/asset/new', view: <AssetFormView />, isProtected: true, requiresSessionId: false },
-    { path: '/device/summary', view: <DeviceSummaryView />, isProtected: true, requiresSessionId: true },
-    { path: '/session/runner', view: <SessionRunnerView />, isProtected: true, requiresSessionId: true },
+    {
+        path: '/device/summary',
+        view: <DeviceSummaryView />,
+        isProtected: true,
+        requiresSessionId: true,
+    },
+    {
+        path: '/session/test',
+        view: <SessionRunnerView />,
+        isProtected: true,
+        requiresSessionId: true,
+    },
 ]
 
 // Function to build a Route element from a route configuration
@@ -32,6 +48,12 @@ const buildRoute = (route, index) => {
 
 // Main App Router component
 export default function AppRouter() {
+    useEffect(() => {
+        TreeService.loadTrees().catch(
+            (error) => console.error('Errore nel caricamento dei trees:', error) // TODO: sistemare
+        )
+    }, [])
+
     return (
         <BrowserRouter>
             <div className={styles.waveLeft} aria-hidden="true" />

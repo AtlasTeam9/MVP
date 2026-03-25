@@ -10,13 +10,10 @@ export function DeviceMainActions({ device }) {
     return (
         <>
             <div className={styles.mainActions}>
-                <button
-                    onClick={() => setShowDeviceInfo(true)}
-                    className={styles.btnPrimary}
-                >
+                <button onClick={() => setShowDeviceInfo(true)} className={styles.btnPrimary}>
                     Show device details
                 </button>
-                <button onClick={() => navigate('/device/test')} className={styles.btnPrimary}>
+                <button onClick={() => navigate('/session/test')} className={styles.btnPrimary}>
                     START TEST
                 </button>
             </div>

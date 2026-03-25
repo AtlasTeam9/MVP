@@ -1,63 +1,27 @@
 import React from 'react'
-import SessionService from '../services/SessionService'
-import useSessionStore from '../store/SessionStore'
-import styles from './SessionRunnerView.module.css' // TODO: da creare
+import { useCurrentDevice } from '../services/DeviceService'
+import { useSessionState } from '../hooks/sessionHooks/useSessionState'
+import { useSessionRedirect } from '../hooks/sessionHooks/useSessionRedirect'
+import { useSessionHandlers } from '../hooks/sessionHooks/useSessionHandlers'
+import { CompletionScreen } from '../components/sessionRunner/CompletionScreen'
+import { SessionContentAdapter } from '../components/sessionRunner/SessionContentAdapter'
 
+import { useEffect } from 'react'
+
+// Main view component for the session runner, which manages the session state
+// and renders the appropriate content based on the current state of the session
 export default function SessionRunnerView() {
-    // Leggiamo lo stato attuale dallo store (es. il nodo corrente/domanda)
-    const currentNode = useSessionStore((state) => state.currentNode)
+    const device = useCurrentDevice()
+    const state = useSessionState()
+    useSessionRedirect(state.sessionId, device)
+    const handlers = useSessionHandlers()
 
-    // --- Metodi definiti nell'UML ---
+    // TODO: per debug, da rimuovere
+    useEffect(() => {
+        console.log('Store state:', { sessionId: state.sessionId, currentNode: state.currentNode })
+    }, [state])
 
-    const handleYesClick = () => {
-        SessionService.sendAnswer(true)
-    }
+    if (state.isTestFinished) return <CompletionScreen onHomeClick={handlers.handleHomeClick} />
 
-    const handleNoClick = () => {
-        SessionService.sendAnswer(false)
-    }
-
-    const handleBackClick = () => {
-        SessionService.previousStep()
-    }
-
-    const handleForwardClick = () => {
-        SessionService.forwardStep()
-    }
-
-    const handleSaveAndExitClick = () => {
-        SessionService.saveAndExit()
-    }
-
-    // Corrisponde al metodo + render(): JSX.Element
-    return (
-        <div className={styles.container}>
-            <header className={styles.header}>
-                <h2>Sessione in corso</h2>
-                <button onClick={handleSaveAndExitClick} className={styles.btnExit}>
-                    Salva ed Esci
-                </button>
-            </header>
-
-            <main className={styles.questionContainer}>
-                {/* Mostriamo il testo del nodo se esiste, altrimenti un fallback */}
-                <h3>{currentNode ? currentNode.text : 'Caricamento domanda...'}</h3>
-                {currentNode?.description && <p>{currentNode.description}</p>}
-
-                <div className={styles.answerButtons}>
-                    <button onClick={handleYesClick} className={styles.btnYes}>
-                        SI
-                    </button>
-                    <button onClick={handleNoClick} className={styles.btnNo}>
-                        NO
-                    </button>
-                </div>
-            </main>
-
-            <footer className={styles.navigation}>
-                <button onClick={handleBackClick}>&larr; Indietro</button>
-                <button onClick={handleForwardClick}>Avanti &rarr;</button>
-            </footer>
-        </div>
-    )
+    return <SessionContentAdapter currentDevice={device} state={state} handlers={handlers} />
 }
