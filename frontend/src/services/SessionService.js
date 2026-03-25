@@ -174,8 +174,6 @@ class SessionService {
     // Private helper to handle tree completion
     #handleTreeCompleted(response, previousAssetIndex) {
         if (response.session_finished) {
-            console.log('Risposta finale: ', response) // TODO: eliminare
-
             // Transform backend results to RequirementResult format and save to store
             const transformedResults = this.#transformResultsToRequirementResults(response.results)
             useResultStore.getState().setResults(transformedResults)
@@ -200,25 +198,15 @@ class SessionService {
 
     // Private helper to transform backend results into RequirementResult format
     #transformResultsToRequirementResults(backendResults) {
-        // backendResults structure: {assetId: {treeId: status}}
-        const trees = useTreeStore.getState().trees
+        // backendResults structure: {requirementId: status}
+        // Example: {"ACM-1": "PASS", "ACM-2": "FAIL", ...}
         const results = []
 
-        // Iterate through all assets and their results
-        for (const [, treeResults] of Object.entries(backendResults)) {
-            for (const [treeId, status] of Object.entries(treeResults)) {
-                // Find the tree with this treeId
-                const tree = trees.find((tre) => tre.id === treeId)
-
-                if (tree) {
-                    results.push({
-                        code: treeId,
-                        name: tree.title,
-                        status: status,
-                        description: null,
-                    })
-                }
-            }
+        for (const [code, status] of Object.entries(backendResults)) {
+            results.push({
+                code: code,
+                status: status,
+            })
         }
 
         return results

@@ -22,25 +22,11 @@
 .headerSection {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
 }
 
-.codeAndName {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    flex: 1;
-}
-
 .code {
-    font-size: 0.875rem;
-    color: #666;
-    font-weight: 500;
-    font-family: monospace;
-}
-
-.name {
     margin: 0;
     font-size: 1.125rem;
     color: #333;
@@ -73,13 +59,6 @@
 .statusNotApplicable {
     background-color: #e2e3e5;
     color: #383d41;
-}
-
-.description {
-    margin: 0;
-    color: #666;
-    font-size: 0.95rem;
-    line-height: 1.5;
 }
 
 .actions {
