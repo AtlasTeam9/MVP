@@ -2,6 +2,7 @@
 import useSessionStore from '../store/SessionStore'
 import useDeviceStore from '../store/DeviceStore'
 import useTreeStore from '../store/TreeStore'
+import useResultStore from '../store/ResultStore'
 import apiClient from '../infrastructure/api/AxiosApiClient'
 import Device from '../domain/Device'
 import Asset from '../domain/Asset'
@@ -173,7 +174,11 @@ class SessionService {
     // Private helper to handle tree completion
     #handleTreeCompleted(response, previousAssetIndex) {
         if (response.session_finished) {
-            console.log('Sessione terminata', response.results) // TODO: mostrare view risultati finali
+            console.log('Risposta finale: ', response) // TODO: eliminare
+
+            // Transform backend results to RequirementResult format and save to store
+            const transformedResults = this.#transformResultsToRequirementResults(response.results)
+            useResultStore.getState().setResults(transformedResults)
             useSessionStore.getState().setTestFinished(true)
             return
         }
@@ -191,6 +196,32 @@ class SessionService {
         }
 
         this.#navigateToNode(current_tree_index, current_asset_index, nodeId)
+    }
+
+    // Private helper to transform backend results into RequirementResult format
+    #transformResultsToRequirementResults(backendResults) {
+        // backendResults structure: {assetId: {treeId: status}}
+        const trees = useTreeStore.getState().trees
+        const results = []
+
+        // Iterate through all assets and their results
+        for (const [, treeResults] of Object.entries(backendResults)) {
+            for (const [treeId, status] of Object.entries(treeResults)) {
+                // Find the tree with this treeId
+                const tree = trees.find((tre) => tre.id === treeId)
+
+                if (tree) {
+                    results.push({
+                        code: treeId,
+                        name: tree.title,
+                        status: status,
+                        description: null,
+                    })
+                }
+            }
+        }
+
+        return results
     }
 
     // Answer the current question and move to the next node

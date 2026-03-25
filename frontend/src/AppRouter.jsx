@@ -7,6 +7,7 @@ import DeviceAssetManagementView from './pages/DeviceAssetManagementView'
 import AssetFormView from './pages/AssetFormView'
 import DeviceSummaryView from './pages/DeviceSummaryView'
 import SessionRunnerView from './pages/SessionRunnerView'
+import ResultView from './pages/ResultView'
 import TreeService from './services/TreeService'
 import styles from './AppRouter.module.css'
 
@@ -30,6 +31,12 @@ const ROUTES = [
     {
         path: '/session/test',
         view: <SessionRunnerView />,
+        isProtected: true,
+        requiresSessionId: true,
+    },
+    {
+        path: '/results',
+        view: <ResultView />,
         isProtected: true,
         requiresSessionId: true,
     },
