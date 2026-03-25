@@ -228,7 +228,6 @@ class SessionController:
         Modifica il device della Sessione (usato prima dell'inizio del test)
         """
 
-        # Chiamiamo il nostro caso d'uso passando l'id e i nuovi dati (convertiti in dizionario)
         await self.modify_device_use_case.execute(
             ModifyDeviceRequest(session_id=session_id, device_data=body.model_dump())
         )
