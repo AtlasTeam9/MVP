@@ -12,16 +12,15 @@ class TestGetTreesUseCase:
         use_case = GetTreesUseCase(sample_trees_objects)
 
         result = await use_case.execute()
+        trees = result.trees
+        assert len(trees) == 2
 
-        assert len(result) == 2
+        assert trees[0].id == "tree_01"
+        assert trees[0].title == "Test Tree 1"
+        assert trees[0].dependencies == []
+        assert "node1" in trees[0].nodes
 
-        assert result[0]["id"] == "tree_01"
-        assert result[0]["title"] == "Test Tree 1"
-        assert result[0]["dependencies"] == []
-        assert "node1" in result[0]["nodes"]
-        assert result[0]["nodes"]["node1"]["question"] == "Q1?"
-
-        assert result[1]["id"] == "tree_02"
-        assert result[1]["title"] == "Test Tree 2"
-        assert result[1]["dependencies"] == ["tree_01"]
-        assert result[1]["nodes"] == {"node3": {"question": "Q3?"}}
+        assert trees[1].id == "tree_02"
+        assert trees[1].title == "Test Tree 2"
+        assert trees[1].dependencies == ["tree_01"]
+        assert trees[1].nodes == {"node3": {"question": "Q3?"}}

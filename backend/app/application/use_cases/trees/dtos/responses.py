@@ -11,4 +11,4 @@ class TreeResponse:
 
 @dataclass
 class GetTreesResponse:
-    list[TreeResponse]
+    trees: list[TreeResponse]

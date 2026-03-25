@@ -406,9 +406,8 @@ class TestExportResults:
         )
 
         content = response.content.decode("utf-8")
-        assert "Device" in content
-        assert "Asset ID" in content
-        assert "Test Device" in content
+        assert "ID Requisito" in content
+        assert "Esito Finale" in content
 
     @pytest.mark.integration
     async def test_export_results_session_not_found(self, client, mock_storage):
