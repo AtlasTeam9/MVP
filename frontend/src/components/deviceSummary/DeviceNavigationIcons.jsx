@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import HomeIcon from '../common/HomeIcon'
 import styles from '../../pages/DeviceSummaryView.module.css'
 
 export function DeviceNavigationIcons() {
@@ -13,9 +14,7 @@ export function DeviceNavigationIcons() {
             >
                 ✏️
             </button>
-            <button className={styles.iconBtn} onClick={() => navigate('/')} title="Home">
-                🏠
-            </button>
+            <HomeIcon />
         </div>
     )
 }

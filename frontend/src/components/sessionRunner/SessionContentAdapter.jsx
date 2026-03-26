@@ -1,9 +1,12 @@
 import React from 'react'
 import { SessionContent } from './SessionContent'
+import useTreeStore from '../../store/TreeStore'
 
 // Adapter component to connect the SessionContent presentation component
 // with the session runner state and handlers
 function SessionContentAdapter({ currentDevice, state, handlers }) {
+    const trees = useTreeStore((treeState) => treeState.trees)
+
     return (
         <SessionContent
             currentDevice={currentDevice}
@@ -19,6 +22,7 @@ function SessionContentAdapter({ currentDevice, state, handlers }) {
             onSaveExit={handlers.handleSaveAndExitClick}
             pastHistory={state.pastHistory}
             futureHistory={state.futureHistory}
+            trees={trees}
         />
     )
 }

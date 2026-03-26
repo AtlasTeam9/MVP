@@ -1,11 +1,11 @@
 import React from 'react'
 import styles from '../../../pages/SessionRunnerView.module.css'
+import { calculateCompletionPercentage } from '../../../infrastructure/utils/progressCalculator'
 
 // Component for rendering the session header with
 // device and asset information, completion percentage, and Save & Exit button
-function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit }) {
-    const totalAssets = currentDevice?.assets?.length || 1
-    const completionPercentage = Math.round(((currentAssetIndex + 1) / totalAssets) * 100)
+function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit, trees, pastHistory }) {
+    const completionPercentage = calculateCompletionPercentage(trees, pastHistory)
     const currentAsset = currentDevice?.assets?.[currentAssetIndex]
 
     return (
@@ -25,7 +25,7 @@ function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit }) {
                 </div>
             </div>
             <button onClick={onSaveExit} className={styles.btnExit}>
-                Save & Exit
+                Save & Exit Test
             </button>
         </header>
     )

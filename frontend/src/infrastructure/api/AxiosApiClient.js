@@ -26,6 +26,11 @@ class AxiosApiClient extends IApiClient {
         })
         return response.data
     }
+
+    async delete(url, config = {}) {
+        const response = await this.axiosInstance.delete(url, config)
+        return response.data
+    }
 }
 
 // Export a singleton instance of AxiosApiClient

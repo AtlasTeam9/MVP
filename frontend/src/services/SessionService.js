@@ -346,10 +346,23 @@ class SessionService {
     // Fetch final results after session is finished
     async fetchFinalResults() {}
 
-    // Clear all session-related data from stores (used when exiting session or returning to home)
-    clearSession() {
-        useSessionStore.getState().clearStore()
-        useResultStore.getState().clearStore()
+    // Clear all session-related data from stores and delete session on backend
+    async clearSession() {
+        try {
+            const sessionId = useSessionStore.getState().sessionId
+
+            // Delete session on backend
+            if (sessionId) {
+                await apiClient.delete(`/session/${sessionId}`)
+            }
+        } catch (error) {
+            console.error("Errore nell'eliminazione della sessione dal backend:", error)
+            // Continue clearing local stores even if backend delete fails
+        } finally {
+            // Always clear local stores
+            useSessionStore.getState().clearStore()
+            useResultStore.getState().clearStore()
+        }
     }
 }
 

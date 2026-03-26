@@ -18,8 +18,9 @@ function SessionContent({
     onSaveExit,
     pastHistory,
     futureHistory,
+    trees,
 }) {
-    const headerProps = { currentDevice, currentAssetIndex, onSaveExit }
+    const headerProps = { currentDevice, currentAssetIndex, onSaveExit, trees, pastHistory }
     const questionProps = { currentNode, error, isLoading, onYes, onNo }
     const footerProps = { pastHistory, futureHistory, isLoading, onBack, onHome, onForward }
 
