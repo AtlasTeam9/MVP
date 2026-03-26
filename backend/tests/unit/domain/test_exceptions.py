@@ -1,6 +1,7 @@
 from app.domain.exceptions import (
     DomainException,
     InvalidDeviceFileException,
+    InvalidFileException,
     InvalidSessionIdException,
     SessionNotFoundException,
     UnsupportedExportFormatException,
@@ -25,6 +26,11 @@ class TestExceptions:
         # Verifica il messaggio di default
         exc = InvalidDeviceFileException()
         assert exc.detail == "File dispositivo non valido."
+
+    def test_invalid_file_exception_default(self):
+        # Verifica il messaggio di default
+        exc = InvalidFileException()
+        assert exc.detail == "File non valido."
 
     def test_invalid_device_file_exception_custom(self):
         # Verifica che si possa passare un messaggio personalizzato

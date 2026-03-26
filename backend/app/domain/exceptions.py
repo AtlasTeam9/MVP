@@ -16,6 +16,11 @@ class InvalidDeviceFileException(DomainException):
         super().__init__(detail)
 
 
+class InvalidFileException(DomainException):
+    def __init__(self, detail: str = "File non valido."):
+        super().__init__(detail)
+
+
 class UnsupportedExportFormatException(DomainException):
     def __init__(self, fmt: str, supported: list[str]):
         super().__init__(f"Formato '{fmt}' non supportato. Formati disponibili: {supported}.")

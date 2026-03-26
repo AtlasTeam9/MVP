@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from app.domain.exceptions import (
     DomainException,
     InvalidDeviceFileException,
+    InvalidFileException,
     InvalidSessionIdException,
     SessionNotFoundException,
     UnsupportedExportFormatException,
@@ -17,6 +18,10 @@ def register_exception_handlers(app) -> None:
 
     @app.exception_handler(InvalidDeviceFileException)
     async def invalid_device_file_handler(request: Request, exc: InvalidDeviceFileException):
+        return JSONResponse(status_code=422, content={"detail": exc.detail})
+
+    @app.exception_handler(InvalidFileException)
+    async def invalid_file_handler(request: Request, exc: InvalidFileException):
         return JSONResponse(status_code=422, content={"detail": exc.detail})
 
     @app.exception_handler(UnsupportedExportFormatException)

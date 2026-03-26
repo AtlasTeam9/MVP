@@ -28,7 +28,7 @@ from app.application.use_cases.session.dtos.requests import (
     LoadSessionRequest,
     ModifyDeviceRequest,
 )
-from app.domain.exceptions import InvalidDeviceFileException
+from app.domain.exceptions import InvalidDeviceFileException, InvalidFileException
 
 from .dependencies import (
     get_answer_use_case,
@@ -249,7 +249,7 @@ class SessionController:
             content = await file.read()
             session_data = json.loads(content)
         except json.JSONDecodeError:
-            raise InvalidDeviceFileException("Il file caricato non è un JSON valido.")
+            raise InvalidFileException("Il file caricato non è un JSON valido.")
 
         result = await self.load_session_use_case.execute(
             LoadSessionRequest(session_data=session_data)
