@@ -4,7 +4,6 @@ import { useCurrentDevice } from '../services/DeviceService'
 import { useSessionState } from '../hooks/sessionHooks/useSessionState'
 import { useSessionRedirect } from '../hooks/sessionHooks/useSessionRedirect'
 import { useSessionHandlers } from '../hooks/sessionHooks/useSessionHandlers'
-import { CompletionScreen } from '../components/sessionRunner/CompletionScreen'
 import { SessionContentAdapter } from '../components/sessionRunner/SessionContentAdapter'
 
 // Main view component for the session runner, which manages the session state

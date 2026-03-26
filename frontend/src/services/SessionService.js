@@ -212,23 +212,70 @@ class SessionService {
         return results
     }
 
+    // Private helper to handle go_back response
+    #handleGoBackResponse(response) {
+        if (!response.found || !response.node_id) {
+            return
+        }
+
+        const nextNode = useTreeStore
+            .getState()
+            .getNodeByTreeIndexAndNodeId(response.current_tree_index, response.node_id)
+
+        if (nextNode) {
+            useSessionStore
+                .getState()
+                .setDevicePosition(
+                    response.current_asset_index,
+                    response.current_tree_index,
+                    response.node_id
+                )
+            useSessionStore.getState().setCurrentNode(nextNode)
+        }
+    }
+
     // Answer the current question and move to the next node
     async sendAnswer(answer) {
         try {
             const sessionId = useSessionStore.getState().sessionId
             const currentAssetIndex = useSessionStore.getState().currentAssetIndex
+            const currentNode = useSessionStore.getState().currentNode
+            const currentTreeIndex = useSessionStore.getState().currentTreeIndex
 
-            const response = await apiClient.post(`/session/${sessionId}/answer`, {
-                answer,
-            })
+            // Check if futureHistory is not empty, meaning user went back and is
+            // answering a previous question
+            const futureHistory = useSessionStore.getState().futureHistory
+            const hasGoingBack = futureHistory.length > 0
 
-            // Backend provides current position information:
-            // current_asset_index, current_tree_index, next_node_id
-            // This allows proper navigation when trees are skipped due to NA/FAIL results
-            if (response.tree_completed) {
-                this.#handleTreeCompleted(response, currentAssetIndex)
+            // Save the current question and answer to pastHistory
+            useSessionStore.getState().selectAnswer(answer)
+
+            // Clear future history since we're creating a new path by answering
+            useSessionStore.getState().clearFuture()
+
+            let response
+            if (hasGoingBack) {
+                // User went back and is changing a previous answer - use go_back endpoint
+                response = await apiClient.post(`/session/${sessionId}/go_back`, {
+                    target_node_id: currentNode?.id,
+                    target_tree_index: currentTreeIndex,
+                    new_answer: answer,
+                })
+                this.#handleGoBackResponse(response)
             } else {
-                this.#handleNextNodeSameTree(response)
+                // Normal forward progression - use answer endpoint
+                response = await apiClient.post(`/session/${sessionId}/answer`, {
+                    answer,
+                })
+
+                // Backend provides current position information:
+                // current_asset_index, current_tree_index, next_node_id
+                // This allows proper navigation when trees are skipped due to NA/FAIL results
+                if (response.tree_completed) {
+                    this.#handleTreeCompleted(response, currentAssetIndex)
+                } else {
+                    this.#handleNextNodeSameTree(response)
+                }
             }
         } catch (error) {
             console.error('Errore nel sending answer:', error) // TODO: mostrare messaggio di errore
@@ -237,10 +284,58 @@ class SessionService {
     }
 
     // Go back to a previous node and change answer
-    async previousStep() {}
+    async previousStep() {
+        try {
+            // Call the store's navigation method
+            useSessionStore.getState().goToPreviousNode()
+
+            // Get the updated state - goToPreviousNode has already set currentNode
+            const { currentNode, currentTreeIndex } = useSessionStore.getState()
+
+            // Fetch the full node data from TreeStore using the node ID and tree index
+            if (currentNode && currentNode.id) {
+                const nodeFromTree = useTreeStore
+                    .getState()
+                    .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
+
+                if (nodeFromTree) {
+                    useSessionStore.getState().setCurrentNode(nodeFromTree)
+                } else {
+                    console.error('Previous node not found in TreeStore')
+                }
+            }
+        } catch (error) {
+            console.error('Error going to previous step:', error)
+            throw error
+        }
+    }
 
     // Go forward in the future history (if user went back previously)
-    async forwardStep() {}
+    async forwardStep() {
+        try {
+            // Call the store's navigation method
+            useSessionStore.getState().goToNextNode()
+
+            // Get the updated state - goToNextNode has already set currentNode
+            const { currentNode, currentTreeIndex } = useSessionStore.getState()
+
+            // Fetch the full node data from TreeStore using the node ID and tree index
+            if (currentNode && currentNode.id) {
+                const nodeFromTree = useTreeStore
+                    .getState()
+                    .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
+
+                if (nodeFromTree) {
+                    useSessionStore.getState().setCurrentNode(nodeFromTree)
+                } else {
+                    console.error('Next node not found in TreeStore')
+                }
+            }
+        } catch (error) {
+            console.error('Error going to forward step:', error)
+            throw error
+        }
+    }
 
     // Modify a previous answer by going back and re-answering
     async modifyPreviousAnswer() {}
