@@ -10,7 +10,6 @@ class ResultStore:
         self._results[asset_id][tree_id] = result
 
     def reset(self, asset_id: str, tree_id: str) -> None:
-        # Keep the tree key but mark it as pending recalculation.
         self._results[asset_id][tree_id] = None
 
     def get(self, asset_id: str, tree_id: str) -> Result | None:
