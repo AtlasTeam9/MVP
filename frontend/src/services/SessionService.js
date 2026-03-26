@@ -257,6 +257,7 @@ class SessionService {
             if (hasGoingBack) {
                 // User went back and is changing a previous answer - use go_back endpoint
                 response = await apiClient.post(`/session/${sessionId}/go_back`, {
+                    target_asset_index: currentAssetIndex,
                     target_node_id: currentNode?.id,
                     target_tree_index: currentTreeIndex,
                     new_answer: answer,
@@ -338,13 +339,13 @@ class SessionService {
     }
 
     // Modify a previous answer by going back and re-answering
-    async modifyPreviousAnswer() {}
+    async modifyPreviousAnswer() { }
 
     // Delete session and clear stores
-    async saveAndExit() {}
+    async saveAndExit() { }
 
     // Fetch final results after session is finished
-    async fetchFinalResults() {}
+    async fetchFinalResults() { }
 
     // Clear all session-related data from stores and delete session on backend
     async clearSession() {
