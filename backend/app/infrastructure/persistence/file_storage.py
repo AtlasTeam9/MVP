@@ -1,4 +1,5 @@
 import json
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -36,7 +37,7 @@ class FileStorage:
             with open(temp_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
 
-            temp_path.replace(file_path)
+            shutil.move(str(temp_path), str(file_path))
 
         except TypeError as e:
             if temp_path.exists():

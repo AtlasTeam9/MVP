@@ -1,5 +1,5 @@
-from app.application.interfaces.modify_device import IModifyDeviceUseCase
 from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.modify_device import IModifyDeviceUseCase
 from app.application.use_cases.session.dtos.requests import ModifyDeviceRequest
 from app.domain.entities.device import Asset, AssetType, Device
 from app.domain.exceptions import SessionNotFoundException

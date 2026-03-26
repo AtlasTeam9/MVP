@@ -1,4 +1,4 @@
-from app.application.interfaces.get_trees_use_case import IGetTreesUseCase
+from app.application.interfaces.use_cases.get_trees import IGetTreesUseCase
 from app.domain.entities.tree import DecisionTree
 
 from .dtos.responses import GetTreesResponse, TreeResponse

@@ -1,5 +1,5 @@
-from app.application.interfaces.answer_use_case import IAnswerUseCase
 from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.answer import IAnswerUseCase
 from app.application.use_cases.session.dtos.requests import AnswerRequest
 from app.application.use_cases.session.dtos.responses import AnswerResponse
 from app.domain.exceptions import SessionNotFoundException
