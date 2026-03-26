@@ -18,7 +18,7 @@ class SessionRepository(BaseRepository):
 
         try:
             device = entity.get_device.to_dict()
-            node = entity.navigator.current_node()
+            node = entity.navigator.current_node() if not entity.state.is_finished else None
             session_dict = {
                 "session_id": entity.get_id,
                 "device": {
