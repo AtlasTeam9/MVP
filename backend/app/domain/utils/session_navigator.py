@@ -117,13 +117,13 @@ class SessionNavigator:
         """
         return [
             {
+                "asset_index": asset_index,
                 "tree_index": tree_index,
                 "node_id": node.get_id,
                 "question": node.get_question,
                 "answer": answer,
             }
-            # Ora non usiamo più l'underscore, ci serve anche il tree_index!
-            for tree_index, node, answer in self.state.navigation_stack
+            for asset_index, tree_index, node, answer in self.state.navigation_stack
         ]
 
     def _advance_tree(self) -> None:

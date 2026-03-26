@@ -44,6 +44,7 @@ class TestGoBackUseCase:
         mock_service.get_session.return_value = None
         request = GoBackRequest(
             session_id="fake-id",
+            target_asset_index=0,
             target_tree_index=0,
             target_node_id="node1",
             new_answer=True,
@@ -58,6 +59,7 @@ class TestGoBackUseCase:
         mock_service.get_session.return_value = sample_session
         request = GoBackRequest(
             session_id=sample_session.get_id,
+            target_asset_index=0,
             target_tree_index=0,
             target_node_id="node_inesistente",
             new_answer=True,
@@ -79,10 +81,11 @@ class TestGoBackUseCase:
         sample_session.answer(False)
         assert len(sample_session.state.navigation_stack) == 1
 
-        node1_id = sample_session.state.navigation_stack[0][1].get_id
+        node1_id = sample_session.state.navigation_stack[0][2].get_id
 
         request = GoBackRequest(
             session_id=sample_session.get_id,
+            target_asset_index=0,
             target_tree_index=0,
             target_node_id=node1_id,
             new_answer=True,
@@ -99,10 +102,11 @@ class TestGoBackUseCase:
         mock_service.get_session.return_value = sample_session
         sample_session.answer(False)
 
-        node1_id = sample_session.state.navigation_stack[0][1].get_id
+        node1_id = sample_session.state.navigation_stack[0][2].get_id
 
         request = GoBackRequest(
             session_id=sample_session.get_id,
+            target_asset_index=0,
             target_tree_index=0,
             target_node_id=node1_id,
             new_answer=True,
@@ -117,6 +121,7 @@ class TestGoBackUseCase:
 
         request = GoBackRequest(
             session_id=sample_session.get_id,
+            target_asset_index=0,
             target_tree_index=0,
             target_node_id="ghost_node",
             new_answer=True,
@@ -130,10 +135,11 @@ class TestGoBackUseCase:
         mock_service.get_session.return_value = sample_session
         sample_session.answer(False)
 
-        node1_id = sample_session.state.navigation_stack[0][1].get_id
+        node1_id = sample_session.state.navigation_stack[0][2].get_id
 
         request = GoBackRequest(
             session_id=sample_session.get_id,
+            target_asset_index=0,
             target_tree_index=0,
             target_node_id=node1_id,
             new_answer=False,

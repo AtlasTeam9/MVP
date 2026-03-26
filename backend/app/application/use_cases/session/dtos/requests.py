@@ -10,6 +10,7 @@ class AnswerRequest:
 @dataclass
 class GoBackRequest:
     session_id: str
+    target_asset_index: int
     target_tree_index: int
     target_node_id: str
     new_answer: bool

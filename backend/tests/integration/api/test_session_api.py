@@ -278,11 +278,16 @@ class TestGoBack:
 
         # Il nodo Q1 deve essere nello stack — recuperiamo il suo id
         session = AppState.sessions[session_id]
-        node1_id = session.state.navigation_stack[0][1].get_id
+        node1_id = session.state.navigation_stack[0][2].get_id
 
         response = await client.post(
             f"/api/v1/session/{session_id}/go_back",
-            json={"target_node_id": node1_id, "target_tree_index": 0, "new_answer": True},
+            json={
+                "target_asset_index": 0,
+                "target_node_id": node1_id,
+                "target_tree_index": 0,
+                "new_answer": True,
+            },
         )
 
         assert response.status_code == 200
@@ -297,7 +302,12 @@ class TestGoBack:
 
         response = await client.post(
             f"/api/v1/session/{session_id}/go_back",
-            json={"target_node_id": "nodo_inesistente", "target_tree_index": 0, "new_answer": True},
+            json={
+                "target_asset_index": 0,
+                "target_node_id": "nodo_inesistente",
+                "target_tree_index": 0,
+                "new_answer": True,
+            },
         )
 
         assert response.status_code == 200
@@ -310,7 +320,12 @@ class TestGoBack:
         """Restituisce 400 per session_id inesistente."""
         response = await client.post(
             "/api/v1/session/sessione-falsa/go_back",
-            json={"target_node_id": "node1", "new_answer": True},
+            json={
+                "target_asset_index": 0,
+                "target_tree_index": 0,
+                "target_node_id": "node1",
+                "new_answer": True,
+            },
         )
 
         assert response.status_code == 400
