@@ -58,15 +58,6 @@ class TestDecisionTree:
         assert tree.get_dependencies == []
         assert tree.nodes == []
 
-    def test_tree_iteration(self, sample_nodes):
-        tree = DecisionTree(id="t_03", title="Iter Tree", nodes=sample_nodes)
-
-        iterated_data = list(tree)
-
-        assert len(iterated_data) == 2
-        assert iterated_data[0] == sample_nodes[0].to_dict()
-        assert iterated_data[1] == sample_nodes[1].to_dict()
-
     def test_tree_properties_return_copies(self, sample_nodes):
         tree = DecisionTree(id="t_04", title="Copy Test", dependencies=["dep1"], nodes=sample_nodes)
 

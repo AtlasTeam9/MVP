@@ -46,10 +46,6 @@ class DecisionTree:
         self._dependencies = dependencies or []
         self._nodes = nodes or []
 
-    def __iter__(self):
-        for node in self._nodes:
-            yield node.to_dict()
-
     @property
     def get_id(self) -> str:
         return self._id

@@ -8,7 +8,7 @@ from app.application.use_cases.session.dtos.requests import LoadSessionRequest
 from app.application.use_cases.session.dtos.responses import LoadSessionResponse
 from app.domain.entities.device import Asset, AssetType, Device
 from app.domain.entities.result import Result
-from app.domain.exceptions import InvalidDeviceFileException
+from app.domain.exceptions import InvalidDeviceFileException, InvalidFileException
 from app.domain.factories.session_factory import SessionFactory
 from app.presentation.api.v1.session.schema import DeviceSchema
 
@@ -24,23 +24,19 @@ class LoadSessionUseCase(ILoadSessionUseCase):
         required_keys = {"session_id", "device", "position", "results", "is_finished"}
         missing = required_keys - data.keys()
         if missing:
-            raise InvalidDeviceFileException(f"File sessione non valido: campi mancanti {missing}.")
+            raise InvalidFileException(f"File sessione non valido: campi mancanti {missing}.")
 
         session_id = data["session_id"]
 
         try:
             uuid.UUID(session_id, version=4)
         except ValueError:
-            raise InvalidDeviceFileException(
-                "File sessione non valido: session_id non è un UUID v4."
-            )
+            raise InvalidFileException("File sessione non valido: session_id non è un UUID v4.")
 
         try:
             validated_device = DeviceSchema(**data["device"])
         except ValidationError as e:
-            raise InvalidDeviceFileException(
-                f"File sessione non valido, sezione 'device': {e.errors()}"
-            )
+            raise InvalidDeviceFileException(f"File device non valido: {e.errors()}")
 
         device = Device(
             device_name=validated_device.device_name,
@@ -70,7 +66,7 @@ class LoadSessionUseCase(ILoadSessionUseCase):
                 try:
                     session.results.record(asset_id, tree_id, Result(result_str))
                 except ValueError:
-                    raise InvalidDeviceFileException(
+                    raise InvalidFileException(
                         f"Risultato non valido '{result_str}' per asset '{asset_id}', "
                         f"tree '{tree_id}'."
                     )
