@@ -47,6 +47,9 @@ class LoadSessionResponseSchema(BaseModel):
     device: DeviceSchema = Field(..., description="Oggetto del dispositivo")
     position: dict[str, Any] = Field(..., description="Stato di avanzamento")
     results: dict = Field(..., description="Risultati registrati fino a ora")
+    aggregate_results: dict = Field(
+        ..., description="Risultati semplificati per la visualizzazione"
+    )
     is_finished: bool = Field(..., description="True se la sessione è già completata")
 
 

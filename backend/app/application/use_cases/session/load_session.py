@@ -93,6 +93,7 @@ class LoadSessionUseCase(ILoadSessionUseCase):
 
         # Persiste su disco e aggiorna la cache
         self._session_service.save_session(session)
+        all_tree_ids = [t.get_id for t in session.get_trees]
 
         return LoadSessionResponse(
             session_id=session.get_id,
@@ -115,5 +116,6 @@ class LoadSessionUseCase(ILoadSessionUseCase):
             current_tree_index=session.state.current_tree_index,
             current_node_id=session.state.current_node_id,
             results=session.results.to_dict(),
+            aggregate_results=session.results.get_aggregated_results(all_tree_ids),
             is_finished=session.state.is_finished,
         )

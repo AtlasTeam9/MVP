@@ -280,5 +280,6 @@ class SessionController:
                 "current_node_id": result.current_node_id,
             },
             results=result.results,
+            aggregate_results=result.aggregate_results,
             is_finished=result.is_finished,
         )
