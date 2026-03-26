@@ -96,6 +96,32 @@ class Session:
     def go_back(self, target_node: Node) -> GoBackResult:
         return self.navigator.go_back(target_node)
 
+    def reset_changed_tree_and_dependents(self, asset_index: int, tree_index: int) -> None:
+        """
+        Resetta il risultato del tree modificato e dei tree successivi che
+        dipendono (direttamente o indirettamente) da esso, limitatamente
+        all'asset indicato.
+        """
+        assets = self.get_assets
+        trees = self.get_trees
+
+        if asset_index < 0 or asset_index >= len(assets):
+            return
+        if tree_index < 0 or tree_index >= len(trees):
+            return
+
+        asset_id = assets[asset_index].get_id
+        affected_tree_ids = {trees[tree_index].get_id}
+
+        # Propagazione in avanti: solo i tree successivi possono dipendere da uno precedente.
+        for i in range(tree_index + 1, len(trees)):
+            tree = trees[i]
+            if any(dep in affected_tree_ids for dep in tree.get_dependencies):
+                affected_tree_ids.add(tree.get_id)
+
+        for tree_id in affected_tree_ids:
+            self.results.reset(asset_id, tree_id)
+
     def _skip_invalid_trees(self) -> None:
         """
         Scorre in avanti gli alberi se le loro dipendenze non sono soddisfatte.

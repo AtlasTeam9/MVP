@@ -49,6 +49,9 @@ class SessionService(ISessionService):
 
         for asset_id, trees in data.get("results", {}).items():
             for tree_id, result_str in trees.items():
+                if result_str == "":
+                    session.results.reset(asset_id, tree_id)
+                    continue
                 session.results.record(asset_id, tree_id, Result(result_str))
 
         self._cache[session.get_id] = session
