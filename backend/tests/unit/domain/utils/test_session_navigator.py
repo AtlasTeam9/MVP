@@ -141,7 +141,7 @@ class TestSessionNavigator:
             assert navigator.state.current_node.get_question == "Q2?"
 
         assert len(navigator.state.navigation_stack) == 1
-        assert navigator.state.navigation_stack[0] == (0, initial_node, False)
+        assert navigator.state.navigation_stack[0] == (0, 0, initial_node, False)
 
     def test_answer_branch_to_result(self, navigator: SessionNavigator):
         # Q1 -> True (porta a Result.NOT_APPLICABLE)
@@ -210,18 +210,20 @@ class TestSessionNavigator:
         # Prepariamo uno stack finto
         node1 = sample_trees_objects[0].nodes[0]
         node2 = sample_trees_objects[0].nodes[1]
-        navigator.state.navigation_stack = [(0, node1, True), (0, node2, False)]
+        navigator.state.navigation_stack = [(0, 0, node1, True), (0, 0, node2, False)]
 
         history = navigator.navigation_history()
 
         assert len(history) == 2
         assert history[0] == {
+            "asset_index": 0,
             "tree_index": 0,
             "node_id": "node1",
             "question": "Q1?",
             "answer": True,
         }
         assert history[1] == {
+            "asset_index": 0,
             "tree_index": 0,
             "node_id": "node2",
             "question": "Q2?",

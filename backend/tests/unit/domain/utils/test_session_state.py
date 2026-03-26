@@ -22,14 +22,14 @@ class TestSessionState:
         fresh_state.push(node1, True)
 
         assert len(fresh_state.navigation_stack) == 1
-        assert fresh_state.navigation_stack[0] == (0, node1, True)
+        assert fresh_state.navigation_stack[0] == (0, 0, node1, True)
 
         # Aggiungiamo un secondo elemento
         node2 = sample_nodes[1]
         fresh_state.push(node2, False)
 
         assert len(fresh_state.navigation_stack) == 2
-        assert fresh_state.navigation_stack[1] == (0, node2, False)
+        assert fresh_state.navigation_stack[1] == (0, 0, node2, False)
 
     def test_clear_stack(self, fresh_state: SessionState, sample_nodes):
         fresh_state.push(sample_nodes[0], True)
@@ -53,7 +53,7 @@ class TestSessionState:
 
         assert found is True
         assert len(fresh_state.navigation_stack) == 1
-        assert fresh_state.navigation_stack[0][1] is node1
+        assert fresh_state.navigation_stack[0][2] is node1
 
     def test_pop_until_node_found_at_bottom(self, fresh_state: SessionState, sample_nodes):
         # Se torniamo al primissimo nodo, lo stack dovrebbe svuotarsi
@@ -89,7 +89,7 @@ class TestSessionState:
 
         assert fresh_state.current_tree_index == 1
         assert fresh_state.current_node is None
-        assert fresh_state.navigation_stack == [(0, sample_nodes[0], True)]
+        assert fresh_state.navigation_stack == [(0, 0, sample_nodes[0], True)]
         # current_asset_index non deve cambiare
         assert fresh_state.current_asset_index == 0
 
@@ -106,4 +106,4 @@ class TestSessionState:
         # Il tree index si deve azzerare per il nuovo asset
         assert fresh_state.current_tree_index == 0
         assert fresh_state.current_node is None
-        assert fresh_state.navigation_stack == []
+        assert len(fresh_state.navigation_stack) == 1

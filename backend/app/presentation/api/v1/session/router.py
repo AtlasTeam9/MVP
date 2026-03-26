@@ -171,11 +171,12 @@ class SessionController:
         self, body: GoBackRequestSchema, session_id: str = Depends(validate_session_id)
     ) -> GoBackResponseSchema:
         """
-        Torna a un nodo precedente nella history del tree corrente e aggiorna la nuova risposta
+        Torna a un nodo precedente nella history e aggiorna la nuova risposta
         """
         result = await self.go_back_use_case.execute(
             GoBackRequest(
                 session_id=session_id,
+                target_asset_index=body.target_asset_index,
                 target_tree_index=body.target_tree_index,
                 target_node_id=body.target_node_id,
                 new_answer=body.new_answer,

@@ -14,11 +14,14 @@ class GoBackUseCase(IGoBackUseCase):
         if session is None:
             raise SessionNotFoundException(request.session_id)
 
-        # Cerca il nodo target nella navigation_stack corrente dell'asset
+        # Cerca il nodo target nella navigation_stack cross-asset
         target_node = None
-        for tree_index, node, _ in session.state.navigation_stack:
-            # Controllo combinato: l'indice dell'albero e l'ID del nodo devono coincidere
-            if tree_index == request.target_tree_index and node.get_id == request.target_node_id:
+        for asset_index, tree_index, node, _ in session.state.navigation_stack:
+            if (
+                asset_index == request.target_asset_index
+                and tree_index == request.target_tree_index
+                and node.get_id == request.target_node_id
+            ):
                 target_node = node
                 break
 
