@@ -1,5 +1,5 @@
-from app.application.interfaces.export_results_use_case import IExportResultsUseCase
 from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.export_results import IExportResultsUseCase
 from app.application.use_cases.session.dtos.requests import ExportResultsRequest
 from app.application.use_cases.session.dtos.responses import ExportResultsResponse
 from app.domain.exceptions import SessionNotFoundException, UnsupportedExportFormatException

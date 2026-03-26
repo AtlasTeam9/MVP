@@ -6,15 +6,16 @@ from fastapi.responses import Response
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
-from app.application.interfaces.answer_use_case import IAnswerUseCase
-from app.application.interfaces.create_session_use_case import (
+from app.application.interfaces.use_cases.answer import IAnswerUseCase
+from app.application.interfaces.use_cases.create_session import (
     ICreateSessionUseCase,
 )
-from app.application.interfaces.delete_session_use_case import IDeleteSessionUseCase
-from app.application.interfaces.export_results_use_case import IExportResultsUseCase
-from app.application.interfaces.export_session_use_case import IExportSessionUseCase
-from app.application.interfaces.go_back_use_case import IGoBackUseCase
-from app.application.interfaces.modify_device import IModifyDeviceUseCase
+from app.application.interfaces.use_cases.delete_session import IDeleteSessionUseCase
+from app.application.interfaces.use_cases.export_results import IExportResultsUseCase
+from app.application.interfaces.use_cases.export_session import IExportSessionUseCase
+from app.application.interfaces.use_cases.go_back import IGoBackUseCase
+from app.application.interfaces.use_cases.load_session import ILoadSessionUseCase
+from app.application.interfaces.use_cases.modify_device import IModifyDeviceUseCase
 from app.application.use_cases.session.create_session import (
     CreateSessionRequest,
 )
@@ -24,6 +25,7 @@ from app.application.use_cases.session.dtos.requests import (
     ExportResultsRequest,
     ExportSessionRequest,
     GoBackRequest,
+    LoadSessionRequest,
     ModifyDeviceRequest,
 )
 from app.domain.exceptions import InvalidDeviceFileException
@@ -35,6 +37,7 @@ from .dependencies import (
     get_export_results_use_case,
     get_export_session_use_case,
     get_go_back_use_case,
+    get_load_session_use_case,
     get_modify_device_use_case,
     validate_session_id,
 )
@@ -45,6 +48,7 @@ from .schema import (
     DeviceSchema,
     GoBackRequestSchema,
     GoBackResponseSchema,
+    LoadSessionResponseSchema,
     SessionResponseSchema,
 )
 
@@ -60,6 +64,7 @@ class SessionController:
     export_session_use_case: IExportSessionUseCase = Depends(get_export_session_use_case)
     delete_session_use_case: IDeleteSessionUseCase = Depends(get_delete_session_use_case)
     modify_device_use_case: IModifyDeviceUseCase = Depends(get_modify_device_use_case)
+    load_session_use_case: ILoadSessionUseCase = Depends(get_load_session_use_case)
 
     @router.post("/create_session_with_file", status_code=201)
     async def create_session_with_file(
@@ -230,4 +235,50 @@ class SessionController:
 
         await self.modify_device_use_case.execute(
             ModifyDeviceRequest(session_id=session_id, device_data=body.model_dump())
+        )
+
+    @router.post("/load_session_from_file", status_code=200)
+    async def load_session_from_file(
+        self, file: Annotated[UploadFile, File(...)]
+    ) -> LoadSessionResponseSchema:
+        """
+        Carica una sessione precedentemente esportata da file JSON.
+        Restituisce lo stato completo della sessione (device, posizione, risultati).
+        """
+        try:
+            content = await file.read()
+            session_data = json.loads(content)
+        except json.JSONDecodeError:
+            raise InvalidDeviceFileException("Il file caricato non è un JSON valido.")
+
+        result = await self.load_session_use_case.execute(
+            LoadSessionRequest(session_data=session_data)
+        )
+
+        return LoadSessionResponseSchema(
+            session_id=result.session_id,
+            device=DeviceSchema(
+                device_name=result.device_name,
+                operating_system=result.device_os,
+                firmware_version=result.device_firmw_v,
+                functionalities=result.device_funcs,
+                description=result.device_desc,
+                assets=[
+                    AssetSchema(
+                        id=asset["id"],
+                        name=asset["name"],
+                        type=asset["type"],
+                        is_sensitive=asset["is_sensitive"],
+                        description=asset["description"],
+                    )
+                    for asset in result.assets
+                ],
+            ),
+            position={
+                "current_asset_index": result.current_asset_index,
+                "current_tree_index": result.current_tree_index,
+                "current_node_id": result.current_node_id,
+            },
+            results=result.results,
+            is_finished=result.is_finished,
         )

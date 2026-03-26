@@ -1,5 +1,5 @@
-from app.application.interfaces.delete_session_use_case import IDeleteSessionUseCase
 from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.delete_session import IDeleteSessionUseCase
 from app.application.use_cases.session.dtos.requests import DeleteSessionRequest
 from app.domain.exceptions import SessionNotFoundException
 

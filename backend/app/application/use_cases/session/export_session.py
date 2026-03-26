@@ -1,7 +1,7 @@
 import json
 
-from app.application.interfaces.export_session_use_case import IExportSessionUseCase
 from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.export_session import IExportSessionUseCase
 from app.application.use_cases.session.dtos.requests import ExportSessionRequest
 from app.application.use_cases.session.dtos.responses import ExportSessionResponse
 from app.domain.exceptions import SessionNotFoundException

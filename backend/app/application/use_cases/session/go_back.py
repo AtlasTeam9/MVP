@@ -1,5 +1,5 @@
-from app.application.interfaces.go_back_use_case import IGoBackUseCase
 from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.go_back import IGoBackUseCase
 from app.application.use_cases.session.dtos.requests import GoBackRequest
 from app.application.use_cases.session.dtos.responses import GoBackResponse
 from app.domain.exceptions import SessionNotFoundException

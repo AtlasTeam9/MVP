@@ -40,3 +40,8 @@ class DeleteSessionRequest:
 class ModifyDeviceRequest:
     session_id: str
     device_data: dict
+
+
+@dataclass
+class LoadSessionRequest:
+    session_data: dict

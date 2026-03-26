@@ -57,3 +57,19 @@ class ExportResultsResponse:
 class ExportSessionResponse:
     content: bytes
     filename: str
+
+
+@dataclass
+class LoadSessionResponse:
+    session_id: str
+    device_name: str
+    device_os: str
+    device_firmw_v: str
+    device_funcs: str
+    device_desc: str | None
+    assets: list[AssetResponse]
+    current_asset_index: int
+    current_tree_index: int
+    current_node_id: str
+    results: dict[str, dict[str, str]]
+    is_finished: bool

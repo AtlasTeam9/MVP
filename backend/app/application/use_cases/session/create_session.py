@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 
-from app.application.interfaces.create_session_use_case import ICreateSessionUseCase
 from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.create_session import ICreateSessionUseCase
 from app.application.use_cases.session.dtos.requests import CreateSessionRequest
 from app.application.use_cases.session.dtos.responses import CreateSessionResponse
 from app.domain.entities.device import Asset, AssetType, Device

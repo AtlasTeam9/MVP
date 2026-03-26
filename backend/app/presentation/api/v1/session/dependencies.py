@@ -2,20 +2,22 @@ import uuid
 
 from fastapi import Depends
 
-from app.application.interfaces.answer_use_case import IAnswerUseCase
-from app.application.interfaces.create_session_use_case import (
+from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.answer import IAnswerUseCase
+from app.application.interfaces.use_cases.create_session import (
     ICreateSessionUseCase,
 )
-from app.application.interfaces.delete_session_use_case import IDeleteSessionUseCase
-from app.application.interfaces.export_results_use_case import IExportResultsUseCase
-from app.application.interfaces.go_back_use_case import IGoBackUseCase
-from app.application.interfaces.session_service import ISessionService
+from app.application.interfaces.use_cases.delete_session import IDeleteSessionUseCase
+from app.application.interfaces.use_cases.export_results import IExportResultsUseCase
+from app.application.interfaces.use_cases.go_back import IGoBackUseCase
+from app.application.interfaces.use_cases.load_session import ILoadSessionUseCase
 from app.application.use_cases.session.answer import AnswerUseCase
 from app.application.use_cases.session.create_session import CreateSessionUseCase
 from app.application.use_cases.session.delete_session import DeleteSessionUseCase
 from app.application.use_cases.session.export_results import ExportResultsUseCase
 from app.application.use_cases.session.export_session import ExportSessionUseCase
 from app.application.use_cases.session.go_back import GoBackUseCase
+from app.application.use_cases.session.load_session import LoadSessionUseCase
 from app.application.use_cases.session.modify_device import ModifyDeviceUseCase
 from app.domain.exceptions import InvalidSessionIdException
 from app.domain.factories.session_factory import SessionFactory
@@ -78,3 +80,10 @@ def get_delete_session_use_case(
     service: ISessionService = Depends(get_session_service),
 ) -> IDeleteSessionUseCase:
     return DeleteSessionUseCase(service)
+
+
+def get_load_session_use_case(
+    service: ISessionService = Depends(get_session_service),
+    factory: SessionFactory = Depends(get_session_factory),
+) -> ILoadSessionUseCase:
+    return LoadSessionUseCase(service, factory)

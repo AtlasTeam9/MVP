@@ -2,7 +2,7 @@ from fastapi import Depends
 from fastapi_utils.cbv import cbv
 from fastapi_utils.inferring_router import InferringRouter
 
-from app.application.interfaces.get_trees_use_case import IGetTreesUseCase
+from app.application.interfaces.use_cases.get_trees import IGetTreesUseCase
 from app.presentation.api.v1.trees.dependencies import get_trees_use_case
 
 from .schema import TreesSchema
