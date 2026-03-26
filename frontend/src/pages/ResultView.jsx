@@ -5,6 +5,7 @@ import { ResultListView } from '../components/results/ResultListView'
 import { ExportDialog } from '../components/results/ExportDialog'
 import HomeIcon from '../components/common/HomeIcon'
 import { useExportResults } from '../hooks/useExportResults'
+import { useExportSession } from '../hooks/useExportSession'
 import styles from './ResultView.module.css'
 
 export default function ResultView() {
@@ -17,6 +18,7 @@ export default function ResultView() {
         handleExportFormat,
         setShowFormatDialog,
     } = useExportResults(sessionId)
+    const { isExportingSession, handleExportSessionClick } = useExportSession(sessionId)
 
     if (!results || results.length === 0) {
         return <div className={styles.container}>No results available</div>
@@ -35,6 +37,13 @@ export default function ResultView() {
                     disabled={isExporting}
                 >
                     {isExporting ? 'Exporting...' : 'Export Results'}
+                </button>
+                <button
+                    className={styles.actionButton}
+                    onClick={handleExportSessionClick}
+                    disabled={isExportingSession}
+                >
+                    {isExportingSession ? 'Exporting...' : 'Export Session'}
                 </button>
                 <HomeIcon />
             </div>
