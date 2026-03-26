@@ -28,6 +28,12 @@ class GoBackUseCase(IGoBackUseCase):
         if target_node is None:
             return GoBackResponse(found=False, node_id=None)
 
+        # La modifica di una risposta invalida il tree corrente e i dipendenti successivi.
+        session.reset_changed_tree_and_dependents(
+            request.target_asset_index,
+            request.target_tree_index,
+        )
+
         go_back_result = session.go_back(target_node)
         if not go_back_result.found:
             return GoBackResponse(found=False, node_id=None)

@@ -45,3 +45,13 @@ class TestResultStore:
         expected_dict = {"asset_1": {"tree_01": "PASS"}, "asset_2": {"tree_02": "NOT_APPLICABLE"}}
 
         assert store.to_dict() == expected_dict
+
+    def test_reset_serializes_as_empty_string(self, sample_assets):
+        """Un risultato resettato deve comparire come stringa vuota nel payload."""
+        store = ResultStore(sample_assets)
+        store.record("asset_1", "tree_01", Result.PASS)
+
+        store.reset("asset_1", "tree_01")
+
+        assert store.get("asset_1", "tree_01") is None
+        assert store.to_dict()["asset_1"]["tree_01"] == ""

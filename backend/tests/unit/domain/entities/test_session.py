@@ -105,6 +105,26 @@ class TestSession:
         assert result.session_finished is True
         assert session.state.is_finished is True
 
+    def test_reset_changed_tree_and_dependents_same_asset_only(self, session_factory):
+        """Resetta solo il tree cambiato e i dipendenti nello stesso asset."""
+        session = self._create_test_session(session_factory)
+
+        # Precondizioni: risultati già presenti su entrambi gli asset
+        session.results.record("a1", "tree_01", Result.PASS)
+        session.results.record("a1", "tree_02", Result.PASS)
+        session.results.record("a2", "tree_01", Result.FAIL)
+        session.results.record("a2", "tree_02", Result.PASS)
+
+        # Modifichiamo tree_01 dell'asset a1: tree_02 dipende da tree_01 e va resettato.
+        session.reset_changed_tree_and_dependents(asset_index=0, tree_index=0)
+
+        assert session.results.to_dict()["a1"]["tree_01"] == ""
+        assert session.results.to_dict()["a1"]["tree_02"] == ""
+
+        # L'altro asset non deve essere toccato.
+        assert session.results.to_dict()["a2"]["tree_01"] == "FAIL"
+        assert session.results.to_dict()["a2"]["tree_02"] == "PASS"
+
     def _create_test_session(self, session_factory) -> Session:
         device = Device(
             device_name="Test Device",
