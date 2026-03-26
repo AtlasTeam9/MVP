@@ -23,6 +23,11 @@ class TreeService {
             useTreeStore.getState().setIsLoading(false)
         }
     }
+
+    // Clear all trees from the store
+    clearTrees() {
+        useTreeStore.getState().clearStore()
+    }
 }
 
 export default new TreeService()

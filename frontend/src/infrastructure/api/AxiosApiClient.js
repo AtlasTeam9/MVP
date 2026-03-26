@@ -13,8 +13,8 @@ class AxiosApiClient extends IApiClient {
         })
     }
 
-    async get(url, params = {}) {
-        const response = await this.axiosInstance.get(url, { params })
+    async get(url, config = {}) {
+        const response = await this.axiosInstance.get(url, config)
         return response.data
     }
 

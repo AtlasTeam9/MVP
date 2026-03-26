@@ -20,8 +20,8 @@ const useDeviceStore = create((set) => ({
     // Set the current device
     setDevice: (device) => set({ currentDevice: device }),
 
-    // Clear the current device
-    clearDevice: () => set({ currentDevice: null }),
+    // Clear the store
+    clearStore: () => set({ currentDevice: null }),
 
     // Add a new asset to the current device
     addAsset: (asset) => {

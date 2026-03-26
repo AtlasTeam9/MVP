@@ -3,7 +3,7 @@ import { create } from 'zustand'
 // Methods to manage results state
 const createResultMethods = (set) => ({
     setResults: (results) => set({ results }),
-    clearResults: () => set({ results: [] }),
+    clearStore: () => set({ results: [] }),
 })
 
 // Combine all methods into a single store

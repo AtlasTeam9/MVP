@@ -1,4 +1,6 @@
 import SessionService from '../../services/SessionService'
+import ExportService from '../../services/ExportService'
+import useSessionStore from '../../store/SessionStore'
 
 // Utility factory function to create an asynchronous handler for session actions
 export const createAsyncHandler =
@@ -51,7 +53,11 @@ const BASE_HANDLER_CONFIGS = [
     },
     {
         name: 'handleSaveAndExitClick',
-        fn: () => SessionService.saveAndExit(),
+        fn: async () => {
+            const sessionId = useSessionStore.getState().sessionId
+            await ExportService.exportSessionAsJSON(sessionId)
+            await SessionService.saveAndExit()
+        },
         errorMsg: 'Error saving and exiting:',
         onSuccess: (navigate) => () => navigate('/device/summary'),
     },

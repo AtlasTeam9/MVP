@@ -250,6 +250,12 @@ class SessionService {
 
     // Fetch final results after session is finished
     async fetchFinalResults() {}
+
+    // Clear all session-related data from stores (used when exiting session or returning to home)
+    clearSession() {
+        useSessionStore.getState().clearStore()
+        useResultStore.getState().clearStore()
+    }
 }
 
 export default new SessionService() // Esportato come Singleton

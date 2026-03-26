@@ -65,7 +65,7 @@ class DeviceService {
 
     // Clear the current device from the store
     clearDevice() {
-        useDeviceStore.getState().clearDevice()
+        useDeviceStore.getState().clearStore()
     }
 }
 
