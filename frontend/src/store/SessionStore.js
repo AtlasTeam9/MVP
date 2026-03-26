@@ -22,16 +22,15 @@ const createAnswerMethods = (set, get) => ({
         const { currentNode, pastHistory, currentTreeIndex, currentAssetIndex } = get()
         if (!currentNode) return
 
+        const newEntry = {
+            nodeId: currentNode.id,
+            answer: choice,
+            treeIndex: currentTreeIndex,
+            assetIndex: currentAssetIndex,
+        }
+
         set({
-            pastHistory: [
-                ...pastHistory,
-                {
-                    nodeId: currentNode.id,
-                    answer: choice,
-                    treeIndex: currentTreeIndex,
-                    assetIndex: currentAssetIndex,
-                },
-            ],
+            pastHistory: [...pastHistory, newEntry],
         })
     },
 })
