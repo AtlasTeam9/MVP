@@ -546,3 +546,33 @@ class TestModifyDevice:
             json=invalid_payload,
         )
         assert response.status_code == 422
+
+
+class TestDownloadDevice:
+    @pytest.mark.integration
+    async def test_download_device_returns_json_attachment(self, client):
+        """Verifica che l'endpoint restituisca un JSON scaricabile."""
+        response = await client.post("/api/v1/device/download_device", json=DEVICE_JSON)
+
+        assert response.status_code == 200
+        assert "application/json" in response.headers["content-type"]
+        assert "attachment" in response.headers["content-disposition"]
+        assert "Test_Device.json" in response.headers["content-disposition"]
+
+    @pytest.mark.integration
+    async def test_download_device_content_matches_payload(self, client):
+        """Verifica che il file JSON contenga esattamente il payload inviato."""
+        response = await client.post("/api/v1/device/download_device", json=DEVICE_JSON)
+
+        assert response.status_code == 200
+        assert json.loads(response.content) == DEVICE_JSON
+
+    @pytest.mark.integration
+    async def test_download_device_invalid_payload(self, client):
+        """Restituisce 422 se il payload non rispetta DeviceSchema."""
+        response = await client.post(
+            "/api/v1/device/download_device",
+            json={"device_name": "manca il resto"},
+        )
+
+        assert response.status_code == 422
