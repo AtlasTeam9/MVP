@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 import Device from '../domain/Device'
 
 // Helper function to create a copy of a device
@@ -13,34 +14,39 @@ const copyDevice = (device) =>
     )
 
 // Custom hook for managing device state across the application
-const useDeviceStore = create((set) => ({
-    // The current device being edited or viewed
-    currentDevice: null,
+const useDeviceStore = create(
+    devtools(
+        (set) => ({
+            // The current device being edited or viewed
+            currentDevice: null,
 
-    // Set the current device
-    setDevice: (device) => set({ currentDevice: device }),
+            // Set the current device
+            setDevice: (device) => set({ currentDevice: device }),
 
-    // Clear the store
-    clearStore: () => set({ currentDevice: null }),
+            // Clear the store
+            clearStore: () => set({ currentDevice: null }),
 
-    // Add a new asset to the current device
-    addAsset: (asset) => {
-        set((state) => {
-            if (!state.currentDevice) return { currentDevice: null }
-            const updatedDevice = copyDevice(state.currentDevice)
-            updatedDevice.addAsset(asset)
-            return { currentDevice: updatedDevice }
-        })
-    },
+            // Add a new asset to the current device
+            addAsset: (asset) => {
+                set((state) => {
+                    if (!state.currentDevice) return { currentDevice: null }
+                    const updatedDevice = copyDevice(state.currentDevice)
+                    updatedDevice.addAsset(asset)
+                    return { currentDevice: updatedDevice }
+                })
+            },
 
-    // Remove a specific asset from the current device
-    deleteAsset: (assetName) =>
-        set((state) => {
-            if (!state.currentDevice) return { currentDevice: null }
-            const updatedDevice = copyDevice(state.currentDevice)
-            updatedDevice.deleteAsset(assetName)
-            return { currentDevice: updatedDevice }
+            // Remove a specific asset from the current device
+            deleteAsset: (assetName) =>
+                set((state) => {
+                    if (!state.currentDevice) return { currentDevice: null }
+                    const updatedDevice = copyDevice(state.currentDevice)
+                    updatedDevice.deleteAsset(assetName)
+                    return { currentDevice: updatedDevice }
+                }),
         }),
-}))
+        { name: 'DeviceStore' }
+    )
+)
 
 export default useDeviceStore

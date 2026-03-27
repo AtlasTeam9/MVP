@@ -347,6 +347,11 @@ class SessionService {
     // Fetch final results after session is finished
     async fetchFinalResults() { }
 
+    // Get the current session ID
+    getSessionId() {
+        return useSessionStore.getState().sessionId
+    }
+
     // Clear all session-related data from stores and delete session on backend
     async clearSession() {
         try {

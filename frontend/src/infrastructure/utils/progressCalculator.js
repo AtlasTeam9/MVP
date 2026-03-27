@@ -2,7 +2,6 @@
  * External variables for caching device metrics
  */
 let totalNodes = 0
-let totalTrees = 0
 let totalAssets = 0
 
 /**
@@ -11,7 +10,6 @@ let totalAssets = 0
  * @param {Array} assets - Array of assets from device
  */
 export function initializeProgressCalculator(trees, assets) {
-    totalTrees = trees ? trees.length : 0
     totalAssets = assets ? assets.length : 0
     totalNodes = 0
 
@@ -22,29 +20,18 @@ export function initializeProgressCalculator(trees, assets) {
             }
         })
     }
-
-    console.log('Progress Calculator Initialized:', {
-        totalNodes,
-        totalTrees,
-        totalAssets,
-    })
 }
 
 /**
  * Calculates the test completion percentage based on current position in the evaluation flow
  * Each asset must evaluate ALL trees sequentially
  * Counts answered nodes in pastHistory for accurate per-node progress
- * @param {number} currentAssetIndex - Current asset index
- * @param {number} currentTreeIndex - Current tree index (0 to totalTrees-1)
+ * @param {number} currentAssetIndex - Current asset index (0 to totalAssets-1)
  * @param {Array} pastHistory - Array of answered nodes (used to count visited nodes)
  * @returns {number} Completion percentage (0-100)
  */
-export function calculateCompletionPercentage(
-    currentAssetIndex = 0,
-    currentTreeIndex = 0,
-    pastHistory = []
-) {
-    if (totalNodes === 0 || totalAssets === 0 || totalTrees === 0) {
+export function calculateCompletionPercentage(currentAssetIndex = 0, pastHistory = []) {
+    if (totalNodes === 0 || totalAssets === 0) {
         return 0
     }
 
@@ -62,15 +49,6 @@ export function calculateCompletionPercentage(
     const completedNodes = currentAssetIndex * totalNodes + nodesInCurrentAsset
 
     const percentage = parseFloat(((completedNodes / totalEvaluationNodes) * 100).toFixed(1))
-
-    console.log('Progress Calculation (Per-asset):', {
-        currentAssetIndex,
-        currentTreeIndex,
-        totalEvaluationNodes,
-        nodesInCurrentAsset,
-        completedNodes,
-        percentage,
-    })
 
     return percentage
 }

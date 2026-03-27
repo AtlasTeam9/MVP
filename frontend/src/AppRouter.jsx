@@ -10,6 +10,7 @@ import SessionRunnerView from './pages/SessionRunnerView'
 import ResultView from './pages/ResultView'
 import TreeService from './services/TreeService'
 import styles from './AppRouter.module.css'
+import { useBeforeUnload } from './hooks/useBeforeUnload'
 
 // Route configuration
 const ROUTES = [
@@ -55,6 +56,8 @@ const buildRoute = (route, index) => {
 
 // Main App Router component
 export default function AppRouter() {
+    useBeforeUnload()
+
     useEffect(() => {
         TreeService.loadTrees().catch(
             (error) => console.error('Errore nel caricamento dei trees:', error) // TODO: sistemare

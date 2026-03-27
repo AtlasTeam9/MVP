@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 
 // Methods to manage session state
 const createSessionMethods = (set) => ({
@@ -147,26 +148,31 @@ const createResultMethods = (set) => ({
 })
 
 // Combine all methods into a single store
-const useSessionStore = create((set, get) => ({
-    // Session fields
-    sessionId: null,
-    pastHistory: [],
-    futureHistory: [],
-    isTestFinished: false,
-    results: null,
+const useSessionStore = create(
+    devtools(
+        (set, get) => ({
+            // Session fields
+            sessionId: null,
+            pastHistory: [],
+            futureHistory: [],
+            isTestFinished: false,
+            results: null,
 
-    // Position in evaluation flow
-    currentNode: null,
-    currentAssetIndex: 0,
-    currentTreeIndex: 0,
+            // Position in evaluation flow
+            currentNode: null,
+            currentAssetIndex: 0,
+            currentTreeIndex: 0,
 
-    // Merge all methods
-    ...createSessionMethods(set),
-    ...createDeviceMethods(set),
-    ...createAnswerMethods(set, get),
-    ...createNavigationMethods(set, get),
-    ...createHistoryMethods(set, get),
-    ...createResultMethods(set),
-}))
+            // Merge all methods
+            ...createSessionMethods(set),
+            ...createDeviceMethods(set),
+            ...createAnswerMethods(set, get),
+            ...createNavigationMethods(set, get),
+            ...createHistoryMethods(set, get),
+            ...createResultMethods(set),
+        }),
+        { name: 'SessionStore' }
+    )
+)
 
 export default useSessionStore

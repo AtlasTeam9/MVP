@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 
 // Helper function to search for a node by tree index and node ID
 function findNodeInTree(trees, treeIndex, nodeId) {
@@ -22,25 +23,30 @@ function findNodeInTree(trees, treeIndex, nodeId) {
     return result
 }
 
-const useTreeStore = create((set, get) => ({
-    // State
-    trees: [],
-    isLoading: false,
-    error: null,
+const useTreeStore = create(
+    devtools(
+        (set, get) => ({
+            // State
+            trees: [],
+            isLoading: false,
+            error: null,
 
-    // Actions
-    setTrees: (trees) => {
-        set({ trees })
-    },
-    setIsLoading: (loading) => set({ isLoading: loading }),
-    setError: (error) => set({ error }),
+            // Actions
+            setTrees: (trees) => {
+                set({ trees })
+            },
+            setIsLoading: (loading) => set({ isLoading: loading }),
+            setError: (error) => set({ error }),
 
-    // Selectors
-    getNodeByTreeIndexAndNodeId: (treeIndex, nodeId) =>
-        findNodeInTree(get().trees, treeIndex, nodeId),
+            // Selectors
+            getNodeByTreeIndexAndNodeId: (treeIndex, nodeId) =>
+                findNodeInTree(get().trees, treeIndex, nodeId),
 
-    // Clear store
-    clearStore: () => set({ trees: [], isLoading: false, error: null }),
-}))
+            // Clear store
+            clearStore: () => set({ trees: [], isLoading: false, error: null }),
+        }),
+        { name: 'TreeStore' }
+    )
+)
 
 export default useTreeStore

@@ -4,7 +4,7 @@ import IApiClient from './IApiClient'
 class AxiosApiClient extends IApiClient {
     constructor() {
         super()
-        this.baseURL = 'http://127.0.0.1:8000/api/v1' // Python backend API URL
+        this.baseURL = import.meta.env.VITE_API_BASE_URL
         this.axiosInstance = axios.create({
             baseURL: this.baseURL,
             headers: {
@@ -36,3 +36,6 @@ class AxiosApiClient extends IApiClient {
 // Export a singleton instance of AxiosApiClient
 const apiClient = new AxiosApiClient()
 export default apiClient
+
+// Export the base URL for use in other parts of the application
+export const API_BASE_URL = apiClient.baseURL

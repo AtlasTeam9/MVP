@@ -9,7 +9,6 @@ function SessionContent({
     currentDevice,
     currentNode,
     currentAssetIndex,
-    currentTreeIndex,
     isLoading,
     error,
     onYes,
@@ -32,7 +31,6 @@ function SessionContent({
     const headerProps = {
         currentDevice,
         currentAssetIndex,
-        currentTreeIndex,
         onSaveExit,
         pastHistory,
     }

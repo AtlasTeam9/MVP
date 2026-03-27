@@ -12,7 +12,6 @@ function SessionContentAdapter({ currentDevice, state, handlers }) {
             currentDevice={currentDevice}
             currentNode={state.currentNode}
             currentAssetIndex={state.currentAssetIndex}
-            currentTreeIndex={state.currentTreeIndex}
             isLoading={handlers.isLoading}
             error={handlers.error}
             onYes={handlers.handleYesClick}
