@@ -2,6 +2,7 @@
 import Device from '../domain/Device'
 import { deviceSchema } from '../domain/schemas/DeviceSchema'
 import useDeviceStore from '../store/DeviceStore'
+import exportService from './ExportService'
 
 // Custom hook to get the current device from the store
 export function useCurrentDevice() {
@@ -59,8 +60,8 @@ class DeviceService {
         useDeviceStore.getState().deleteAsset(assetId)
     }
 
-    async persistToFile() {
-        /* Logic for local download if needed */
+    saveDeviceToFile() {
+        exportService.exportDeviceAsJSON(this.getCurrentDevice())
     }
 
     // Clear the current device from the store

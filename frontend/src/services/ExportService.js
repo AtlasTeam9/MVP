@@ -71,6 +71,26 @@ class ExportService {
     }
 
     /**
+     * Export device as JSON
+     * @param {Device} device - The device to export
+     */
+    exportDeviceAsJSON(device) {
+        if (!device) {
+            throw new Error('Device is required for export')
+        }
+
+        try {
+            const deviceData = device.toDict()
+            const jsonString = JSON.stringify(deviceData, null, 2)
+            const blob = new Blob([jsonString], { type: 'application/json' })
+            this.downloadFile(blob, `${device.name}.json`)
+        } catch (error) {
+            console.error('Error during export of the device:', error)
+            throw error
+        }
+    }
+
+    /**
      * Helper method for downloading the file
      * @param {Blob} response - Response blob from the server
      * @param {string} filename - Name of the file to download

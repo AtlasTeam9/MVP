@@ -25,7 +25,7 @@ function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit, pastHisto
                 </div>
             </div>
             <button onClick={onSaveExit} className={styles.btnExit}>
-                Save & Exit Test
+                Save & Exit
             </button>
         </header>
     )

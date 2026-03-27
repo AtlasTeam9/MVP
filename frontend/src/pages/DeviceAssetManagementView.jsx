@@ -32,6 +32,7 @@ function useAssetManagement() {
 
         console.log('Saving device:', currentDevice) // TODO: rimuovere
         // TODO: implementare chiamata api al backend
+        deviceService.saveDeviceToFile()
     }
 
     return {

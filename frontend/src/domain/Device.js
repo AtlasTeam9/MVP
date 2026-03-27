@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 export default class Device {
     constructor(name, assets = [], os, firmware, funcs, desc = null) {
         this._name = name
@@ -43,10 +44,10 @@ export default class Device {
 
     toDict() {
         return {
-            deviceName: this.name,
+            device_name: this.name,
             assets: this.assets.map((asset) => asset.toDict()),
-            operatingSystem: this.operatingSystem,
-            firmwareVersion: this.firmwareVersion,
+            operating_system: this.operatingSystem,
+            firmware_version: this.firmwareVersion,
             functionalities: this.functionalities,
             description: this.description,
         }

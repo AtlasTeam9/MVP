@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 export const AssetType = {
     NETWORK_FUNCTION: 'Network Function',
     NETWORK_FUNCTION_CONFIGURATION: 'Network Function Configuration',
@@ -46,8 +47,8 @@ class Asset {
             id: this._id,
             name: this._name,
             type: this._type,
-            isSensitive: this._isSensitive,
-            desc: this._desc,
+            is_sensitive: this._isSensitive,
+            description: this._desc,
         }
     }
 }
