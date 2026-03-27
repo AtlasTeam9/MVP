@@ -6,7 +6,7 @@ from .result_store import ResultStore
 from .session_navigator import SessionNavigator
 
 
-class SessionDependencyManager:
+class DependencyManager:
     """
     Gestisce le regole di dipendenza tra tree durante la navigazione
     e quando una risposta viene modificata.

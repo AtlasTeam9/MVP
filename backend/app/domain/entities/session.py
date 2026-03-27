@@ -1,6 +1,6 @@
 from app.domain.utils.dependency_evaluator import DependencyEvaluator
+from app.domain.utils.dependency_manager import DependencyManager
 from app.domain.utils.result_store import ResultStore
-from app.domain.utils.session_dependency_manager import SessionDependencyManager
 from app.domain.utils.session_navigator import AnswerResult, GoBackResult, SessionNavigator
 from app.domain.utils.session_state import SessionState
 
@@ -32,7 +32,7 @@ class Session:
         self.results = results
         self.navigator = navigator
         self.dependencies = dependency_evaluator
-        self._dependency_manager = SessionDependencyManager(
+        self._dependency_manager = DependencyManager(
             results=results,
             navigator=navigator,
             dependency_evaluator=dependency_evaluator,
@@ -93,9 +93,6 @@ class Session:
             # Il navigatore è passato automaticamente al prossimo albero. Controlliamo se va saltato!
             self.skip_invalid_trees()
 
-            # Aggiorniamo il risultato ritornato per riflettere lo stato corretto
-            # della sessione dopo eventuali salti (es. se abbiamo saltato tutti gli
-            # alberi rimanenti, la sessione è finita)
             answer_result.session_finished = self.state.is_finished
 
         return answer_result
