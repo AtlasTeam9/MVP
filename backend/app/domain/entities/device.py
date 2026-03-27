@@ -77,7 +77,6 @@ class Asset:
 
 
 class Device:
-    # Per il momento ho inserito le informazioni come: sistema operativo, versione firmware, funzionalità e descrizione come opzionali
     def __init__(
         self,
         device_name: str,

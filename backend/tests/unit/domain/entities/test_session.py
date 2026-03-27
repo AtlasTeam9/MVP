@@ -77,7 +77,7 @@ class TestSession:
         assert result.tree_completed is True
         assert result.tree_result == Result.NOT_APPLICABLE
 
-        # tree_02 dipende da tree_01. Poiché tree_01 è N/A, session._skip_invalid_trees()
+        # tree_02 dipende da tree_01. Poiché tree_01 è N/A, session.skip_invalid_trees()
         # deve aver saltato tree_02 e deve averci spostato direttamente all'Asset 2 (a2).
         if session.current_asset and session.current_tree:
             assert session.current_asset.get_id == "a2"
