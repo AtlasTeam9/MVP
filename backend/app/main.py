@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.application.state import AppState
 from app.infrastructure.persistence.file_storage import FileStorage
 from app.infrastructure.persistence.file_tree_provider import FileTreeProvider
-from app.presentation.api.v1.device.router import router as device_router
 from app.presentation.api.v1.exception_handlers import register_exception_handlers
 from app.presentation.api.v1.session.router import router as session_router
 from app.presentation.api.v1.trees.router import router as trees_router
@@ -39,5 +38,4 @@ app.add_middleware(
 
 app.include_router(session_router, prefix="/api/v1")
 app.include_router(trees_router, prefix="/api/v1")
-app.include_router(device_router, prefix="/api/v1")
 register_exception_handlers(app)
