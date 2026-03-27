@@ -4,6 +4,7 @@ import useDeviceStore from '../store/DeviceStore'
 import useTreeStore from '../store/TreeStore'
 import useResultStore from '../store/ResultStore'
 import apiClient from '../infrastructure/api/AxiosApiClient'
+import deviceService from './DeviceService'
 import Device from '../domain/Device'
 import Asset from '../domain/Asset'
 
@@ -125,6 +126,7 @@ class SessionService {
         }
     }
 
+    // TODO: aspettare risposta bluewind
     resumeSession(requirementId, assetId) {
         console.log(`Ripresa sessione: req=${requirementId}, asset=${assetId}`)
         // TODO: Logica per riprendere una sessione specifica
@@ -339,13 +341,29 @@ class SessionService {
     }
 
     // Modify a previous answer by going back and re-answering
-    async modifyPreviousAnswer() { }
+    async modifyPreviousAnswer() {}
 
-    // Delete session and clear stores
-    async saveAndExit() { }
+    // Delete session and clear stores (same behavior as HomeIcon)
+    async saveAndExit() {
+        try {
+            const sessionId = useSessionStore.getState().sessionId
+
+            // Delete session on backend
+            if (sessionId) {
+                await apiClient.delete(`/session/${sessionId}/delete`)
+            }
+        } catch (error) {
+            console.error("Errore nell'eliminazione della sessione dal backend:", error)
+            // Continue clearing local stores even if backend delete fails
+        } finally {
+            // Always clear local stores
+            deviceService.clearDevice()
+            this.clearSession()
+        }
+    }
 
     // Fetch final results after session is finished
-    async fetchFinalResults() { }
+    async fetchFinalResults() {}
 
     // Get the current session ID
     getSessionId() {
@@ -359,7 +377,7 @@ class SessionService {
 
             // Delete session on backend
             if (sessionId) {
-                await apiClient.delete(`/session/${sessionId}`)
+                await apiClient.delete(`/session/${sessionId}/delete`)
             }
         } catch (error) {
             console.error("Errore nell'eliminazione della sessione dal backend:", error)

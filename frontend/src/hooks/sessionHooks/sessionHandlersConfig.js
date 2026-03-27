@@ -59,7 +59,7 @@ const BASE_HANDLER_CONFIGS = [
             await SessionService.saveAndExit()
         },
         errorMsg: 'Error saving and exiting:',
-        onSuccess: (navigate) => () => navigate('/device/summary'),
+        onSuccess: (navigate) => () => navigate('/'),
     },
 ]
 
