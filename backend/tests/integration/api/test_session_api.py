@@ -441,7 +441,7 @@ class TestDeleteSession:
         session_id = await create_session(client, mock_storage, device_file)
         assert session_id in AppState.sessions
 
-        response = await client.delete(f"/api/v1/session/{session_id}")
+        response = await client.delete(f"/api/v1/session/{session_id}/delete")
 
         assert response.status_code == 204
         assert session_id not in AppState.sessions
@@ -451,14 +451,14 @@ class TestDeleteSession:
         """Verifica che delete_session venga chiamato sullo storage."""
         session_id = await create_session(client, mock_storage, device_file)
 
-        await client.delete(f"/api/v1/session/{session_id}")
+        await client.delete(f"/api/v1/session/{session_id}/delete")
 
         mock_storage.delete_session.assert_called_once_with(session_id)
 
     @pytest.mark.integration
     async def test_delete_session_not_found(self, client, mock_storage):
         """Restituisce 400 per session_id inesistente."""
-        response = await client.delete("/api/v1/session/sessione-falsa")
+        response = await client.delete("/api/v1/session/sessione-falsa/delete")
         assert response.status_code == 400
 
 
