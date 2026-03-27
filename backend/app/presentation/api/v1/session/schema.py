@@ -45,6 +45,9 @@ class DeviceSchema(BaseModel):
 class LoadSessionResponseSchema(BaseModel):
     session_id: str = Field(..., description="ID univoco della sessione")
     device: DeviceSchema = Field(..., description="Oggetto del dispositivo")
+    answer: list[dict[str, Any]] = Field(
+        ..., description="Cronologia risposte ripristinata"
+    )
     position: dict[str, Any] = Field(..., description="Stato di avanzamento")
     results: dict = Field(..., description="Risultati registrati fino a ora")
     aggregate_results: dict = Field(
@@ -62,6 +65,20 @@ class GoBackRequestSchema(BaseModel):
     target_node_id: str = Field(..., description="ID del nodo a cui tornare")
     target_tree_index: int = Field(..., description="Indice dell'albero a cui tornare")
     new_answer: bool = Field(..., description="Nuova risposta per il nodo target")
+
+
+class AnswerHistoryItemSchema(BaseModel):
+    asset_index: int = Field(..., description="Indice dell'asset della risposta")
+    tree_index: int = Field(..., description="Indice dell'albero della risposta")
+    node_id: str = Field(..., description="ID del nodo a cui è stata data risposta", min_length=1)
+    answer: bool = Field(..., description="Risposta data al nodo")
+
+
+class ExportSessionRequestSchema(BaseModel):
+    answer: list[AnswerHistoryItemSchema] = Field(
+        default_factory=list,
+        description="Cronologia risposte in ordine temporale",
+    )
 
 
 class GoBackResponseSchema(BaseModel):

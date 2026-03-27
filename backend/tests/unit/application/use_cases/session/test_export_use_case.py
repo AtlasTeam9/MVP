@@ -15,6 +15,15 @@ from app.domain.exceptions import SessionNotFoundException, UnsupportedExportFor
 from app.domain.services.exporters.csv_exporter import CsvExporter
 from app.domain.services.exporters.pdf_exporter import PdfExporter
 
+SAMPLE_ANSWER_HISTORY = [
+    {
+        "asset_index": 0,
+        "tree_index": 0,
+        "node_id": "node1",
+        "answer": True,
+    }
+]
+
 # ---------------------------------------------------------------------------
 # Shared fixtures
 # ---------------------------------------------------------------------------
@@ -139,14 +148,17 @@ def export_session_use_case(mock_service):
 class TestExportSessionUseCase:
     async def test_raises_if_session_not_found(self, export_session_use_case, mock_service):
         mock_service.get_session.return_value = None
-        request = ExportSessionRequest(session_id="fake-id")
+        request = ExportSessionRequest(session_id="fake-id", answers=[])
 
         with pytest.raises(SessionNotFoundException):
             await export_session_use_case.execute(request)
 
     async def test_returns_json_bytes(self, export_session_use_case, mock_service, sample_session):
         mock_service.get_session.return_value = sample_session
-        request = ExportSessionRequest(session_id=sample_session.get_id)
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
 
         response = await export_session_use_case.execute(request)
 
@@ -158,7 +170,10 @@ class TestExportSessionUseCase:
         self, export_session_use_case, mock_service, sample_session
     ):
         mock_service.get_session.return_value = sample_session
-        request = ExportSessionRequest(session_id=sample_session.get_id)
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
 
         response = await export_session_use_case.execute(request)
         data = json.loads(response.content)
@@ -169,7 +184,10 @@ class TestExportSessionUseCase:
         self, export_session_use_case, mock_service, sample_session
     ):
         mock_service.get_session.return_value = sample_session
-        request = ExportSessionRequest(session_id=sample_session.get_id)
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
 
         response = await export_session_use_case.execute(request)
         data = json.loads(response.content)
@@ -181,7 +199,10 @@ class TestExportSessionUseCase:
         self, export_session_use_case, mock_service, sample_session
     ):
         mock_service.get_session.return_value = sample_session
-        request = ExportSessionRequest(session_id=sample_session.get_id)
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
 
         response = await export_session_use_case.execute(request)
         data = json.loads(response.content)
@@ -194,7 +215,10 @@ class TestExportSessionUseCase:
         self, export_session_use_case, mock_service, sample_session
     ):
         mock_service.get_session.return_value = sample_session
-        request = ExportSessionRequest(session_id=sample_session.get_id)
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
 
         response = await export_session_use_case.execute(request)
         data = json.loads(response.content)
@@ -208,7 +232,10 @@ class TestExportSessionUseCase:
         self, export_session_use_case, mock_service, sample_session
     ):
         mock_service.get_session.return_value = sample_session
-        request = ExportSessionRequest(session_id=sample_session.get_id)
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
 
         response = await export_session_use_case.execute(request)
 
@@ -219,7 +246,10 @@ class TestExportSessionUseCase:
         self, export_session_use_case, mock_service, sample_session
     ):
         mock_service.get_session.return_value = sample_session
-        request = ExportSessionRequest(session_id=sample_session.get_id)
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
 
         response = await export_session_use_case.execute(request)
         data = json.loads(response.content)
@@ -229,9 +259,27 @@ class TestExportSessionUseCase:
 
     async def test_json_is_valid_utf8(self, export_session_use_case, mock_service, sample_session):
         mock_service.get_session.return_value = sample_session
-        request = ExportSessionRequest(session_id=sample_session.get_id)
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
 
         response = await export_session_use_case.execute(request)
 
         decoded = response.content.decode("utf-8")
         assert len(decoded) > 0
+
+    async def test_json_contains_answer_history(
+        self, export_session_use_case, mock_service, sample_session
+    ):
+        mock_service.get_session.return_value = sample_session
+        request = ExportSessionRequest(
+            session_id=sample_session.get_id,
+            answers=SAMPLE_ANSWER_HISTORY,
+        )
+
+        response = await export_session_use_case.execute(request)
+        data = json.loads(response.content)
+
+        assert "answer" in data
+        assert data["answer"] == SAMPLE_ANSWER_HISTORY

@@ -44,6 +44,7 @@ from .dependencies import (
 from .schema import (
     AnswerRequestSchema,
     AnswerResponseSchema,
+    ExportSessionRequestSchema,
     AssetSchema,
     DeviceSchema,
     GoBackRequestSchema,
@@ -189,13 +190,20 @@ class SessionController:
             current_tree_index=result.current_tree_index,
         )
 
-    @router.get("/{session_id}/export", status_code=200)
-    async def export_session(self, session_id: str = Depends(validate_session_id)) -> Response:
+    @router.post("/{session_id}/export", status_code=200)
+    async def export_session(
+        self,
+        body: ExportSessionRequestSchema,
+        session_id: str = Depends(validate_session_id),
+    ) -> Response:
         """
         Scarica la sessione completa come file JSON.
         """
         result = await self.export_session_use_case.execute(
-            ExportSessionRequest(session_id=session_id)
+            ExportSessionRequest(
+                session_id=session_id,
+                answers=[item.model_dump() for item in body.answer],
+            )
         )
         return Response(
             content=result.content,
@@ -275,6 +283,7 @@ class SessionController:
                     for asset in result.assets
                 ],
             ),
+            answer=result.answers,
             position={
                 "current_asset_index": result.current_asset_index,
                 "current_tree_index": result.current_tree_index,
