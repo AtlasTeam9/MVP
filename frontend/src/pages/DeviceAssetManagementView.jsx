@@ -27,11 +27,19 @@ function useAssetManagement() {
         }
     }
 
+    const onSaveDevice = () => {
+        if (!currentDevice) return
+
+        console.log('Saving device:', currentDevice) // TODO: rimuovere
+        // TODO: implementare chiamata api al backend
+    }
+
     return {
         currentDevice,
         onAddAsset: () => navigate('/asset/new'),
         onGoToSummary,
         onDeleteAsset: deviceService.removeAsset,
+        onSaveDevice,
     }
 }
 
@@ -66,17 +74,23 @@ function AssetListDisplay({ assets, onDeleteAsset }) {
     )
 }
 
-// Component for action buttons related to asset management (add new asset, go to summary)
-function AssetActionButtons({ assets, onAddAsset, onGoToSummary }) {
+// Component for action buttons related to asset management
+// (add new asset, go to summary, save device)
+function AssetActionButtons({ assets, onAddAsset, onGoToSummary, onSaveDevice }) {
     return (
         <div className={styles.buttonGroup}>
             <button className={styles.btnPrimary} onClick={onAddAsset}>
                 Add new asset
             </button>
             {assets && assets.length > 0 && (
-                <button className={styles.btnSecondary} onClick={onGoToSummary}>
-                    Go to summary
-                </button>
+                <>
+                    <button className={styles.btnSecondary} onClick={onGoToSummary}>
+                        Go to summary
+                    </button>
+                    <button className={styles.btnSecondary} onClick={onSaveDevice}>
+                        Save Device
+                    </button>
+                </>
             )}
         </div>
     )
@@ -84,7 +98,13 @@ function AssetActionButtons({ assets, onAddAsset, onGoToSummary }) {
 
 // Main content component for the DeviceAssetManagementView, displaying the header, asset list,
 // and action buttons
-function DeviceAssetManagementContent({ currentDevice, onAddAsset, onGoToSummary, onDeleteAsset }) {
+function DeviceAssetManagementContent({
+    currentDevice,
+    onAddAsset,
+    onGoToSummary,
+    onDeleteAsset,
+    onSaveDevice,
+}) {
     return (
         <div className={styles.container}>
             <BackIcon className={styles.backIcon} />
@@ -105,6 +125,7 @@ function DeviceAssetManagementContent({ currentDevice, onAddAsset, onGoToSummary
                     assets={currentDevice.assets}
                     onAddAsset={onAddAsset}
                     onGoToSummary={onGoToSummary}
+                    onSaveDevice={onSaveDevice}
                 />
             </div>
             <div className={styles.navigationIcons}>
@@ -116,7 +137,8 @@ function DeviceAssetManagementContent({ currentDevice, onAddAsset, onGoToSummary
 
 // Main component for the Device Asset Management view
 export default function DeviceAssetManagementView() {
-    const { currentDevice, onAddAsset, onGoToSummary, onDeleteAsset } = useAssetManagement()
+    const { currentDevice, onAddAsset, onGoToSummary, onDeleteAsset, onSaveDevice } =
+        useAssetManagement()
 
     if (!currentDevice) {
         return (
@@ -132,6 +154,7 @@ export default function DeviceAssetManagementView() {
             onAddAsset={onAddAsset}
             onGoToSummary={onGoToSummary}
             onDeleteAsset={onDeleteAsset}
+            onSaveDevice={onSaveDevice}
         />
     )
 }
