@@ -4,6 +4,7 @@ import { useCurrentDevice } from '../services/DeviceService'
 import deviceService from '../services/DeviceService'
 import sessionService from '../services/SessionService'
 import styles from './DeviceAssetManagementView.module.css'
+import BackIcon from '../components/common/BackIcon'
 import HomeIcon from '../components/common/HomeIcon'
 
 // Custom hook to manage the logic of the Device Asset Management view
@@ -56,7 +57,7 @@ function AssetListDisplay({ assets, onDeleteAsset }) {
                             onClick={() => onDeleteAsset(asset.name)}
                             title="Delete asset"
                         >
-                            ✕
+                            🗑️
                         </button>
                     </div>
                 ))}
@@ -86,9 +87,12 @@ function AssetActionButtons({ assets, onAddAsset, onGoToSummary }) {
 function DeviceAssetManagementContent({ currentDevice, onAddAsset, onGoToSummary, onDeleteAsset }) {
     return (
         <div className={styles.container}>
+            <BackIcon className={styles.backIcon} />
             <header className={styles.header}>
-                <h1>Device Asset Management</h1>
-                <p className={styles.deviceName}>{currentDevice.name}</p>
+                <div className={styles.headerTitle}>
+                    <h1>Device Asset Management</h1>
+                    <p className={styles.deviceName}>{currentDevice.name}</p>
+                </div>
             </header>
             <div className={styles.content}>
                 <div className={styles.assetSection}>

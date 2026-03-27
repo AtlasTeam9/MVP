@@ -3,10 +3,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { deviceSchema } from '../domain/schemas/DeviceSchema'
-import deviceService from '../services/DeviceService'
+import deviceService, { useCurrentDevice } from '../services/DeviceService'
+import sessionService from '../services/SessionService'
 
 import styles from './DeviceFormView.module.css'
 import Device from '../domain/Device'
+import BackIcon from '../components/common/BackIcon'
 
 // Standard form data structure for a Device, used for both creation and editing
 const initialData = {
@@ -18,10 +20,10 @@ const initialData = {
 }
 
 // Helper function to convert form data into a Device instance
-const buildDevice = (data) =>
+const buildDevice = (data, assets = []) =>
     new Device(
         data.name,
-        [],
+        assets,
         data.operatingSystem,
         data.firmwareVersion,
         data.functionalities,
@@ -31,6 +33,18 @@ const buildDevice = (data) =>
 // Custom hook to manage form state and navigation logic
 function useDeviceForm() {
     const navigate = useNavigate()
+    const currentDevice = useCurrentDevice()
+
+    // Use current device data if available, otherwise use empty initial data
+    const formInitialData = currentDevice
+        ? {
+              name: currentDevice.name,
+              operatingSystem: currentDevice.operatingSystem,
+              firmwareVersion: currentDevice.firmwareVersion,
+              functionalities: currentDevice.functionalities,
+              description: currentDevice.description || '',
+          }
+        : initialData
 
     const {
         register,
@@ -39,11 +53,12 @@ function useDeviceForm() {
         formState: { errors },
     } = useForm({
         resolver: zodResolver(deviceSchema),
-        defaultValues: initialData,
+        defaultValues: formInitialData,
     })
 
     const onSave = (data) => {
-        const dev = buildDevice(data)
+        const assets = currentDevice ? currentDevice.assets : []
+        const dev = buildDevice(data, assets)
         deviceService.createDevice(dev)
         navigate('/device/assets')
     }
@@ -53,7 +68,11 @@ function useDeviceForm() {
         handleSubmit: handleSubmit(onSave),
         resetForm: () => reset(),
         errors,
-        onCancel: () => navigate('/'),
+        onCancel: () => {
+            deviceService.clearDevice()
+            sessionService.clearSession()
+            navigate('/')
+        },
     }
 }
 
@@ -121,22 +140,22 @@ export default function DeviceFormView() {
     const { register, handleSubmit, resetForm, onCancel, errors } = useDeviceForm()
 
     return (
-        <form className={styles.container} onSubmit={handleSubmit}>
-            <h2>Create a new Device</h2>
+        <>
+            <BackIcon className={styles.backIcon} onBack={onCancel} />
+            <form className={styles.container} onSubmit={handleSubmit}>
+                <h2>Create a new Device</h2>
 
-            <DeviceFormFields register={register} errors={errors} />
+                <DeviceFormFields register={register} errors={errors} />
 
-            <div className={styles.buttonGroup}>
-                <button type="button" className={styles.btnSecondary} onClick={onCancel}>
-                    Cancel
-                </button>
-                <button type="button" className={styles.btnSecondary} onClick={resetForm}>
-                    Reset
-                </button>
-                <button type="submit" className={styles.btnPrimary}>
-                    Save
-                </button>
-            </div>
-        </form>
+                <div className={styles.buttonGroup}>
+                    <button type="button" className={styles.btnSecondary} onClick={resetForm}>
+                        Reset
+                    </button>
+                    <button type="submit" className={styles.btnPrimary}>
+                        Save
+                    </button>
+                </div>
+            </form>
+        </>
     )
 }

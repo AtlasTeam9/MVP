@@ -15,7 +15,7 @@ function HomeIcon() {
     }
 
     return (
-        <button className={styles.iconBtn} onClick={handleHomeClick} title="Home">
+        <button className={styles.iconBtn} onClick={handleHomeClick} title="Return to Homepage">
             🏠
         </button>
     )

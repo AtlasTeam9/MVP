@@ -150,10 +150,16 @@ textarea {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.toggleSwitch input:checked+.toggleSlider {
+.toggleSwitch input:checked + .toggleSlider {
     background-color: var(--primary-color);
 }
 
-.toggleSwitch input:checked+.toggleSlider:before {
+.toggleSwitch input:checked + .toggleSlider:before {
     transform: translateX(22px);
+}
+
+.backIcon {
+    position: fixed;
+    left: 20px;
+    top: 40px;
 }

@@ -7,6 +7,7 @@ import Asset, { AssetType } from '../domain/Asset'
 import deviceService from '../services/DeviceService'
 
 import styles from './DeviceFormView.module.css'
+import BackIcon from '../components/common/BackIcon'
 
 // Standard form data structure for an Asset
 const initialData = {
@@ -174,22 +175,22 @@ export default function AssetFormView() {
     const { register, handleSubmit, resetForm, onCancel, errors } = useAssetForm()
 
     return (
-        <form className={styles.container} onSubmit={handleSubmit}>
-            <h2>Add New Asset</h2>
+        <>
+            <BackIcon className={styles.backIcon} onBack={onCancel} />
+            <form className={styles.container} onSubmit={handleSubmit}>
+                <h2>Add New Asset</h2>
 
-            <AssetFormFields register={register} errors={errors} />
+                <AssetFormFields register={register} errors={errors} />
 
-            <div className={styles.buttonGroup}>
-                <button type="button" className={styles.btnSecondary} onClick={onCancel}>
-                    Cancel
-                </button>
-                <button type="button" className={styles.btnSecondary} onClick={resetForm}>
-                    Reset
-                </button>
-                <button type="submit" className={styles.btnPrimary}>
-                    Save
-                </button>
-            </div>
-        </form>
+                <div className={styles.buttonGroup}>
+                    <button type="button" className={styles.btnSecondary} onClick={resetForm}>
+                        Reset
+                    </button>
+                    <button type="submit" className={styles.btnPrimary}>
+                        Save
+                    </button>
+                </div>
+            </form>
+        </>
     )
 }
