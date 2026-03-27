@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -30,6 +30,7 @@ class ExportResultsRequest:
 @dataclass
 class ExportSessionRequest:
     session_id: str
+    answers: list[dict] = field(default_factory=list)
 
 
 @dataclass

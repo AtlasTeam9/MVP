@@ -337,7 +337,10 @@ class TestExportSession:
         """Verifica che l'export restituisca un JSON scaricabile."""
         session_id = await create_session(client, mock_storage, device_file)
 
-        response = await client.get(f"/api/v1/session/{session_id}/export")
+        response = await client.post(
+            f"/api/v1/session/{session_id}/export",
+            json={"answer": []},
+        )
 
         assert response.status_code == 200
         assert response.headers["content-type"] == "application/json"
@@ -348,11 +351,15 @@ class TestExportSession:
         """Verifica che il contenuto dell'export abbia i campi corretti."""
         session_id = await create_session(client, mock_storage, device_file)
 
-        response = await client.get(f"/api/v1/session/{session_id}/export")
+        response = await client.post(
+            f"/api/v1/session/{session_id}/export",
+            json={"answer": []},
+        )
         data = json.loads(response.content)
 
         assert data["session_id"] == session_id
         assert "device" in data
+        assert "answer" in data
         assert "results" in data
         assert "position" in data
         assert "is_finished" in data
@@ -360,8 +367,100 @@ class TestExportSession:
     @pytest.mark.integration
     async def test_export_session_not_found(self, client, mock_storage):
         """Restituisce 400 per session_id inesistente."""
-        response = await client.get("/api/v1/session/sessione-falsa/export")
+        response = await client.post(
+            "/api/v1/session/sessione-falsa/export",
+            json={"answer": []},
+        )
         assert response.status_code == 400
+
+    @pytest.mark.integration
+    async def test_load_session_restores_navigation_history(
+        self, client, mock_storage, device_file, tmp_path
+    ):
+        """Verifica che load_session ripristini la history risposte utile al go_back."""
+        session_id = await create_session(client, mock_storage, device_file)
+
+        # Crea almeno una entry nello stack: risposta al nodo iniziale.
+        await client.post(
+            f"/api/v1/session/{session_id}/answer",
+            json={"answer": False},
+        )
+
+        session = AppState.sessions[session_id]
+        answer_history = [
+            {
+                "asset_index": item["asset_index"],
+                "tree_index": item["tree_index"],
+                "node_id": item["node_id"],
+                "answer": item["answer"],
+            }
+            for item in session.navigation_history
+        ]
+
+        export_response = await client.post(
+            f"/api/v1/session/{session_id}/export",
+            json={"answer": answer_history},
+        )
+        assert export_response.status_code == 200
+
+        exported_path = tmp_path / "session_export_with_answers.json"
+        exported_path.write_bytes(export_response.content)
+
+        # Simula un nuovo import della sessione.
+        with open(exported_path, "rb") as f:
+            load_response = await client.post(
+                "/api/v1/session/load_session_from_file",
+                files={"file": ("session.json", f, "application/json")},
+            )
+        assert load_response.status_code == 200
+
+        loaded_payload = load_response.json()
+        assert "answer" in loaded_payload
+        assert loaded_payload["answer"] == answer_history
+
+        loaded_session_id = loaded_payload["session_id"]
+        loaded_session = AppState.sessions[loaded_session_id]
+        assert len(loaded_session.state.navigation_stack) == len(answer_history)
+
+        first = answer_history[0]
+        go_back_response = await client.post(
+            f"/api/v1/session/{loaded_session_id}/go_back",
+            json={
+                "target_asset_index": first["asset_index"],
+                "target_tree_index": first["tree_index"],
+                "target_node_id": first["node_id"],
+                "new_answer": True,
+            },
+        )
+        assert go_back_response.status_code == 200
+        assert go_back_response.json()["found"] is True
+
+    @pytest.mark.integration
+    async def test_load_session_requires_answer_field(
+        self, client, mock_storage, device_file, tmp_path
+    ):
+        """Il file importato deve contenere obbligatoriamente il campo answer."""
+        session_id = await create_session(client, mock_storage, device_file)
+
+        export_response = await client.post(
+            f"/api/v1/session/{session_id}/export",
+            json={"answer": []},
+        )
+        assert export_response.status_code == 200
+
+        exported_data = json.loads(export_response.content)
+        exported_data.pop("answer", None)
+
+        invalid_export_path = tmp_path / "session_export_missing_answer.json"
+        invalid_export_path.write_text(json.dumps(exported_data), encoding="utf-8")
+
+        with open(invalid_export_path, "rb") as f:
+            load_response = await client.post(
+                "/api/v1/session/load_session_from_file",
+                files={"file": ("session.json", f, "application/json")},
+            )
+
+        assert load_response.status_code == 422
 
 
 class TestExportResults:

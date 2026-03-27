@@ -25,6 +25,7 @@ class ExportSessionUseCase(IExportSessionUseCase):
                 "current_node_id": session.state.current_node_id,
             },
             "results": session.results.to_dict(),
+            "answer": request.answers,
             "is_finished": session.state.is_finished,
         }
 

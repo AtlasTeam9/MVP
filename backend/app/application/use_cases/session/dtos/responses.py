@@ -71,6 +71,7 @@ class LoadSessionResponse:
     current_asset_index: int
     current_tree_index: int
     current_node_id: str
+    answers: list[dict]
     results: dict[str, dict[str, str]]
     aggregate_results: dict
     is_finished: bool
