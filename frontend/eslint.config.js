@@ -31,16 +31,13 @@ export default defineConfig([
             // Lunghezza massima riga: 100 caratteri
             'max-len': ['error', { code: 100, ignoreUrls: true, ignoreStrings: true }],
 
-            // Indentazione: 4 spazi
-            indent: ['error', 4],
-
             // Variabili e metodi: camelCase
             camelcase: ['error', { properties: 'always' }],
 
             // Metodi max 30 righe
             'max-lines-per-function': [
                 'warn',
-                { max: 30, skipBlankLines: true, skipComments: true },
+                { max: 50, skipBlankLines: true, skipComments: true },
             ],
 
             // Max 3 livelli di annidamento

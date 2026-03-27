@@ -29,9 +29,7 @@
     {
         "id": "ACM-2",
         "title": "Appropriate access control mechanisms",
-        "dependencies": [
-            "ACM-1"
-        ],
+        "dependencies": ["ACM-1"],
         "nodes": {
             "node1": {
                 "question": "Do the access control mechanisms ensure that only authorized entities have access to the protected security asset or network asset?",
@@ -43,9 +41,7 @@
     {
         "id": "AUM-1-1",
         "title": "Applicability of authentication mechanisms - network interface",
-        "dependencies": [
-            "ACM-1"
-        ],
+        "dependencies": ["ACM-1"],
         "nodes": {
             "node1": {
                 "question": "Is the managed access for network functions or network functions configuration where the absence of authentication is required for the equipment's intended functionality?",
@@ -67,9 +63,7 @@
     {
         "id": "AUM-1-2",
         "title": "Applicability of authentication mechanisms - user interface",
-        "dependencies": [
-            "ACM-1"
-        ],
+        "dependencies": ["ACM-1"],
         "nodes": {
             "node1": {
                 "question": "Is the managed access performed over a user interface where physical or logical measures in the targeted environment provide confidence in the correctness of an entity's claim?",
@@ -96,9 +90,7 @@
     {
         "id": "AUM-2-NI",
         "title": "Appropriate authentication mechanisms - network interface",
-        "dependencies": [
-            "AUM-1-1"
-        ],
+        "dependencies": ["AUM-1-1"],
         "nodes": {
             "node1": {
                 "question": "Does the authentication mechanism examine evidence from at least one element of the categories knowledge, possession and inherence (one factor authentication)?",
@@ -110,9 +102,7 @@
     {
         "id": "AUM-2-UI",
         "title": "Appropriate authentication mechanisms - user interface",
-        "dependencies": [
-            "AUM-1-2"
-        ],
+        "dependencies": ["AUM-1-2"],
         "nodes": {
             "node1": {
                 "question": "Does the authentication mechanism examine evidence from at least one element of the categories knowledge, possession and inherence (one factor authentication)?",
@@ -124,9 +114,7 @@
     {
         "id": "AUM-3-NI",
         "title": "Authenticator validation - network interface",
-        "dependencies": [
-            "AUM-1-1"
-        ],
+        "dependencies": ["AUM-1-1"],
         "nodes": {
             "node1": {
                 "question": "Does the authentication mechanism validate all relevant properties considering the available information about the authenticator in the operational environments of use?",
@@ -138,9 +126,7 @@
     {
         "id": "AUM-3-UI",
         "title": "Authenticator validation - user interface",
-        "dependencies": [
-            "AUM-1-2"
-        ],
+        "dependencies": ["AUM-1-2"],
         "nodes": {
             "node1": {
                 "question": "Does the authentication mechanism validate all relevant properties considering the available information about the authenticator in the operational environments of use?",
@@ -152,9 +138,7 @@
     {
         "id": "AUM-4-NI",
         "title": "Changing authenticators - network interface",
-        "dependencies": [
-            "AUM-1-1"
-        ],
+        "dependencies": ["AUM-1-1"],
         "nodes": {
             "node1": {
                 "question": "Does the change of the authenticator conflict security goals?",
@@ -171,9 +155,7 @@
     {
         "id": "AUM-4-UI",
         "title": "Changing authenticators - user interface",
-        "dependencies": [
-            "AUM-1-2"
-        ],
+        "dependencies": ["AUM-1-2"],
         "nodes": {
             "node1": {
                 "question": "Does the change of the authenticator conflict security goals?",
@@ -190,9 +172,7 @@
     {
         "id": "AUM-5-1-NI",
         "title": "Password strength - factory default passwords - network interface",
-        "dependencies": [
-            "AUM-1-1"
-        ],
+        "dependencies": ["AUM-1-1"],
         "nodes": {
             "node1": {
                 "question": "Is the password enforced to be changed by the user before or on first use?",
@@ -214,9 +194,7 @@
     {
         "id": "AUM-5-1-UI",
         "title": "Password strength - factory default passwords - user interface",
-        "dependencies": [
-            "AUM-1-2"
-        ],
+        "dependencies": ["AUM-1-2"],
         "nodes": {
             "node1": {
                 "question": "Is the password enforced to be changed by the user before or on first use?",
@@ -238,9 +216,7 @@
     {
         "id": "AUM-5-2-NI",
         "title": "Password strength - non-factory default passwords - network interface",
-        "dependencies": [
-            "AUM-1-1"
-        ],
+        "dependencies": ["AUM-1-1"],
         "nodes": {
             "node1": {
                 "question": "Is the password enforced to be set by the user before or on first use and before the equipment is logically connected to a network?",
@@ -262,9 +238,7 @@
     {
         "id": "AUM-5-2-UI",
         "title": "Password strength - non-factory default passwords - user interface",
-        "dependencies": [
-            "AUM-1-2"
-        ],
+        "dependencies": ["AUM-1-2"],
         "nodes": {
             "node1": {
                 "question": "Is the password enforced to be set by the user before or on first use and before the equipment is logically connected to a network?",
@@ -286,9 +260,7 @@
     {
         "id": "AUM-6-NI",
         "title": "Brute force protection - network interface",
-        "dependencies": [
-            "AUM-1-1"
-        ],
+        "dependencies": ["AUM-1-1"],
         "nodes": {
             "node1": {
                 "question": "Has the authentication mechanism the capability to be resilient against brute force attacks?",
@@ -300,9 +272,7 @@
     {
         "id": "AUM-6-UI",
         "title": "Brute force protection - user interface",
-        "dependencies": [
-            "AUM-1-2"
-        ],
+        "dependencies": ["AUM-1-2"],
         "nodes": {
             "node1": {
                 "question": "Has the authentication mechanism the capability to be resilient against brute force attacks?",

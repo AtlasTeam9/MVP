@@ -3,10 +3,12 @@
     flex-direction: column;
     align-items: center;
     padding: 40px 20px;
+    border-radius: 20px;
     max-width: 600px;
-    margin: 0 auto;
-    height: 100svh;
+    margin: 50px auto;
+    height: fit-content;
     justify-content: center;
+    background: white;
 }
 
 .formGroup {
@@ -27,6 +29,12 @@
     border: 1px solid #ccc;
     border-radius: var(--border-radius);
     font-size: 16px;
+}
+
+.input[type='textarea'],
+textarea {
+    resize: none;
+    min-height: 120px;
 }
 
 .inputError {
@@ -57,8 +65,16 @@
 }
 
 .btnPrimary {
-    background-color: var(--primary-color);
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
     color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
 }
 
 .btnPrimary:hover {
@@ -66,10 +82,84 @@
 }
 
 .btnSecondary {
-    background-color: #e0e0e0;
-    color: #333;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
 }
 
 .btnSecondary:hover {
-    background-color: #d0d0d0;
+    background-color: var(--primary-hover);
+}
+
+/* iOS-style Toggle Switch */
+.toggleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.toggleLabel {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.toggleSwitch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.toggleSwitch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggleSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 28px;
+    transition: 0.3s;
+}
+
+.toggleSlider:before {
+    position: absolute;
+    content: '';
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleSwitch input:checked + .toggleSlider {
+    background-color: var(--primary-color);
+}
+
+.toggleSwitch input:checked + .toggleSlider:before {
+    transform: translateX(22px);
+}
+
+.backIcon {
+    position: fixed;
+    left: 20px;
+    top: 40px;
 }

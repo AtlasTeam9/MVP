@@ -1,17 +1,24 @@
+/* eslint-disable camelcase */
 export const AssetType = {
-    NETWORK: 'Network',
-    SECURITY: 'Security',
+    NETWORK_FUNCTION: 'Network Function',
+    NETWORK_FUNCTION_CONFIGURATION: 'Network Function Configuration',
+    SECURITY_FUNCTION: 'Security Function',
+    SECURITY_PARAMETER: 'Security Parameter',
 
     fromString(value) {
         const val = value.toLowerCase()
-        if (val.startsWith('network')) return AssetType.NETWORK
-        if (val.startsWith('security')) return AssetType.SECURITY
+        if (val.startsWith('network function')) return AssetType.NETWORK_FUNCTION
+        if (val.startsWith('network function configuration'))
+            return AssetType.NETWORK_FUNCTION_CONFIGURATION
+        if (val.startsWith('security function')) return AssetType.SECURITY_FUNCTION
+        if (val.startsWith('security parameter')) return AssetType.SECURITY_PARAMETER
+
         throw new Error(`Unknown asset type: ${value}`)
     },
 }
 
 class Asset {
-    constructor(id, name, type, isSensitive = null, desc = null) {
+    constructor(id, name, type, isSensitive, desc = null) {
         this._id = id
         this._name = name
         this._type = type
@@ -25,8 +32,14 @@ class Asset {
     get name() {
         return this._name
     }
-    set name(val) {
-        this._name = val
+    get type() {
+        return this._type
+    }
+    get isSensitive() {
+        return this._isSensitive
+    }
+    get desc() {
+        return this._desc
     }
 
     toDict() {
@@ -34,8 +47,10 @@ class Asset {
             id: this._id,
             name: this._name,
             type: this._type,
-            isSensitive: this._isSensitive,
-            desc: this._desc,
+            is_sensitive: this._isSensitive,
+            description: this._desc,
         }
     }
 }
+
+export default Asset

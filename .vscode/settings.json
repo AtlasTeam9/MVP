@@ -46,8 +46,10 @@
         "**/.venv": true
     },
 
+    // Esclusioni dalla visualizzazione dei file
     "files.exclude": {
-        "**/__init__.py": true,
-        "**/__pycache__": true
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/__init__.py": true
     }
 }

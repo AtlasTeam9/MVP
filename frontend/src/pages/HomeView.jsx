@@ -1,12 +1,21 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './HomeView.module.css'
+import UploadButton from '../components/common/UploadButton'
+import SessionService from '../services/SessionService'
 
+// Custom hook for managing navigation logic in the home view
 function useHomeNavigation() {
     const navigate = useNavigate()
 
-    const handleLoadDevice = async () => {
-        // TODO: inserire logica per caricare il file JSON del dispositivo
+    const handleLoadDevice = async (file) => {
+        try {
+            await SessionService.createSessionWithFile(file)
+            navigate('/device/summary')
+        } catch (err) {
+            console.error('Error loading device:', err.message) // TODO: da eliminare, solo per debug
+            alert('Failed to load device: ' + err.message)
+        }
     }
 
     const handleCreateDevice = () => {
@@ -24,34 +33,35 @@ function useHomeNavigation() {
     }
 }
 
+// Button group component for the home view
 function HomeActions({ actions }) {
     return (
         <div className={styles.buttonGroup}>
-            {/* TODO: Questo diventerà <UploadButton /> */}
-            <button className={styles.button} onClick={actions.handleLoadDevice}>
-                Carica Dispositivo (JSON)
-            </button>
+            <UploadButton onFileSelect={actions.handleLoadDevice}>
+                Upload Device (JSON)
+            </UploadButton>
 
             <button className={styles.button} onClick={actions.handleCreateDevice}>
-                Crea Nuovo Dispositivo
+                Create New Device
             </button>
 
-            {/* TODO: Questo diventerà <UploadButton /> */}
-            <button className={styles.button} onClick={actions.handleLoadPreviousSession}>
-                Carica Sessione Precedente
-            </button>
+            <UploadButton onFileSelect={actions.handleLoadPreviousSession}>
+                Upload Previous Session
+            </UploadButton>
         </div>
     )
 }
 
-export default function HomeView() {
+// Main component for the home view, displaying title, description, and action buttons
+function HomeView() {
     const actions = useHomeNavigation()
-
     return (
         <div className={styles.container}>
-            <h1>EN-18031 Compliance Validation</h1>
+            <h1>EN-18031 Compliance Verification</h1>
             <p>Upload a session file or create a new one to get started.</p>
             <HomeActions actions={actions} />
         </div>
     )
 }
+
+export default HomeView

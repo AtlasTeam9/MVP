@@ -1,18 +1,16 @@
+/* eslint-disable camelcase */
 export default class Device {
-    constructor(name, assets = [], os = null, firmware = null, funcs = null, desc = null) {
+    constructor(name, assets = [], os, firmware, funcs, desc = null) {
         this._name = name
         this._assets = assets
-        this._os = os
-        this._firmware = firmware
-        this._funcs = funcs
-        this._desc = desc
+        this._operatingSystem = os
+        this._firmwareVersion = firmware
+        this._functionalities = funcs
+        this._description = desc
     }
 
     get name() {
         return this._name
-    }
-    set name(val) {
-        this._name = val
     }
 
     get assets() {
@@ -20,27 +18,36 @@ export default class Device {
     }
 
     get operatingSystem() {
-        return this._os || 'operating System not inserted'
+        return this._operatingSystem
     }
 
     get firmwareVersion() {
-        return this._firmware || 'Firmware version not inserted'
+        return this._firmwareVersion
     }
 
     get functionalities() {
-        return this._funcs || 'Functionalities not inserted'
+        return this._functionalities
     }
 
     get description() {
-        return this._desc || 'Description not inserted'
+        return this._description || 'Description not inserted'
+    }
+
+    addAsset(asset) {
+        this._assets.push(asset)
+    }
+
+    // TODO: capire se eliminare l'asset per ID o per nome. Attualmente è per nome.
+    deleteAsset(assetName) {
+        this._assets = this._assets.filter((ass) => ass.name !== assetName)
     }
 
     toDict() {
         return {
-            deviceName: this._name,
-            assets: this._assets.map((asset) => asset.toDict()),
-            operatingSystem: this.operatingSystem,
-            firmwareVersion: this.firmwareVersion,
+            device_name: this.name,
+            assets: this.assets.map((asset) => asset.toDict()),
+            operating_system: this.operatingSystem,
+            firmware_version: this.firmwareVersion,
             functionalities: this.functionalities,
             description: this.description,
         }

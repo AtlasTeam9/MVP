@@ -1,120 +1,161 @@
-import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+import { deviceSchema } from '../domain/schemas/DeviceSchema'
+import deviceService, { useCurrentDevice } from '../services/DeviceService'
+import sessionService from '../services/SessionService'
+
 import styles from './DeviceFormView.module.css'
 import Device from '../domain/Device'
+import BackIcon from '../components/common/BackIcon'
 
-const validateData = (formData) => {
-    const newErrors = {}
-    if (!formData.name.trim()) newErrors.name = 'Il nome è obbligatorio'
-    if (!formData.functionality.trim()) newErrors.functionality = 'Obbligatorio'
-    return newErrors
+// Standard form data structure for a Device, used for both creation and editing
+const initialData = {
+    name: '',
+    operatingSystem: '',
+    firmwareVersion: '',
+    functionalities: '',
+    description: '',
 }
 
-// const createDeviceInstance = (formData) => {
-//     return new Device(
-//         formData.name,
-//         [], // assets list
-//         formData.operatingSystem,
-//         formData.firmwareVersion,
-//         formData.functionality,
-//         formData.description
-//     )
-// }
+// Helper function to convert form data into a Device instance
+const buildDevice = (data, assets = []) =>
+    new Device(
+        data.name,
+        assets,
+        data.operatingSystem,
+        data.firmwareVersion,
+        data.functionalities,
+        data.description
+    )
 
-// --- 2. CUSTOM HOOK ---
-
+// Custom hook to manage form state and navigation logic
 function useDeviceForm() {
     const navigate = useNavigate()
-    const [formData, setFormData] = useState({ name: '', functionality: '', operatingSystem: '' })
-    const [errors, setErrors] = useState({})
+    const currentDevice = useCurrentDevice()
 
-    const handleChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-        if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }))
+    // Use current device data if available, otherwise use empty initial data
+    const formInitialData = currentDevice
+        ? {
+              name: currentDevice.name,
+              operatingSystem: currentDevice.operatingSystem,
+              firmwareVersion: currentDevice.firmwareVersion,
+              functionalities: currentDevice.functionalities,
+              description: currentDevice.description || '',
+          }
+        : initialData
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(deviceSchema),
+        defaultValues: formInitialData,
+    })
+
+    const onSave = (data) => {
+        const assets = currentDevice ? currentDevice.assets : []
+        const dev = buildDevice(data, assets)
+        deviceService.createDevice(dev)
+        navigate('/device/assets')
     }
 
-    const onSave = () => {
-        const newErrors = validateData(formData)
-        setErrors(newErrors)
-
-        if (Object.keys(newErrors).length === 0) {
-            // const nuovoDispositivo = createDeviceInstance(formData)
+    return {
+        register,
+        handleSubmit: handleSubmit(onSave),
+        resetForm: () => reset(),
+        errors,
+        onCancel: () => {
+            deviceService.clearDevice()
+            sessionService.clearSession()
             navigate('/')
-        }
+        },
     }
-
-    return { formData, errors, handleChange, onSave, onCancel: () => navigate('/') }
 }
 
-// ==========================================
-// 2. COMPONENTE UI (Grafica riutilizzabile)
-// ==========================================
-function InputField({ label, value, onChange, error, placeholder }) {
+// Components for form fields, separated into required and optional for better organization
+function InputField({ label, registration, error, isTextArea = false }) {
+    const InputTag = isTextArea ? 'textarea' : 'input'
     return (
         <div className={styles.formGroup}>
-            <label className={styles.label}>{label}</label>
-            <input
-                type="text"
+            <label className={styles.label} htmlFor={registration.name}>
+                {label}
+            </label>
+            <InputTag
+                id={registration.name}
                 className={`${styles.input} ${error ? styles.inputError : ''}`}
-                value={value}
-                onChange={(val) => onChange(val.target.value)}
-                placeholder={placeholder}
+                {...registration}
             />
-            {error && <span className={styles.errorMessage}>{error}</span>}
+            {error && <span className={styles.errorMessage}>{error.message}</span>}
         </div>
     )
 }
 
-// ==========================================
-// 3. SOTTO-COMPONENTE PER I CAMPI DEL FORM
-// ==========================================
-function DeviceFields({ formData, errors, handleChange }) {
+function RequiredFields({ register, errors }) {
     return (
         <>
+            <InputField label="Nome *" registration={register('name')} error={errors?.name} />
             <InputField
-                label="Nome Dispositivo *"
-                value={formData.name}
-                onChange={(val) => handleChange('name', val)}
-                error={errors.name}
-                placeholder="Es. Sensore A1"
+                label="Operating System *"
+                registration={register('operatingSystem')}
+                error={errors?.operatingSystem}
             />
             <InputField
-                label="Funzionalità *"
-                value={formData.functionality}
-                onChange={(val) => handleChange('functionality', val)}
-                error={errors.functionality}
-                placeholder="Es. Temperatura"
+                label="Firmware *"
+                registration={register('firmwareVersion')}
+                error={errors?.firmwareVersion}
             />
             <InputField
-                label="Sistema Operativo"
-                value={formData.operatingSystem}
-                onChange={(val) => handleChange('operatingSystem', val)}
-                placeholder="Es. FreeRTOS"
+                label="Functionalities *"
+                registration={register('functionalities')}
+                error={errors?.functionalities}
             />
         </>
     )
 }
 
-// ==========================================
-// 4. LA VISTA PRINCIPALE
-// ==========================================
+function OptionalFields({ register }) {
+    return (
+        <>
+            <InputField label="Description" registration={register('description')} isTextArea />
+        </>
+    )
+}
+
+// Component that combines all form fields
+function DeviceFormFields({ register, errors }) {
+    return (
+        <>
+            <RequiredFields register={register} errors={errors} />
+            <OptionalFields register={register} />
+        </>
+    )
+}
+
+// Main component for the Device form view, utilizing the custom hook and form field components
 export default function DeviceFormView() {
-    const { formData, errors, handleChange, onSave, onCancel } = useDeviceForm()
+    const { register, handleSubmit, resetForm, onCancel, errors } = useDeviceForm()
 
     return (
-        <div className={styles.container}>
-            <h2>Crea Nuovo Dispositivo</h2>
+        <>
+            <BackIcon className={styles.backIcon} onBack={onCancel} />
+            <form className={styles.container} onSubmit={handleSubmit}>
+                <h2>Create a new Device</h2>
 
-            <DeviceFields formData={formData} errors={errors} handleChange={handleChange} />
+                <DeviceFormFields register={register} errors={errors} />
 
-            <div className={styles.buttonGroup}>
-                <button className={`${styles.button} ${styles.btnSecondary}`} onClick={onCancel}>
-                    Annulla
-                </button>
-                <button className={`${styles.button} ${styles.btnPrimary}`} onClick={onSave}>
-                    Salva Dispositivo
-                </button>
-            </div>
-        </div>
+                <div className={styles.buttonGroup}>
+                    <button type="button" className={styles.btnSecondary} onClick={resetForm}>
+                        Reset
+                    </button>
+                    <button type="submit" className={styles.btnPrimary}>
+                        Save
+                    </button>
+                </div>
+            </form>
+        </>
     )
 }
