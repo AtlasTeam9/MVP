@@ -219,7 +219,7 @@ class SessionController:
             headers={"Content-Disposition": f"attachment; filename={result.filename}"},
         )
 
-    @router.delete("/{session_id}", status_code=204)
+    @router.delete("/{session_id}/delete", status_code=204)
     async def delete_session(self, session_id: str = Depends(validate_session_id)) -> None:
         """
         Rimuove la sessione dalla memoria e cancella il file JSON dal server.
