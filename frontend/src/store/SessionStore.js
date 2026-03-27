@@ -138,6 +138,19 @@ const createHistoryMethods = (set, get) => ({
             set({ pastHistory: history.slice(0, index) })
         }
     },
+
+    importPastHistory: (answers) => {
+        // Convert array from file format to pastHistory format
+        // File format: {asset_index, tree_index, node_id, answer}
+        // pastHistory format: {assetIndex, treeIndex, nodeId, answer}
+        const formattedHistory = answers.map((item) => ({
+            assetIndex: item.asset_index,
+            treeIndex: item.tree_index,
+            nodeId: item.node_id,
+            answer: item.answer,
+        }))
+        set({ pastHistory: formattedHistory })
+    },
 })
 
 // Methods to manage test completion status and results storage

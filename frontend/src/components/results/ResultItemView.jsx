@@ -9,6 +9,8 @@ const getStatusClass = (stat) => {
             return styles.statusFail
         case 'NOT_APPLICABLE':
             return styles.statusNotApplicable
+        case 'NOT_COMPLETED':
+            return styles.statusNotCompleted
         default:
             return ''
     }
@@ -18,13 +20,18 @@ const getStatusClass = (stat) => {
 export function ResultItemView({ item }) {
     const { code, status } = item
     const isModifiable = false // TODO: implementare se serve
+    
+    // Determine display status: if empty or null, show NOT_COMPLETED
+    const displayStatus = status && status.trim() !== '' ? status : 'NOT_COMPLETED'
 
     return (
         <div className={styles.itemContainer}>
             <div className={styles.contentWrapper}>
                 <div className={styles.headerSection}>
                     <h3 className={styles.code}>{code}</h3>
-                    <span className={`${styles.status} ${getStatusClass(status)}`}>{status}</span>
+                    <span className={`${styles.status} ${getStatusClass(displayStatus)}`}>
+                        {displayStatus}
+                    </span>
                 </div>
             </div>
 

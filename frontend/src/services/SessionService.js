@@ -324,6 +324,58 @@ class SessionService {
     // Modify a previous answer by going back and re-answering
     async modifyPreviousAnswer() {}
 
+    // Load a previously saved session from a JSON file
+    async loadSessionFromFile(file) {
+        try {
+            const formData = new FormData()
+            formData.append('file', file)
+
+            // API call to load session from file
+            const response = await apiClient.post('/session/load_session_from_file', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            })
+
+            // Set sessionId in SessionStore
+            useSessionStore.getState().setSessionId(response.session_id)
+
+            // Create Device object from response data and set in DeviceStore
+            const deviceObj = this.#createDeviceFromResponse(response.device)
+            useDeviceStore.getState().setDevice(deviceObj)
+
+            // Import past history (previous answers) into SessionStore
+            if (response.answer && response.answer.length > 0) {
+                useSessionStore.getState().importPastHistory(response.answer)
+            }
+
+            // Set the device position based on where the session left off
+            const { current_asset_index, current_tree_index, current_node_id } = response.position
+            useSessionStore
+                .getState()
+                .setDevicePosition(current_asset_index, current_tree_index, current_node_id)
+
+            // Load the current node from TreeStore using tree index and node ID
+            this.#setCurrentNodeFromResponse(response, response.position)
+
+            // Transform aggregate_results to RequirementResult format and save to ResultStore
+            const transformedResults = this.#transformResultsToRequirementResults(
+                response.aggregate_results
+            )
+            useResultStore.getState().setResults(transformedResults)
+
+            // Set test finished status based on is_finished flag
+            useSessionStore.getState().setTestFinished(response.is_finished)
+
+            console.log('Sessione caricata da file:', response.session_id)
+            console.log('Risultati della sessione caricati:', transformedResults)
+            console.log('Cronologia degli answer importati:', response.answer?.length || 0)
+
+            return { results: transformedResults, isFinished: response.is_finished }
+        } catch (error) {
+            console.error('Errore nel caricamento della sessione da file:', error)
+            throw error
+        }
+    }
+
     // Delete session and clear stores (same behavior as HomeIcon)
     async saveAndExit() {
         try {

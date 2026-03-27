@@ -22,8 +22,14 @@ function useHomeNavigation() {
         navigate('/device/new')
     }
 
-    const handleLoadPreviousSession = () => {
-        // TODO: inserire logica per ripristinare una sessione salvata
+    const handleLoadPreviousSession = async (file) => {
+        try {
+            await SessionService.loadSessionFromFile(file)
+            navigate('/results')
+        } catch (err) {
+            console.error('Error loading previous session:', err.message)
+            alert('Failed to load session: ' + err.message)
+        }
     }
 
     return {
