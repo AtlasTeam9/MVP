@@ -50,12 +50,17 @@ class ExportService {
     /**
      * Export complete session as JSON
      * @param {string} sessionId - ID of the session
+     * @param {Array} answers - Answer history payload for backend export
      */
-    async exportSessionAsJSON(sessionId) {
+    async exportSessionAsJSON(sessionId, answers = []) {
         try {
-            const blob = await apiClient.get(`/session/${sessionId}/export`, {
-                responseType: 'blob',
-            })
+            const blob = await apiClient.post(
+                `/session/${sessionId}/export`,
+                { answer: answers },
+                {
+                    responseType: 'blob',
+                }
+            )
 
             if (!blob || (blob.size === 0 && blob.length === 0)) {
                 throw new Error('Errore: il server ha ritornato una risposta vuota')
@@ -96,7 +101,14 @@ class ExportService {
      * @param {string} filename - Name of the file to download
      */
     downloadFile(response, filename) {
-        const url = window.URL.createObjectURL(new Blob([response]))
+        const payload =
+            response instanceof Blob
+                ? response
+                : typeof response === 'string'
+                    ? new Blob([response], { type: 'application/json' })
+                    : new Blob([JSON.stringify(response, null, 2)], { type: 'application/json' })
+
+        const url = window.URL.createObjectURL(payload)
         const link = document.createElement('a')
         link.href = url
         link.setAttribute('download', filename)

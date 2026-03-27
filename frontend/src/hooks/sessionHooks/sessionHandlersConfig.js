@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import SessionService from '../../services/SessionService'
 import ExportService from '../../services/ExportService'
 import useSessionStore from '../../store/SessionStore'
@@ -54,8 +55,15 @@ const BASE_HANDLER_CONFIGS = [
     {
         name: 'handleSaveAndExitClick',
         fn: async () => {
-            const sessionId = useSessionStore.getState().sessionId
-            await ExportService.exportSessionAsJSON(sessionId)
+            const { sessionId, pastHistory } = useSessionStore.getState()
+            const answers = pastHistory.map((item) => ({
+                asset_index: item.assetIndex,
+                tree_index: item.treeIndex,
+                node_id: item.nodeId,
+                answer: item.answer,
+            }))
+
+            await ExportService.exportSessionAsJSON(sessionId, answers)
             await SessionService.saveAndExit()
         },
         errorMsg: 'Error saving and exiting:',
