@@ -15,6 +15,11 @@ function useAssetManagement() {
     const currentDevice = useCurrentDevice()
 
     const onGoToSummary = async () => {
+        if (!currentDevice) {
+            console.error('Device not loaded')
+            return
+        }
+
         try {
             const result = await sessionService.createSessionWithDevice(currentDevice)
             console.log('Session created with ID:', result.sessionId) // TODO: rimuovere
@@ -30,8 +35,6 @@ function useAssetManagement() {
     const onSaveDevice = () => {
         if (!currentDevice) return
 
-        console.log('Saving device:', currentDevice) // TODO: rimuovere
-        // TODO: implementare chiamata api al backend
         deviceService.saveDeviceToFile()
     }
 

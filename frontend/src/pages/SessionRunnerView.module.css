@@ -212,15 +212,26 @@
 
 /* ============ FOOTER ============ */
 .footer {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     padding: 20px 30px;
     background-color: white;
     border-top: 1px solid #ddd;
     gap: 20px;
-    flex-wrap: wrap;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.footer > :first-child {
+    justify-self: start;
+}
+
+.footer > :last-child {
+    justify-self: end;
+}
+
+.footer > :nth-child(2) {
+    justify-self: center;
 }
 
 .btnNav,

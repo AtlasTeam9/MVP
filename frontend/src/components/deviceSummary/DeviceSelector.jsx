@@ -23,11 +23,7 @@ export function DeviceSelector({ device }) {
             </button>
 
             {isDropdownOpen && (
-                <AssetListView
-                    assets={device.assets || []}
-                    isEditable={false}
-                    showDeleteIcon={false}
-                />
+                <AssetListView assets={device.assets || []} showDeleteIcon={false} />
             )}
         </div>
     )

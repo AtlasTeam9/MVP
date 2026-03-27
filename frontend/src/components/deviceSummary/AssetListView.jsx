@@ -2,12 +2,7 @@ import { AssetItemView } from './AssetItemView'
 
 // Component to display the list of assets of a device in the dropdown when the device name is
 // clicked in the device summary view.
-export function AssetListView({
-    assets,
-    isEditable = false,
-    showDeleteIcon = false,
-    onDeleteAsset,
-}) {
+export function AssetListView({ assets, showDeleteIcon = false, onDeleteAsset }) {
     return (
         <div style={styles.assetListContainer}>
             <h4 style={styles.assetListTitle}>Assets ({assets?.length || 0})</h4>
@@ -16,7 +11,7 @@ export function AssetListView({
                     <AssetItemView
                         key={asset.id}
                         asset={asset}
-                        showDeleteIcon={showDeleteIcon && isEditable}
+                        showDeleteIcon={showDeleteIcon}
                         onDelete={onDeleteAsset}
                     />
                 ))}

@@ -26,25 +26,6 @@ class SessionService {
         )
     }
 
-    // Private method to convert Device object to API payload (camelCase to snake_case)
-    #convertDeviceToPayload(device) {
-        const deviceDict = device.toDict()
-        return {
-            device_name: deviceDict.deviceName,
-            operating_system: deviceDict.operatingSystem,
-            firmware_version: deviceDict.firmwareVersion,
-            functionalities: deviceDict.functionalities,
-            description: deviceDict.description || null,
-            assets: deviceDict.assets.map((asset) => ({
-                id: asset.id,
-                name: asset.name,
-                type: asset.type,
-                is_sensitive: asset.isSensitive,
-                description: asset.desc || null,
-            })),
-        }
-    }
-
     // Private helper method to set the current node from response or TreeStore
     #setCurrentNodeFromResponse(response, position) {
         if (response.current_node) {
@@ -113,7 +94,7 @@ class SessionService {
     // Create a new session from a Device object (direct API call without file)
     async createSessionWithDevice(device) {
         try {
-            const devicePayload = this.#convertDeviceToPayload(device)
+            const devicePayload = device.toDict()
 
             // API call to create a session with the device object directly
             const response = await apiClient.post('/session/create_session', devicePayload)
