@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ExportService from '../services/ExportService'
+import SessionService from '../services/SessionService'
 
 export function useExportSession(sessionId) {
     const [isExportingSession, setIsExportingSession] = useState(false)
@@ -7,7 +8,8 @@ export function useExportSession(sessionId) {
     const handleExportSessionClick = async () => {
         setIsExportingSession(true)
         try {
-            await ExportService.exportSessionAsJSON(sessionId)
+            const answers = SessionService.getFormattedAnswers()
+            await ExportService.exportSessionAsJSON(sessionId, answers)
         } catch (error) {
             alert("Errore durante l'export della sessione: " + error.message)
         } finally {

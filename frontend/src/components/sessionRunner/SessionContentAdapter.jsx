@@ -1,11 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SessionContent } from './SessionContent'
 import useTreeStore from '../../store/TreeStore'
+import { initializeProgressCalculator } from '../../infrastructure/utils/progressCalculator'
 
 // Adapter component to connect the SessionContent presentation component
 // with the session runner state and handlers
 function SessionContentAdapter({ currentDevice, state, handlers }) {
     const trees = useTreeStore((treeState) => treeState.trees)
+
+    // Initialize progress calculator when trees or device changes
+    // This is done in the adapter (container) to avoid prop drilling
+    useEffect(() => {
+        if (trees && currentDevice) {
+            initializeProgressCalculator(trees, currentDevice.assets)
+        }
+    }, [trees, currentDevice, state.sessionId])
 
     return (
         <SessionContent

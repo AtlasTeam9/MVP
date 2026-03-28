@@ -24,6 +24,7 @@ function useHomeNavigation() {
 
     const handleLoadPreviousSession = async (file) => {
         try {
+            // TODO: ritorna qualcosa il metodo?
             await SessionService.loadSessionFromFile(file)
             navigate('/results')
         } catch (err) {

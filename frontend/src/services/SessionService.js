@@ -365,12 +365,9 @@ class SessionService {
             // Set test finished status based on is_finished flag
             useSessionStore.getState().setTestFinished(response.is_finished)
 
-            console.log('Sessione caricata da file:', response.session_id)
-            console.log('Risultati della sessione caricati:', transformedResults)
-            console.log('Cronologia degli answer importati:', response.answer?.length || 0)
-
             return { results: transformedResults, isFinished: response.is_finished }
         } catch (error) {
+            // TODO: sistemare
             console.error('Errore nel caricamento della sessione da file:', error)
             throw error
         }
@@ -401,6 +398,17 @@ class SessionService {
     // Get the current session ID
     getSessionId() {
         return useSessionStore.getState().sessionId
+    }
+
+    // Get formatted answers from the session history for export
+    getFormattedAnswers() {
+        const { pastHistory } = useSessionStore.getState()
+        return pastHistory.map((item) => ({
+            asset_index: item.assetIndex,
+            tree_index: item.treeIndex,
+            node_id: item.nodeId,
+            answer: item.answer,
+        }))
     }
 
     // Clear all session-related data from stores and delete session on backend

@@ -31,8 +31,10 @@ class ResultStore:
         - PASS: Se per quel requisito tutti gli asset sono PASS o NA (e almeno un PASS).
         - FAIL: Se c'è almeno un FAIL tra gli asset per quel requisito.
         - NOT_APPLICABLE: Se tutti gli asset sono NA per quel requisito.
+        - NOT_COMPLETED: Se non tutti gli asset hanno un risultato per quel requisito.
         """
         aggregated = {}
+        num_total_assets = len(self._results)
 
         for tree_id in all_tree_ids:
             asset_results = []
@@ -41,10 +43,14 @@ class ResultStore:
                 if res:
                     asset_results.append(res)
 
-            if not asset_results:
+            num_assets_with_result = len(asset_results)
+
+            # Se nessun asset o non tutti gli asset hanno risultato
+            if num_assets_with_result == 0 or num_assets_with_result < num_total_assets:
+                aggregated[tree_id] = Result.NOT_COMPLETED.value
                 continue
 
-            # Logica di decisione
+            # Logica di decisione quando tutti gli asset hanno un risultato
             if any(r == Result.FAIL for r in asset_results):
                 aggregated[tree_id] = Result.FAIL.value
             elif any(r == Result.PASS for r in asset_results):
