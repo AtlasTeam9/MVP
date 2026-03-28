@@ -1,17 +1,21 @@
 /**
- * External variables for caching device metrics
- */
-let totalNodes = 0
-let totalAssets = 0
-
-/**
- * Initialize progress calculator with device data
+ * Calculates the test completion percentage based on current position in the evaluation flow
+ * Each asset must evaluate ALL trees sequentially
+ * Counts answered nodes in pastHistory for accurate per-node progress
+ * @param {number} currentAssetIndex - Current asset index (0 to totalAssets-1)
+ * @param {Array} pastHistory - Array of answered nodes (used to count visited nodes)
  * @param {Array} trees - Array of decision trees from TreeStore
- * @param {Array} assets - Array of assets from device
+ * @param {Array} assets - Array of assets from current device
+ * @returns {number} Completion percentage (0-100)
  */
-export function initializeProgressCalculator(trees, assets) {
-    totalAssets = assets ? assets.length : 0
-    totalNodes = 0
+export function calculateCompletionPercentage(
+    currentAssetIndex = 0,
+    pastHistory = [],
+    trees = [],
+    assets = []
+) {
+    const totalAssets = assets ? assets.length : 0
+    let totalNodes = 0
 
     if (trees && trees.length > 0) {
         trees.forEach((tree) => {
@@ -20,17 +24,7 @@ export function initializeProgressCalculator(trees, assets) {
             }
         })
     }
-}
 
-/**
- * Calculates the test completion percentage based on current position in the evaluation flow
- * Each asset must evaluate ALL trees sequentially
- * Counts answered nodes in pastHistory for accurate per-node progress
- * @param {number} currentAssetIndex - Current asset index (0 to totalAssets-1)
- * @param {Array} pastHistory - Array of answered nodes (used to count visited nodes)
- * @returns {number} Completion percentage (0-100)
- */
-export function calculateCompletionPercentage(currentAssetIndex = 0, pastHistory = []) {
     if (totalNodes === 0 || totalAssets === 0) {
         return 0
     }

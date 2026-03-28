@@ -84,6 +84,12 @@ class ExportSessionRequestSchema(BaseModel):
 class GoBackResponseSchema(BaseModel):
     found: bool = Field(..., description="True se il nodo è stato creato False altrimenti")
     node_id: str | None = Field(None, description="Id del nodo trovato")
+    tree_completed: bool = Field(
+        False, description="True se l'albero corrente è completato False altrimenti"
+    )
+    tree_result: str | None = Field(None, description="Risultato dell'albero completato")
+    session_finished: bool = Field(False, description="True se la sessione è finita False altrimenti")
+    results: dict | None = Field(None, description="Dizionario dei risultati del test")
     current_asset_index: int | None = Field(None, description="L'indice dell'asset corrente")
     current_tree_index: int | None = Field(None, description="L'indice dell'albero corrente")
 

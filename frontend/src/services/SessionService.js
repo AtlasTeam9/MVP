@@ -53,6 +53,7 @@ class SessionService {
         const deviceObj = this.#createDeviceFromResponse(device)
 
         useSessionStore.getState().setSessionId(sessionId)
+        useSessionStore.getState().setSessionUploaded(false)
         useDeviceStore.getState().setDevice(deviceObj)
         useSessionStore
             .getState()
@@ -197,7 +198,18 @@ class SessionService {
 
     // Private helper to handle go_back response
     #handleGoBackResponse(response) {
-        if (!response.found || !response.node_id) {
+        if (!response.found) {
+            return
+        }
+
+        if (response.session_finished) {
+            const transformedResults = this.#transformResultsToRequirementResults(response.results)
+            useResultStore.getState().setResults(transformedResults)
+            useSessionStore.getState().setTestFinished(true)
+            return
+        }
+
+        if (!response.node_id) {
             return
         }
 
@@ -226,9 +238,11 @@ class SessionService {
             const currentTreeIndex = useSessionStore.getState().currentTreeIndex
 
             // Check if futureHistory is not empty, meaning user went back and is
-            // answering a previous question
+            // answering a previous question, OR if we're in resume mode
+            // (resuming from selected asset)
             const futureHistory = useSessionStore.getState().futureHistory
-            const hasGoingBack = futureHistory.length > 0
+            const isResumeMode = useSessionStore.getState().isResumeMode
+            const hasGoingBack = futureHistory.length > 0 || isResumeMode
 
             // Save the current question and answer to pastHistory
             useSessionStore.getState().selectAnswer(answer)
@@ -236,15 +250,25 @@ class SessionService {
             // Clear future history since we're creating a new path by answering
             useSessionStore.getState().clearFuture()
 
+            // Exit resume mode after first answer
+            if (isResumeMode) {
+                useSessionStore.getState().setResumeMode(false)
+            }
+
             let response
             if (hasGoingBack) {
-                // User went back and is changing a previous answer - use go_back endpoint
+                // User went back and is changing a previous answer, OR resuming from selected asset
+                // use go_back endpoint
+                console.log('ASSET INDEX PRE:', {
+                    assetIndex: currentAssetIndex,
+                })
                 response = await apiClient.post(`/session/${sessionId}/go_back`, {
                     target_asset_index: currentAssetIndex,
                     target_node_id: currentNode?.id,
                     target_tree_index: currentTreeIndex,
                     new_answer: answer,
                 })
+                console.log('Risposta da go_back:', response) // TODO: eliminare
                 this.#handleGoBackResponse(response)
             } else {
                 // Normal forward progression - use answer endpoint
@@ -337,6 +361,7 @@ class SessionService {
 
             // Set sessionId in SessionStore
             useSessionStore.getState().setSessionId(response.session_id)
+            useSessionStore.getState().setSessionUploaded(true)
 
             // Create Device object from response data and set in DeviceStore
             const deviceObj = this.#createDeviceFromResponse(response.device)
@@ -349,18 +374,29 @@ class SessionService {
 
             // Set the device position based on where the session left off
             const { current_asset_index, current_tree_index, current_node_id } = response.position
-            useSessionStore
-                .getState()
-                .setDevicePosition(current_asset_index, current_tree_index, current_node_id)
 
-            // Load the current node from TreeStore using tree index and node ID
-            this.#setCurrentNodeFromResponse(response, response.position)
+            // Only set position if session is not finished
+            // For finished sessions, position is invalid (asset_index out of bounds, node_id empty)
+            // The position will be set when user selects asset in ModifySessionView
+            if (!response.is_finished) {
+                useSessionStore
+                    .getState()
+                    .setDevicePosition(current_asset_index, current_tree_index, current_node_id)
+
+                // Load the current node from TreeStore using tree index and node ID
+                this.#setCurrentNodeFromResponse(response, response.position)
+            }
 
             // Transform aggregate_results to RequirementResult format and save to ResultStore
             const transformedResults = this.#transformResultsToRequirementResults(
                 response.aggregate_results
             )
             useResultStore.getState().setResults(transformedResults)
+
+            // Save results per asset in SessionStore for detailed view
+            if (response.results) {
+                useSessionStore.getState().setResultsPerAsset(response.results)
+            }
 
             // Set test finished status based on is_finished flag
             useSessionStore.getState().setTestFinished(response.is_finished)

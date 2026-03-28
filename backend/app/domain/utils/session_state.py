@@ -19,13 +19,27 @@ class SessionState:
             (self.current_asset_index, self.current_tree_index, node, answer)
         )
 
-    def pop_until(self, target_node: Node) -> bool:
+    def pop_until(
+        self,
+        target_node: Node,
+        target_asset_index: int | None = None,
+        target_tree_index: int | None = None,
+    ) -> bool:
         """
         Rimuove dallo stack tutte le entry dal fondo fino a target_node (incluso).
         Ripristina anche asset e albero correnti.
         """
         for i in range(len(self.navigation_stack) - 1, -1, -1):
             asset_index, tree_index, node, _ = self.navigation_stack[i]
+            if node is not target_node:
+                continue
+
+            if target_asset_index is not None and asset_index != target_asset_index:
+                continue
+
+            if target_tree_index is not None and tree_index != target_tree_index:
+                continue
+
             if node is target_node:
                 self.current_asset_index = asset_index
                 self.current_tree_index = tree_index

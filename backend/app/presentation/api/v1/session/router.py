@@ -186,6 +186,10 @@ class SessionController:
         return GoBackResponseSchema(
             found=result.found,
             node_id=result.node_id,
+            tree_completed=result.tree_completed,
+            tree_result=result.tree_result,
+            session_finished=result.session_finished,
+            results=result.results,
             current_asset_index=result.current_asset_index,
             current_tree_index=result.current_tree_index,
         )

@@ -8,6 +8,7 @@ import AssetFormView from './pages/AssetFormView'
 import DeviceSummaryView from './pages/DeviceSummaryView'
 import SessionRunnerView from './pages/SessionRunnerView'
 import ResultView from './pages/ResultView'
+import ModifySessionView from './pages/ModifySessionView'
 import TreeService from './services/TreeService'
 import styles from './AppRouter.module.css'
 import { useBeforeUnload } from './hooks/useBeforeUnload'
@@ -38,6 +39,12 @@ const ROUTES = [
     {
         path: '/results',
         view: <ResultView />,
+        isProtected: true,
+        requiresSessionId: true,
+    },
+    {
+        path: '/session/modify',
+        view: <ModifySessionView />,
         isProtected: true,
         requiresSessionId: true,
     },

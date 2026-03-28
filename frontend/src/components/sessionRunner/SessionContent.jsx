@@ -8,6 +8,7 @@ function SessionContent({
     currentDevice,
     currentNode,
     currentAssetIndex,
+    currentTreeIndex,
     isLoading,
     error,
     onYes,
@@ -26,7 +27,7 @@ function SessionContent({
         onSaveExit,
         pastHistory,
     }
-    const questionProps = { currentNode, error, isLoading, onYes, onNo }
+    const questionProps = { currentNode, currentTreeIndex, trees, error, isLoading, onYes, onNo }
     const footerProps = { pastHistory, futureHistory, isLoading, onBack, onHome, onForward }
 
     return (

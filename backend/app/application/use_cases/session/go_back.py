@@ -34,12 +34,20 @@ class GoBackUseCase(IGoBackUseCase):
             request.target_tree_index,
         )
 
-        go_back_result = session.go_back(target_node)
+        go_back_result = session.go_back(
+            target_node,
+            target_asset_index=request.target_asset_index,
+            target_tree_index=request.target_tree_index,
+        )
         if not go_back_result.found:
             return GoBackResponse(found=False, node_id=None)
 
         answer_result = session.answer(request.new_answer)
         current_node = session.current_node
+        aggregated_results = None
+        if answer_result.session_finished:
+            all_tree_ids = [tree.get_id for tree in session.get_trees]
+            aggregated_results = session.results.get_aggregated_results(all_tree_ids)
         self._session_service.save_session(session)
 
         return GoBackResponse(
@@ -48,6 +56,7 @@ class GoBackUseCase(IGoBackUseCase):
             tree_completed=answer_result.tree_completed,
             tree_result=answer_result.tree_result.value if answer_result.tree_result else None,
             session_finished=answer_result.session_finished,
+            results=aggregated_results,
             current_asset_index=session.state.current_asset_index,
             current_tree_index=session.state.current_tree_index,
         )

@@ -1,5 +1,5 @@
 {
-    "session_id": "f3930d0f-dc43-4eab-91c4-98002eac071a",
+    "session_id": "69328329-ec11-4394-87c9-94c0544829d2",
     "device": {
         "device_name": "Coffee Machine",
         "operating_system": "Linux-based embedded system",
@@ -93,8 +93,8 @@
     },
     "results": {
         "ASSET_01": {
-            "ACM-1": "NOT_APPLICABLE",
-            "ACM-2": "NOT_APPLICABLE",
+            "ACM-1": "PASS",
+            "ACM-2": "PASS",
             "AUM-1-1": "NOT_APPLICABLE",
             "AUM-1-2": "NOT_APPLICABLE",
             "AUM-2-NI": "NOT_APPLICABLE",
@@ -291,6 +291,115 @@
             "AUM-6-UI": "NOT_APPLICABLE"
         }
     },
-    "answer": [],
+    "answer": [
+        {
+            "asset_index": 0,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": false
+        },
+        {
+            "asset_index": 0,
+            "tree_index": 0,
+            "node_id": "node2",
+            "answer": false
+        },
+        {
+            "asset_index": 0,
+            "tree_index": 0,
+            "node_id": "node3",
+            "answer": false
+        },
+        {
+            "asset_index": 0,
+            "tree_index": 0,
+            "node_id": "node4",
+            "answer": true
+        },
+        {
+            "asset_index": 0,
+            "tree_index": 1,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 0,
+            "tree_index": 2,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 0,
+            "tree_index": 3,
+            "node_id": "node1",
+            "answer": false
+        },
+        {
+            "asset_index": 0,
+            "tree_index": 3,
+            "node_id": "node2",
+            "answer": true
+        },
+        {
+            "asset_index": 1,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 2,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 3,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 4,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 5,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 6,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 7,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 8,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 9,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        },
+        {
+            "asset_index": 10,
+            "tree_index": 0,
+            "node_id": "node1",
+            "answer": true
+        }
+    ],
     "is_finished": true
 }

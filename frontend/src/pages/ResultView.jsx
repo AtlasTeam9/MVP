@@ -13,6 +13,7 @@ export default function ResultView() {
     const results = useResultStore((state) => state.results)
     const sessionId = useSessionStore((state) => state.sessionId)
     const isTestFinished = useSessionStore((state) => state.isTestFinished)
+    const isSessionUploaded = useSessionStore((state) => state.isSessionUploaded)
     const {
         isExporting,
         showFormatDialog,
@@ -24,6 +25,10 @@ export default function ResultView() {
 
     const handleResumeSession = () => {
         navigate('/session/test')
+    }
+
+    const handleModifySession = () => {
+        navigate('/session/modify')
     }
 
     if (!results || results.length === 0) {
@@ -38,10 +43,12 @@ export default function ResultView() {
             <ResultListView items={results} />
             <ResultActions
                 isTestFinished={isTestFinished}
+                isSessionUploaded={isSessionUploaded}
                 isExporting={isExporting}
                 isExportingSession={isExportingSession}
                 showFormatDialog={showFormatDialog}
                 onResumeSession={handleResumeSession}
+                onModifySession={handleModifySession}
                 onExportClick={handleExportClick}
                 onExportSessionClick={handleExportSessionClick}
                 onFormatSelect={handleExportFormat}

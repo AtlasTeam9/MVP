@@ -28,6 +28,7 @@ class GoBackResponse:
     tree_completed: bool = False
     tree_result: str | None = None
     session_finished: bool = False
+    results: dict | None = None
     current_asset_index: int | None = None
     current_tree_index: int | None = None
 
