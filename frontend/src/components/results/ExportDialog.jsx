@@ -3,7 +3,7 @@ import React from 'react'
 export function ExportDialog({ onFormatSelect, onCancel }) {
     return (
         <div style={styles.overlay} onClick={onCancel}>
-            <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div style={styles.modal} onClick={(event) => event.stopPropagation()}>
                 <div style={styles.header}>
                     <h2 style={styles.title}>Seleziona formato di esportazione</h2>
                     <button style={styles.closeBtn} onClick={onCancel}>

@@ -29,14 +29,7 @@ export function ResultItemView({ item, isExpanded, onToggleExpand }) {
         <div className={styles.itemContainer}>
             <div
                 className={styles.contentWrapper}
-                onClick={
-                    isInteractive
-                        ? () => {
-                              console.log('Clicked on requirement:', code)
-                              onToggleExpand()
-                          }
-                        : undefined
-                }
+                onClick={isInteractive ? onToggleExpand : undefined}
                 style={{ cursor: isInteractive ? 'pointer' : 'default' }}
             >
                 <div className={styles.headerSection}>

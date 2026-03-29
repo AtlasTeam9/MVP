@@ -37,11 +37,11 @@ const useDeviceStore = create(
             },
 
             // Remove a specific asset from the current device
-            deleteAsset: (assetName) =>
+            deleteAsset: (assetId) =>
                 set((state) => {
                     if (!state.currentDevice) return { currentDevice: null }
                     const updatedDevice = copyDevice(state.currentDevice)
-                    updatedDevice.deleteAsset(assetName)
+                    updatedDevice.deleteAsset(assetId)
                     return { currentDevice: updatedDevice }
                 }),
         }),

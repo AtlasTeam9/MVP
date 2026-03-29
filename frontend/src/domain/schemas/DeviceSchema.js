@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-// TODO: stabilire quali sono i controlli esatti sui campi
 // Device fields controls used in the form
 const deviceSchema = z.object({
     name: z.string().min(1, 'Name is required'),

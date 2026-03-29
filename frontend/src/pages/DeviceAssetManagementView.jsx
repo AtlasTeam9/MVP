@@ -89,11 +89,11 @@ function AssetListDisplay({ assets, onDeleteAsset }) {
             <h4 className={styles.assetListTitle}>Assets ({assets.length})</h4>
             <div className={styles.assetItems}>
                 {assets.map((asset) => (
-                    <div key={asset.name} className={styles.assetItem}>
+                    <div key={asset.id} className={styles.assetItem}>
                         <span className={styles.assetName}>{asset.name}</span>
                         <button
                             className={styles.deleteBtn}
-                            onClick={() => onDeleteAsset(asset.name)}
+                            onClick={() => onDeleteAsset(asset.id)}
                             title="Delete asset"
                         >
                             🗑️

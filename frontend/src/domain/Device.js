@@ -37,9 +37,8 @@ export default class Device {
         this._assets.push(asset)
     }
 
-    // TODO: capire se eliminare l'asset per ID o per nome. Attualmente è per nome.
-    deleteAsset(assetName) {
-        this._assets = this._assets.filter((ass) => ass.name !== assetName)
+    deleteAsset(assetId) {
+        this._assets = this._assets.filter((asset) => asset.id !== assetId)
     }
 
     toDict() {

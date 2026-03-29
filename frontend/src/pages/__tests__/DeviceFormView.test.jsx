@@ -11,6 +11,7 @@ function renderForm() {
             <Routes>
                 <Route path="/" element={<div>Home</div>} />
                 <Route path="/device/new" element={<DeviceFormView />} />
+                <Route path="/device/assets" element={<div>Device Assets</div>} />
             </Routes>
         </MemoryRouter>
     )
@@ -26,9 +27,9 @@ describe('DeviceFormView — rendering', () => {
     it('shows all required fields', () => {
         renderForm()
         expect(screen.getByLabelText(/nome/i)).toBeInTheDocument()
-        expect(screen.getByLabelText(/os/i)).toBeInTheDocument()
+        expect(screen.getByLabelText(/operating system/i)).toBeInTheDocument()
         expect(screen.getByLabelText(/firmware/i)).toBeInTheDocument()
-        expect(screen.getByLabelText(/functionality/i)).toBeInTheDocument()
+        expect(screen.getByLabelText(/functionalities/i)).toBeInTheDocument()
     })
 
     it('shows the optional Description field', () => {
@@ -36,9 +37,9 @@ describe('DeviceFormView — rendering', () => {
         expect(screen.getByLabelText(/description/i)).toBeInTheDocument()
     })
 
-    it('shows the Cancel, Reset and Save buttons', () => {
+    it('shows the Back, Reset and Save buttons', () => {
         renderForm()
-        expect(screen.getByText('Cancel')).toBeInTheDocument()
+        expect(screen.getByTitle('Go back')).toBeInTheDocument()
         expect(screen.getByText('Reset')).toBeInTheDocument()
         expect(screen.getByText('Save')).toBeInTheDocument()
     })
@@ -55,7 +56,7 @@ describe('DeviceFormView — validation', () => {
             expect(screen.getByText('Name is required')).toBeInTheDocument()
             expect(screen.getByText('OS is required')).toBeInTheDocument()
             expect(screen.getByText('Firmware version is required')).toBeInTheDocument()
-            expect(screen.getByText('Functionality is required')).toBeInTheDocument()
+            expect(screen.getByText('Functionalities are required')).toBeInTheDocument()
         })
     })
 
@@ -64,26 +65,26 @@ describe('DeviceFormView — validation', () => {
         const user = userEvent.setup()
 
         await user.type(screen.getByLabelText(/nome/i), 'Router')
-        await user.type(screen.getByLabelText(/os/i), 'Linux')
+        await user.type(screen.getByLabelText(/operating system/i), 'Linux')
         await user.type(screen.getByLabelText(/firmware/i), '1.0.0')
-        await user.type(screen.getByLabelText(/functionality/i), 'routing')
+        await user.type(screen.getByLabelText(/functionalities/i), 'routing')
         await user.click(screen.getByText('Save'))
 
         await waitFor(() => {
             expect(screen.queryByText('Name is required')).not.toBeInTheDocument()
             expect(screen.queryByText('OS is required')).not.toBeInTheDocument()
             expect(screen.queryByText('Firmware version is required')).not.toBeInTheDocument()
-            expect(screen.queryByText('Functionality is required')).not.toBeInTheDocument()
+            expect(screen.queryByText('Functionalities are required')).not.toBeInTheDocument()
         })
     })
 })
 
 // Integration tests for DeviceFormView covering action logic
 describe('DeviceFormView — actions', () => {
-    it('navigates to the home page when clicking Cancel', async () => {
+    it('navigates to the home page when clicking Back', async () => {
         renderForm()
         const user = userEvent.setup()
-        await user.click(screen.getByText('Cancel'))
+        await user.click(screen.getByTitle('Go back'))
         expect(screen.getByText('Home')).toBeInTheDocument()
     })
 
@@ -99,19 +100,18 @@ describe('DeviceFormView — actions', () => {
         expect(nameInput).toHaveValue('')
     })
 
-    // TODO: modificare e verificare che si vada alla pagina corretta dopo il salvataggio
-    it('navigates to the home page after a valid save', async () => {
+    it('navigates to device assets after a valid save', async () => {
         renderForm()
         const user = userEvent.setup()
 
         await user.type(screen.getByLabelText(/nome/i), 'Router')
-        await user.type(screen.getByLabelText(/os/i), 'Linux')
+        await user.type(screen.getByLabelText(/operating system/i), 'Linux')
         await user.type(screen.getByLabelText(/firmware/i), '1.0.0')
-        await user.type(screen.getByLabelText(/functionality/i), 'routing')
+        await user.type(screen.getByLabelText(/functionalities/i), 'routing')
         await user.click(screen.getByText('Save'))
 
         await waitFor(() => {
-            expect(screen.getByText('Home')).toBeInTheDocument()
+            expect(screen.getByText('Device Assets')).toBeInTheDocument()
         })
     })
 })

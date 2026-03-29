@@ -3,7 +3,10 @@ import IApiClient from '../IApiClient'
 
 // Creation of a mock for axios
 vi.mock('axios', () => ({
-    default: { create: vi.fn(() => axiosInstance) },
+    default: {
+        create: vi.fn(() => axiosInstance),
+        isAxiosError: (error) => Boolean(error?.isAxiosError),
+    },
 }))
 
 let axiosInstance
@@ -65,18 +68,20 @@ describe('AxiosApiClient — get()', () => {
         axiosInstance.get.mockResolvedValue({ data: { id: 1, name: 'Router' } })
         const data = await AxiosApiClient.get('/devices')
         expect(data).toEqual({ id: 1, name: 'Router' })
-        expect(axiosInstance.get).toHaveBeenCalledWith('/devices', { params: {} })
+        expect(axiosInstance.get).toHaveBeenCalledWith('/devices', {})
     })
 
     it('passes query parameters correctly', async () => {
         axiosInstance.get.mockResolvedValue({ data: [] })
         await AxiosApiClient.get('/devices', { active: true })
-        expect(axiosInstance.get).toHaveBeenCalledWith('/devices', { params: { active: true } })
+        expect(axiosInstance.get).toHaveBeenCalledWith('/devices', { active: true })
     })
 
     it('propagates network errors', async () => {
-        axiosInstance.get.mockRejectedValue(new Error('Network Error'))
-        await expect(AxiosApiClient.get('/devices')).rejects.toThrow('Network Error')
+        axiosInstance.get.mockRejectedValue({ isAxiosError: true })
+        await expect(AxiosApiClient.get('/devices')).rejects.toThrow(
+            'Impossibile contattare il server. Controlla la connessione.'
+        )
     })
 })
 
@@ -87,11 +92,15 @@ describe('AxiosApiClient — post()', () => {
         axiosInstance.post.mockResolvedValue({ data: { id: 42, ...payload } })
         const data = await AxiosApiClient.post('/devices', payload)
         expect(data).toMatchObject({ id: 42, deviceName: 'Switch' })
-        expect(axiosInstance.post).toHaveBeenCalledWith('/devices', payload)
+        expect(axiosInstance.post).toHaveBeenCalledWith('/devices', payload, {
+            headers: { 'Content-Type': 'application/json' },
+        })
     })
 
     it('propagates network errors', async () => {
-        axiosInstance.post.mockRejectedValue(new Error('Network Error'))
-        await expect(AxiosApiClient.post('/devices', {})).rejects.toThrow('Network Error')
+        axiosInstance.post.mockRejectedValue({ isAxiosError: true })
+        await expect(AxiosApiClient.post('/devices', {})).rejects.toThrow(
+            'Impossibile contattare il server. Controlla la connessione.'
+        )
     })
 })

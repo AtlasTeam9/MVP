@@ -20,7 +20,6 @@ const initialData = {
 // Helper function to convert form data into an Asset instance
 const buildAsset = (data) => {
     const id = Date.now().toString() // Generate a simple unique ID
-    // TODO: capire come gestire il campo id
     return new Asset(id, data.name, data.type, data.isSensitive, data.desc || null)
 }
 

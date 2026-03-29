@@ -4,6 +4,7 @@ import useResultStore from '../store/ResultStore'
 import useTreeStore from '../store/TreeStore'
 import useDeviceStore from '../store/DeviceStore'
 import useSessionStore from '../store/SessionStore'
+import sessionService from '../services/SessionService'
 import { ResultItemView } from '../components/results/ResultItemView'
 import { AssetResultsView } from '../components/results/AssetResultsView'
 import BackIcon from '../components/common/BackIcon'
@@ -46,27 +47,10 @@ function useModifySessionLogic() {
 
     const handleResumeTest = () => {
         if (!selectedAsset || !expandedRequirement || !device || !trees) return
-        const assetIndex = device.assets.findIndex((asset) => asset.id === selectedAsset)
-        const treeIndex = trees.findIndex((tree) => tree.id === expandedRequirement)
-        if (assetIndex === -1 || treeIndex === -1) return
 
-        // Get the complete node data from TreeStore (same as SessionService does)
-        const firstNode = useTreeStore.getState().getNodeByTreeIndexAndNodeId(treeIndex, 'node1')
+        const canResume = sessionService.resumeSession(expandedRequirement, selectedAsset)
 
-        if (!firstNode) return
-
-        // Set the device position and current node (same flow as loading a session)
-        useSessionStore.getState().setDevicePosition(assetIndex, treeIndex, 'node1')
-        useSessionStore.getState().setCurrentNode(firstNode)
-        // Truncate pastHistory to keep only responses before this position
-        useSessionStore.getState().truncateHistoryByPosition(assetIndex, treeIndex)
-        // Clear futureHistory to ensure we use normal answer endpoint (not go_back)
-        useSessionStore.getState().clearFuture()
-        // Set resume mode to use go_back endpoint for next answer
-        useSessionStore.getState().setResumeMode(true)
-        // After starting a modification run, hide Modify Session on subsequent results screens
-        useSessionStore.getState().setSessionUploaded(false)
-        useSessionStore.getState().setTestFinished(false)
+        if (!canResume) return
 
         navigate('/session/test')
     }
