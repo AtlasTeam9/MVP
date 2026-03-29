@@ -1,0 +1,30 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      CORS_ORIGINS: ${CORS_ORIGINS-}
+    init: true
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - backend_sessions:/app/data/sessions
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:${BACKEND_PORT:-8000}/api/v1}
+    depends_on:
+      backend:
+        condition: service_healthy
+    init: true
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    restart: unless-stopped
+
+volumes:
+  backend_sessions:

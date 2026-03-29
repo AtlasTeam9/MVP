@@ -23,3 +23,5 @@ Per forzare il rebuild dell'immagine:
 ```bash
 docker compose up --build
 ```
+
+`CORS_ORIGINS` e una lista separata da virgole degli origin consentiti. Se non viene impostata, il backend accetta richieste da qualsiasi origin.
