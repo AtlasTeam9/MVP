@@ -41,6 +41,7 @@ function useAssetForm() {
     const onSave = (data) => {
         const createdAsset = buildAsset(data)
         deviceService.addAssetToDevice(createdAsset)
+
         navigate('/device/assets')
     }
 

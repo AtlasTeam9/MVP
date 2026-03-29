@@ -1,7 +1,7 @@
-// import apiClient from '../infrastructure/api/AxiosApiClient'
 import Device from '../domain/Device'
 import { deviceSchema } from '../domain/schemas/DeviceSchema'
 import useDeviceStore from '../store/DeviceStore'
+import useUIStore from '../store/UIStore'
 import exportService from './ExportService'
 
 // Custom hook to get the current device from the store
@@ -54,14 +54,17 @@ class DeviceService {
     // Methods for asset management
     addAssetToDevice(asset) {
         useDeviceStore.getState().addAsset(asset)
+        useUIStore.getState().setDirty(true)
     }
 
     removeAsset(assetId) {
         useDeviceStore.getState().deleteAsset(assetId)
+        useUIStore.getState().setDirty(true)
     }
 
     saveDeviceToFile() {
         exportService.exportDeviceAsJSON(this.getCurrentDevice())
+        useUIStore.getState().setDirty(false)
     }
 
     // Clear the current device from the store

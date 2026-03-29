@@ -26,6 +26,7 @@ function SessionContent({
         currentAssetIndex,
         onSaveExit,
         pastHistory,
+        trees,
     }
     const questionProps = { currentNode, currentTreeIndex, trees, error, isLoading, onYes, onNo }
     const footerProps = { pastHistory, futureHistory, isLoading, onBack, onHome, onForward }

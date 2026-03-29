@@ -256,6 +256,12 @@
     transform: scale(1.1);
 }
 
+.backIcon {
+    position: fixed;
+    left: 20px;
+    top: 40px;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     .container {

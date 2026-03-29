@@ -1,4 +1,5 @@
 import apiClient from '../infrastructure/api/AxiosApiClient'
+import StateError from '../infrastructure/errors/StateError'
 
 class ExportService {
     /**
@@ -7,28 +8,22 @@ class ExportService {
      * @param {string} format - Format of the export ('csv' or 'pdf')
      */
     async exportResults(sessionId, format = 'csv') {
-        try {
-            const blob = await apiClient.get(`/session/${sessionId}/export/results`, {
-                params: { format },
-                responseType: 'blob',
+        const blob = await apiClient.get(`/session/${sessionId}/export/results`, {
+            params: { format },
+            responseType: 'blob',
+        })
+
+        if (!blob || (blob.size === 0 && blob.length === 0)) {
+            throw new StateError('Il server ha ritornato una risposta vuota.', {
+                code: 'EXPORT_EMPTY_RESPONSE',
+                context: { format },
             })
-
-            console.log('Blob:', blob)
-            console.log('Blob type:', typeof blob)
-            console.log('Blob size:', blob?.size || blob?.length)
-
-            if (!blob || (blob.size === 0 && blob.length === 0)) {
-                throw new Error('Errore: il server ha ritornato una risposta vuota')
-            }
-
-            // Converti string a Blob se necessario
-            const finalBlob =
-                blob instanceof Blob ? blob : new Blob([blob], { type: `application/${format}` })
-            this.downloadFile(finalBlob, `results.${format}`)
-        } catch (error) {
-            console.error(`Error during export of results in ${format}:`, error)
-            throw error
         }
+
+        // Converti string a Blob se necessario
+        const finalBlob =
+            blob instanceof Blob ? blob : new Blob([blob], { type: `application/${format}` })
+        this.downloadFile(finalBlob, `results.${format}`)
     }
 
     /**
@@ -53,26 +48,23 @@ class ExportService {
      * @param {Array} answers - Answer history payload for backend export
      */
     async exportSessionAsJSON(sessionId, answers = []) {
-        try {
-            const blob = await apiClient.post(
-                `/session/${sessionId}/export`,
-                { answer: answers },
-                {
-                    responseType: 'blob',
-                }
-            )
-
-            if (!blob || (blob.size === 0 && blob.length === 0)) {
-                throw new Error('Errore: il server ha ritornato una risposta vuota')
+        const blob = await apiClient.post(
+            `/session/${sessionId}/export`,
+            { answer: answers },
+            {
+                responseType: 'blob',
             }
+        )
 
-            const finalBlob =
-                blob instanceof Blob ? blob : new Blob([blob], { type: 'application/json' })
-            this.downloadFile(finalBlob, 'session.json')
-        } catch (error) {
-            console.error('Error during export of the session:', error)
-            throw error
+        if (!blob || (blob.size === 0 && blob.length === 0)) {
+            throw new StateError('Il server ha ritornato una risposta vuota.', {
+                code: 'EXPORT_EMPTY_RESPONSE',
+                context: { format: 'json' },
+            })
         }
+
+        const finalBlob = blob instanceof Blob ? blob : new Blob([blob], { type: 'application/json' })
+        this.downloadFile(finalBlob, 'session.json')
     }
 
     /**
@@ -81,18 +73,15 @@ class ExportService {
      */
     exportDeviceAsJSON(device) {
         if (!device) {
-            throw new Error('Device is required for export')
+            throw new StateError('Dispositivo mancante per l export.', {
+                code: 'EXPORT_DEVICE_REQUIRED',
+            })
         }
 
-        try {
-            const deviceData = device.toDict()
-            const jsonString = JSON.stringify(deviceData, null, 2)
-            const blob = new Blob([jsonString], { type: 'application/json' })
-            this.downloadFile(blob, `${device.name}.json`)
-        } catch (error) {
-            console.error('Error during export of the device:', error)
-            throw error
-        }
+        const deviceData = device.toDict()
+        const jsonString = JSON.stringify(deviceData, null, 2)
+        const blob = new Blob([jsonString], { type: 'application/json' })
+        this.downloadFile(blob, `${device.name}.json`)
     }
 
     /**

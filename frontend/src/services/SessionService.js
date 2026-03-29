@@ -7,6 +7,7 @@ import apiClient from '../infrastructure/api/AxiosApiClient'
 import deviceService from './DeviceService'
 import Device from '../domain/Device'
 import Asset from '../domain/Asset'
+import StateError from '../infrastructure/errors/StateError'
 
 class SessionService {
     // Private method to extract device data from API response and create a Device object
@@ -65,57 +66,41 @@ class SessionService {
 
         this.#setCurrentNodeFromResponse(response, position)
 
-        console.log(
-            'Sessione salvata nel SessionStore, device salvato nel DeviceStore, posizione inizializzata: ',
-            position
-        ) // TODO: eliminare
-
         return { sessionId, device: deviceObj, position }
     }
 
     // Create a new session by uploading a device file (JSON)
     async createSessionWithFile(file) {
-        try {
-            const formData = new FormData()
-            formData.append('file', file)
+        const formData = new FormData()
+        formData.append('file', file)
 
-            // API call to create a session with the uploaded file
-            const response = await apiClient.post('/session/create_session_with_file', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            })
+        // API call to create a session with the uploaded file
+        const response = await apiClient.post('/session/create_session_with_file', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        })
 
-            return this.#initializeSessionFromResponse(response)
-        } catch (error) {
-            console.error('Errore nella creazione della sessione:', error)
-            // TODO: mostrare messaggio di errore
-            throw error
-        }
+        return this.#initializeSessionFromResponse(response)
     }
 
     // Create a new session from a Device object (direct API call without file)
     async createSessionWithDevice(device) {
-        try {
-            const devicePayload = device.toDict()
+        const devicePayload = device.toDict()
 
-            // API call to create a session with the device object directly
-            const response = await apiClient.post('/session/create_session', devicePayload)
+        // API call to create a session with the device object directly
+        const response = await apiClient.post('/session/create_session', devicePayload)
 
-            return this.#initializeSessionFromResponse(response)
-        } catch (error) {
-            console.error('Errore nella creazione della sessione:', error)
-            // TODO: mostrare messaggio di errore
-            throw error
-        }
+        return this.#initializeSessionFromResponse(response)
     }
 
     // TODO: aspettare risposta bluewind
     resumeSession(requirementId, assetId) {
-        console.log(`Ripresa sessione: req=${requirementId}, asset=${assetId}`)
+        void requirementId
+        void assetId
         // TODO: Logica per riprendere una sessione specifica
     }
 
     importSessionFromFile(content) {
-        console.log('Importazione sessione da file', content)
+        void content
         // TODO: Validazione file JSON e popolamento dello store
     }
 
@@ -134,8 +119,10 @@ class SessionService {
             .getNodeByTreeIndexAndNodeId(current_tree_index, next_node_id)
 
         if (!nextNode) {
-            console.error('Next node not found in TreeStore') // TODO: sistemare
-            return
+            throw new StateError('Nodo successivo non trovato nello stato locale.', {
+                code: 'TREE_NEXT_NODE_NOT_FOUND',
+                context: { current_tree_index, next_node_id },
+            })
         }
 
         useSessionStore
@@ -148,8 +135,10 @@ class SessionService {
     #navigateToNode(treeIndex, assetIndex, nodeId) {
         const nextNode = this.#getFirstNodeOfTree(treeIndex)
         if (!nextNode) {
-            console.error('First node of tree not found') // TODO: sistemare
-            return
+            throw new StateError('Nodo iniziale dell albero non trovato nello stato locale.', {
+                code: 'TREE_FIRST_NODE_NOT_FOUND',
+                context: { treeIndex, assetIndex, nodeId },
+            })
         }
         useSessionStore.getState().setDevicePosition(assetIndex, treeIndex, nodeId)
         useSessionStore.getState().setCurrentNode(nextNode)
@@ -168,14 +157,6 @@ class SessionService {
         const { current_asset_index, current_tree_index, next_node_id } = response
         const assetChanged = current_asset_index !== previousAssetIndex
         const nodeId = assetChanged ? next_node_id : 'node1'
-
-        // TODO: eliminare
-        if (assetChanged) {
-            console.log(
-                `Asset cambiato: da ${previousAssetIndex} a ${current_asset_index},
-                saltati gli alberi intermedi`
-            )
-        }
 
         this.#navigateToNode(current_tree_index, current_asset_index, nodeId)
     }
@@ -231,117 +212,104 @@ class SessionService {
 
     // Answer the current question and move to the next node
     async sendAnswer(answer) {
-        try {
-            const sessionId = useSessionStore.getState().sessionId
-            const currentAssetIndex = useSessionStore.getState().currentAssetIndex
-            const currentNode = useSessionStore.getState().currentNode
-            const currentTreeIndex = useSessionStore.getState().currentTreeIndex
+        const sessionId = useSessionStore.getState().sessionId
+        const currentAssetIndex = useSessionStore.getState().currentAssetIndex
+        const currentNode = useSessionStore.getState().currentNode
+        const currentTreeIndex = useSessionStore.getState().currentTreeIndex
 
-            // Check if futureHistory is not empty, meaning user went back and is
-            // answering a previous question, OR if we're in resume mode
-            // (resuming from selected asset)
-            const futureHistory = useSessionStore.getState().futureHistory
-            const isResumeMode = useSessionStore.getState().isResumeMode
-            const hasGoingBack = futureHistory.length > 0 || isResumeMode
+        // Check if futureHistory is not empty, meaning user went back and is
+        // answering a previous question, OR if we're in resume mode
+        // (resuming from selected asset)
+        const futureHistory = useSessionStore.getState().futureHistory
+        const isResumeMode = useSessionStore.getState().isResumeMode
+        const hasGoingBack = futureHistory.length > 0 || isResumeMode
 
-            // Save the current question and answer to pastHistory
-            useSessionStore.getState().selectAnswer(answer)
+        // Save the current question and answer to pastHistory
+        useSessionStore.getState().selectAnswer(answer)
 
-            // Clear future history since we're creating a new path by answering
-            useSessionStore.getState().clearFuture()
+        // Clear future history since we're creating a new path by answering
+        useSessionStore.getState().clearFuture()
 
-            // Exit resume mode after first answer
-            if (isResumeMode) {
-                useSessionStore.getState().setResumeMode(false)
-            }
+        // Exit resume mode after first answer
+        if (isResumeMode) {
+            useSessionStore.getState().setResumeMode(false)
+        }
 
-            let response
-            if (hasGoingBack) {
-                // User went back and is changing a previous answer, OR resuming from selected asset
-                // use go_back endpoint
-                console.log('ASSET INDEX PRE:', {
-                    assetIndex: currentAssetIndex,
-                })
-                response = await apiClient.post(`/session/${sessionId}/go_back`, {
-                    target_asset_index: currentAssetIndex,
-                    target_node_id: currentNode?.id,
-                    target_tree_index: currentTreeIndex,
-                    new_answer: answer,
-                })
-                console.log('Risposta da go_back:', response) // TODO: eliminare
-                this.#handleGoBackResponse(response)
+        let response
+        if (hasGoingBack) {
+            // User went back and is changing a previous answer, OR resuming from selected asset
+            // use go_back endpoint
+            response = await apiClient.post(`/session/${sessionId}/go_back`, {
+                target_asset_index: currentAssetIndex,
+                target_node_id: currentNode?.id,
+                target_tree_index: currentTreeIndex,
+                new_answer: answer,
+            })
+            this.#handleGoBackResponse(response)
+        } else {
+            // Normal forward progression - use answer endpoint
+            response = await apiClient.post(`/session/${sessionId}/answer`, {
+                answer,
+            })
+
+            // Backend provides current position information:
+            // current_asset_index, current_tree_index, next_node_id
+            // This allows proper navigation when trees are skipped due to NA/FAIL results
+            if (response.tree_completed) {
+                this.#handleTreeCompleted(response, currentAssetIndex)
             } else {
-                // Normal forward progression - use answer endpoint
-                response = await apiClient.post(`/session/${sessionId}/answer`, {
-                    answer,
-                })
-
-                // Backend provides current position information:
-                // current_asset_index, current_tree_index, next_node_id
-                // This allows proper navigation when trees are skipped due to NA/FAIL results
-                if (response.tree_completed) {
-                    this.#handleTreeCompleted(response, currentAssetIndex)
-                } else {
-                    this.#handleNextNodeSameTree(response)
-                }
+                this.#handleNextNodeSameTree(response)
             }
-        } catch (error) {
-            console.error('Errore nel sending answer:', error) // TODO: mostrare messaggio di errore
-            throw error
         }
     }
 
     // Go back to a previous node and change answer
     async previousStep() {
-        try {
-            // Call the store's navigation method
-            useSessionStore.getState().goToPreviousNode()
+        // Call the store's navigation method
+        useSessionStore.getState().goToPreviousNode()
 
-            // Get the updated state - goToPreviousNode has already set currentNode
-            const { currentNode, currentTreeIndex } = useSessionStore.getState()
+        // Get the updated state - goToPreviousNode has already set currentNode
+        const { currentNode, currentTreeIndex } = useSessionStore.getState()
 
-            // Fetch the full node data from TreeStore using the node ID and tree index
-            if (currentNode && currentNode.id) {
-                const nodeFromTree = useTreeStore
-                    .getState()
-                    .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
+        // Fetch the full node data from TreeStore using the node ID and tree index
+        if (currentNode && currentNode.id) {
+            const nodeFromTree = useTreeStore
+                .getState()
+                .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
 
-                if (nodeFromTree) {
-                    useSessionStore.getState().setCurrentNode(nodeFromTree)
-                } else {
-                    console.error('Previous node not found in TreeStore')
-                }
+            if (nodeFromTree) {
+                useSessionStore.getState().setCurrentNode(nodeFromTree)
+            } else {
+                throw new StateError('Nodo precedente non trovato nello stato locale.', {
+                    code: 'TREE_PREVIOUS_NODE_NOT_FOUND',
+                    context: { currentTreeIndex, nodeId: currentNode.id },
+                })
             }
-        } catch (error) {
-            console.error('Error going to previous step:', error)
-            throw error
         }
     }
 
     // Go forward in the future history (if user went back previously)
     async forwardStep() {
-        try {
-            // Call the store's navigation method
-            useSessionStore.getState().goToNextNode()
+        // Call the store's navigation method
+        useSessionStore.getState().goToNextNode()
 
-            // Get the updated state - goToNextNode has already set currentNode
-            const { currentNode, currentTreeIndex } = useSessionStore.getState()
+        // Get the updated state - goToNextNode has already set currentNode
+        const { currentNode, currentTreeIndex } = useSessionStore.getState()
 
-            // Fetch the full node data from TreeStore using the node ID and tree index
-            if (currentNode && currentNode.id) {
-                const nodeFromTree = useTreeStore
-                    .getState()
-                    .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
+        // Fetch the full node data from TreeStore using the node ID and tree index
+        if (currentNode && currentNode.id) {
+            const nodeFromTree = useTreeStore
+                .getState()
+                .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
 
-                if (nodeFromTree) {
-                    useSessionStore.getState().setCurrentNode(nodeFromTree)
-                } else {
-                    console.error('Next node not found in TreeStore')
-                }
+            if (nodeFromTree) {
+                useSessionStore.getState().setCurrentNode(nodeFromTree)
+            } else {
+                throw new StateError('Nodo successivo non trovato nello stato locale.', {
+                    code: 'TREE_FORWARD_NODE_NOT_FOUND',
+                    context: { currentTreeIndex, nodeId: currentNode.id },
+                })
             }
-        } catch (error) {
-            console.error('Error going to forward step:', error)
-            throw error
         }
     }
 
@@ -350,63 +318,57 @@ class SessionService {
 
     // Load a previously saved session from a JSON file
     async loadSessionFromFile(file) {
-        try {
-            const formData = new FormData()
-            formData.append('file', file)
+        const formData = new FormData()
+        formData.append('file', file)
 
-            // API call to load session from file
-            const response = await apiClient.post('/session/load_session_from_file', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            })
+        // API call to load session from file
+        const response = await apiClient.post('/session/load_session_from_file', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        })
 
-            // Set sessionId in SessionStore
-            useSessionStore.getState().setSessionId(response.session_id)
-            useSessionStore.getState().setSessionUploaded(true)
+        // Set sessionId in SessionStore
+        useSessionStore.getState().setSessionId(response.session_id)
+        useSessionStore.getState().setSessionUploaded(true)
 
-            // Create Device object from response data and set in DeviceStore
-            const deviceObj = this.#createDeviceFromResponse(response.device)
-            useDeviceStore.getState().setDevice(deviceObj)
+        // Create Device object from response data and set in DeviceStore
+        const deviceObj = this.#createDeviceFromResponse(response.device)
+        useDeviceStore.getState().setDevice(deviceObj)
 
-            // Import past history (previous answers) into SessionStore
-            if (response.answer && response.answer.length > 0) {
-                useSessionStore.getState().importPastHistory(response.answer)
-            }
-
-            // Set the device position based on where the session left off
-            const { current_asset_index, current_tree_index, current_node_id } = response.position
-
-            // Only set position if session is not finished
-            // For finished sessions, position is invalid (asset_index out of bounds, node_id empty)
-            // The position will be set when user selects asset in ModifySessionView
-            if (!response.is_finished) {
-                useSessionStore
-                    .getState()
-                    .setDevicePosition(current_asset_index, current_tree_index, current_node_id)
-
-                // Load the current node from TreeStore using tree index and node ID
-                this.#setCurrentNodeFromResponse(response, response.position)
-            }
-
-            // Transform aggregate_results to RequirementResult format and save to ResultStore
-            const transformedResults = this.#transformResultsToRequirementResults(
-                response.aggregate_results
-            )
-            useResultStore.getState().setResults(transformedResults)
-
-            // Save results per asset in SessionStore for detailed view
-            if (response.results) {
-                useSessionStore.getState().setResultsPerAsset(response.results)
-            }
-
-            // Set test finished status based on is_finished flag
-            useSessionStore.getState().setTestFinished(response.is_finished)
-
-            return { results: transformedResults, isFinished: response.is_finished }
-        } catch (error) {
-            // TODO: sistemare
-            console.error('Errore nel caricamento della sessione da file:', error)
-            throw error
+        // Import past history (previous answers) into SessionStore
+        if (response.answer && response.answer.length > 0) {
+            useSessionStore.getState().importPastHistory(response.answer)
         }
+
+        // Set the device position based on where the session left off
+        const { current_asset_index, current_tree_index, current_node_id } = response.position
+
+        // Only set position if session is not finished
+        // For finished sessions, position is invalid (asset_index out of bounds, node_id empty)
+        // The position will be set when user selects asset in ModifySessionView
+        if (!response.is_finished) {
+            useSessionStore
+                .getState()
+                .setDevicePosition(current_asset_index, current_tree_index, current_node_id)
+
+            // Load the current node from TreeStore using tree index and node ID
+            this.#setCurrentNodeFromResponse(response, response.position)
+        }
+
+        // Transform aggregate_results to RequirementResult format and save to ResultStore
+        const transformedResults = this.#transformResultsToRequirementResults(
+            response.aggregate_results
+        )
+        useResultStore.getState().setResults(transformedResults)
+
+        // Save results per asset in SessionStore for detailed view
+        if (response.results) {
+            useSessionStore.getState().setResultsPerAsset(response.results)
+        }
+
+        // Set test finished status based on is_finished flag
+        useSessionStore.getState().setTestFinished(response.is_finished)
+
+        return { results: transformedResults, isFinished: response.is_finished }
     }
 
     // Delete session and clear stores (same behavior as HomeIcon)
@@ -418,8 +380,7 @@ class SessionService {
             if (sessionId) {
                 await apiClient.delete(`/session/${sessionId}/delete`)
             }
-        } catch (error) {
-            console.error("Errore nell'eliminazione della sessione dal backend:", error)
+        } catch {
             // Continue clearing local stores even if backend delete fails
         } finally {
             // Always clear local stores
@@ -456,8 +417,7 @@ class SessionService {
             if (sessionId) {
                 await apiClient.delete(`/session/${sessionId}/delete`)
             }
-        } catch (error) {
-            console.error("Errore nell'eliminazione della sessione dal backend:", error)
+        } catch {
             // Continue clearing local stores even if backend delete fails
         } finally {
             // Always clear local stores
