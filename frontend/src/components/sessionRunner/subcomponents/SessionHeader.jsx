@@ -4,8 +4,13 @@ import { calculateCompletionPercentage } from '../../../infrastructure/utils/pro
 
 // Component for rendering the session header with
 // device and asset information, completion percentage, and Save & Exit button
-function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit, pastHistory }) {
-    const completionPercentage = calculateCompletionPercentage(currentAssetIndex, pastHistory)
+function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit, pastHistory, trees }) {
+    const completionPercentage = calculateCompletionPercentage(
+        currentAssetIndex,
+        pastHistory,
+        trees,
+        currentDevice?.assets
+    )
     const currentAsset = currentDevice?.assets?.[currentAssetIndex]
 
     return (

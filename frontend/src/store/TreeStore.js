@@ -28,14 +28,12 @@ const useTreeStore = create(
         (set, get) => ({
             // State
             trees: [],
-            isLoading: false,
             error: null,
 
             // Actions
             setTrees: (trees) => {
                 set({ trees })
             },
-            setIsLoading: (loading) => set({ isLoading: loading }),
             setError: (error) => set({ error }),
 
             // Selectors
@@ -43,7 +41,7 @@ const useTreeStore = create(
                 findNodeInTree(get().trees, treeIndex, nodeId),
 
             // Clear store
-            clearStore: () => set({ trees: [], isLoading: false, error: null }),
+            clearStore: () => set({ trees: [], error: null }),
         }),
         { name: 'TreeStore' }
     )

@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styles from '../../pages/SessionRunnerView.module.css'
 import { SessionHeader, QuestionSection, NavigationFooter } from './subcomponents'
-import { initializeProgressCalculator } from '../../infrastructure/utils/progressCalculator'
 
 // Main component for rendering the session content,
 // including header, question section, and navigation footer
@@ -9,6 +8,7 @@ function SessionContent({
     currentDevice,
     currentNode,
     currentAssetIndex,
+    currentTreeIndex,
     isLoading,
     error,
     onYes,
@@ -21,20 +21,14 @@ function SessionContent({
     futureHistory,
     trees,
 }) {
-    // Initialize progress calculator when trees or device changes
-    useEffect(() => {
-        if (trees && currentDevice) {
-            initializeProgressCalculator(trees, currentDevice.assets)
-        }
-    }, [trees, currentDevice])
-
     const headerProps = {
         currentDevice,
         currentAssetIndex,
         onSaveExit,
         pastHistory,
+        trees,
     }
-    const questionProps = { currentNode, error, isLoading, onYes, onNo }
+    const questionProps = { currentNode, currentTreeIndex, trees, error, isLoading, onYes, onNo }
     const footerProps = { pastHistory, futureHistory, isLoading, onBack, onHome, onForward }
 
     return (

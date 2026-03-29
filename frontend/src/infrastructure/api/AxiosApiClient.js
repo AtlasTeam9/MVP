@@ -1,5 +1,6 @@
 import axios from 'axios'
 import IApiClient from './IApiClient'
+import { mapToAppError } from '../errors/errorMapper'
 
 class AxiosApiClient extends IApiClient {
     constructor() {
@@ -14,22 +15,35 @@ class AxiosApiClient extends IApiClient {
     }
 
     async get(url, config = {}) {
-        const response = await this.axiosInstance.get(url, config)
-        return response.data
+        try {
+            const response = await this.axiosInstance.get(url, config)
+            return response.data
+        } catch (error) {
+            throw mapToAppError(error)
+        }
     }
 
     async post(url, data, config = {}) {
-        const headers = data instanceof FormData ? {} : { 'Content-Type': 'application/json' }
+        try {
+            const headers = data instanceof FormData ? {} : { 'Content-Type': 'application/json' }
 
-        const response = await this.axiosInstance.post(url, data, {
-            headers: { ...headers, ...config.headers },
-        })
-        return response.data
+            const response = await this.axiosInstance.post(url, data, {
+                ...config,
+                headers: { ...headers, ...(config.headers || {}) },
+            })
+            return response.data
+        } catch (error) {
+            throw mapToAppError(error)
+        }
     }
 
     async delete(url, config = {}) {
-        const response = await this.axiosInstance.delete(url, config)
-        return response.data
+        try {
+            const response = await this.axiosInstance.delete(url, config)
+            return response.data
+        } catch (error) {
+            throw mapToAppError(error)
+        }
     }
 }
 

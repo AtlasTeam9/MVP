@@ -1,16 +1,19 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import useResultStore from '../store/ResultStore'
 import useSessionStore from '../store/SessionStore'
 import { ResultListView } from '../components/results/ResultListView'
-import { ExportDialog } from '../components/results/ExportDialog'
-import HomeIcon from '../components/common/HomeIcon'
+import { ResultActions } from '../components/results/ResultActions'
 import { useExportResults } from '../hooks/useExportResults'
 import { useExportSession } from '../hooks/useExportSession'
 import styles from './ResultView.module.css'
 
 export default function ResultView() {
+    const navigate = useNavigate()
     const results = useResultStore((state) => state.results)
     const sessionId = useSessionStore((state) => state.sessionId)
+    const isTestFinished = useSessionStore((state) => state.isTestFinished)
+    const isSessionUploaded = useSessionStore((state) => state.isSessionUploaded)
     const {
         isExporting,
         showFormatDialog,
@@ -19,6 +22,14 @@ export default function ResultView() {
         setShowFormatDialog,
     } = useExportResults(sessionId)
     const { isExportingSession, handleExportSessionClick } = useExportSession(sessionId)
+
+    const handleResumeSession = () => {
+        navigate('/session/test')
+    }
+
+    const handleModifySession = () => {
+        navigate('/session/modify')
+    }
 
     if (!results || results.length === 0) {
         return <div className={styles.container}>No results available</div>
@@ -30,29 +41,19 @@ export default function ResultView() {
                 <h1>Test Results</h1>
             </header>
             <ResultListView items={results} />
-            <div className={styles.actions}>
-                <button
-                    className={styles.actionButton}
-                    onClick={handleExportClick}
-                    disabled={isExporting}
-                >
-                    {isExporting ? 'Exporting...' : 'Export Results'}
-                </button>
-                <button
-                    className={styles.actionButton}
-                    onClick={handleExportSessionClick}
-                    disabled={isExportingSession}
-                >
-                    {isExportingSession ? 'Exporting...' : 'Export Session'}
-                </button>
-                <HomeIcon />
-            </div>
-            {showFormatDialog && (
-                <ExportDialog
-                    onFormatSelect={handleExportFormat}
-                    onCancel={() => setShowFormatDialog(false)}
-                />
-            )}
+            <ResultActions
+                isTestFinished={isTestFinished}
+                isSessionUploaded={isSessionUploaded}
+                isExporting={isExporting}
+                isExportingSession={isExportingSession}
+                showFormatDialog={showFormatDialog}
+                onResumeSession={handleResumeSession}
+                onModifySession={handleModifySession}
+                onExportClick={handleExportClick}
+                onExportSessionClick={handleExportSessionClick}
+                onFormatSelect={handleExportFormat}
+                onCloseDialog={() => setShowFormatDialog(false)}
+            />
         </div>
     )
 }

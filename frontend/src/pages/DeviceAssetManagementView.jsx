@@ -1,35 +1,43 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCurrentDevice } from '../services/DeviceService'
 import deviceService from '../services/DeviceService'
 import sessionService from '../services/SessionService'
+import useUIStore from '../store/UIStore'
+import NotificationManager from '../infrastructure/notifications/NotificationManager'
+
 import styles from './DeviceAssetManagementView.module.css'
 import BackIcon from '../components/common/BackIcon'
 import HomeIcon from '../components/common/HomeIcon'
 
+async function createSessionAndNavigate(currentDevice, navigate) {
+    if (!currentDevice) return
+
+    try {
+        await sessionService.createSessionWithDevice(currentDevice)
+        navigate('/device/summary', { state: { fromDeviceAssetManagement: true } })
+    } catch (error) {
+        NotificationManager.notifyError(error)
+    }
+}
+
 // Custom hook to manage the logic of the Device Asset Management view
 function useAssetManagement() {
     const navigate = useNavigate()
-
-    // Get the currentDevice from the service
+    const [showUnsavedDialog, setShowUnsavedDialog] = useState(false)
     const currentDevice = useCurrentDevice()
 
+    const proceedToSummary = async () => {
+        await createSessionAndNavigate(currentDevice, navigate)
+    }
+
     const onGoToSummary = async () => {
-        if (!currentDevice) {
-            console.error('Device not loaded')
+        if (useUIStore.getState().isDirty) {
+            setShowUnsavedDialog(true)
             return
         }
 
-        try {
-            const result = await sessionService.createSessionWithDevice(currentDevice)
-            console.log('Session created with ID:', result.sessionId) // TODO: rimuovere
-            console.log('Device:', result.device) // TODO: rimuovere
-            console.log('Position:', result.position) // TODO: rimuovere
-            navigate('/device/summary')
-        } catch (error) {
-            console.error('Failed to create session:', error) // TODO: rimuovere
-            // TODO: mostrare messaggio di errore all'utente
-        }
+        await proceedToSummary()
     }
 
     const onSaveDevice = () => {
@@ -38,12 +46,31 @@ function useAssetManagement() {
         deviceService.saveDeviceToFile()
     }
 
+    const onConfirmSaveBeforeSummary = async () => {
+        onSaveDevice()
+        setShowUnsavedDialog(false)
+        await proceedToSummary()
+    }
+
+    const onConfirmSkipSaveBeforeSummary = async () => {
+        setShowUnsavedDialog(false)
+        await proceedToSummary()
+    }
+
+    const onCancelUnsavedDialog = () => {
+        setShowUnsavedDialog(false)
+    }
+
     return {
         currentDevice,
+        showUnsavedDialog,
         onAddAsset: () => navigate('/asset/new'),
         onGoToSummary,
         onDeleteAsset: deviceService.removeAsset,
         onSaveDevice,
+        onConfirmSaveBeforeSummary,
+        onConfirmSkipSaveBeforeSummary,
+        onCancelUnsavedDialog,
     }
 }
 
@@ -100,6 +127,33 @@ function AssetActionButtons({ assets, onAddAsset, onGoToSummary, onSaveDevice })
     )
 }
 
+function UnsavedChangesDialog({ onConfirmSave, onConfirmSkipSave, onCancel }) {
+    return (
+        <div className={styles.overlay} onClick={onCancel}>
+            <div className={styles.modal} onClick={(event) => event.stopPropagation()}>
+                <div className={styles.modalHeader}>
+                    <h2 className={styles.modalTitle}>Unsaved changes</h2>
+                    <button className={styles.modalCloseBtn} onClick={onCancel}>
+                        ✕
+                    </button>
+                </div>
+                <p className={styles.modalText}>
+                    There are unsaved changes to the device. Do you want to save before going to
+                    the summary?
+                </p>
+                <div className={styles.modalActions}>
+                    <button className={styles.modalButton} onClick={onConfirmSave}>
+                        YES
+                    </button>
+                    <button className={styles.modalButtonSecondary} onClick={onConfirmSkipSave}>
+                        NO
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 // Main content component for the DeviceAssetManagementView, displaying the header, asset list,
 // and action buttons
 function DeviceAssetManagementContent({
@@ -141,8 +195,17 @@ function DeviceAssetManagementContent({
 
 // Main component for the Device Asset Management view
 export default function DeviceAssetManagementView() {
-    const { currentDevice, onAddAsset, onGoToSummary, onDeleteAsset, onSaveDevice } =
-        useAssetManagement()
+    const {
+        currentDevice,
+        showUnsavedDialog,
+        onAddAsset,
+        onGoToSummary,
+        onDeleteAsset,
+        onSaveDevice,
+        onConfirmSaveBeforeSummary,
+        onConfirmSkipSaveBeforeSummary,
+        onCancelUnsavedDialog,
+    } = useAssetManagement()
 
     if (!currentDevice) {
         return (
@@ -153,12 +216,21 @@ export default function DeviceAssetManagementView() {
     }
 
     return (
-        <DeviceAssetManagementContent
-            currentDevice={currentDevice}
-            onAddAsset={onAddAsset}
-            onGoToSummary={onGoToSummary}
-            onDeleteAsset={onDeleteAsset}
-            onSaveDevice={onSaveDevice}
-        />
+        <>
+            <DeviceAssetManagementContent
+                currentDevice={currentDevice}
+                onAddAsset={onAddAsset}
+                onGoToSummary={onGoToSummary}
+                onDeleteAsset={onDeleteAsset}
+                onSaveDevice={onSaveDevice}
+            />
+            {showUnsavedDialog && (
+                <UnsavedChangesDialog
+                    onConfirmSave={onConfirmSaveBeforeSummary}
+                    onConfirmSkipSave={onConfirmSkipSaveBeforeSummary}
+                    onCancel={onCancelUnsavedDialog}
+                />
+            )}
+        </>
     )
 }

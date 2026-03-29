@@ -5,6 +5,7 @@ import { devtools } from 'zustand/middleware'
 const createSessionMethods = (set) => ({
     setSessionId: (id) => set({ sessionId: id }),
     setCurrentNode: (node) => set({ currentNode: node }),
+    setSessionUploaded: (isUploaded) => set({ isSessionUploaded: isUploaded }),
 })
 
 // Methods to manage device position in the evaluation flow
@@ -125,7 +126,10 @@ const createHistoryMethods = (set, get) => ({
             pastHistory: [],
             futureHistory: [],
             isTestFinished: false,
+            isResumeMode: false,
+            isSessionUploaded: false,
             results: null,
+            resultsPerAsset: null,
             currentNode: null,
             currentAssetIndex: 0,
             currentTreeIndex: 0,
@@ -138,12 +142,40 @@ const createHistoryMethods = (set, get) => ({
             set({ pastHistory: history.slice(0, index) })
         }
     },
+
+    truncateHistoryByPosition: (assetIndex, treeIndex) => {
+        const history = get().pastHistory
+        const newHistory = history.filter((item) => {
+            // Keep responses from previous assets
+            if (item.assetIndex < assetIndex) return true
+            // For same asset, keep responses from previous requirements
+            if (item.assetIndex === assetIndex && item.treeIndex < treeIndex) return true
+            // Don't keep responses from this requirement or later
+            return false
+        })
+        set({ pastHistory: newHistory })
+    },
+
+    importPastHistory: (answers) => {
+        // Convert array from file format to pastHistory format
+        // File format: {asset_index, tree_index, node_id, answer}
+        // pastHistory format: {assetIndex, treeIndex, nodeId, answer}
+        const formattedHistory = answers.map((item) => ({
+            assetIndex: item.asset_index,
+            treeIndex: item.tree_index,
+            nodeId: item.node_id,
+            answer: item.answer,
+        }))
+        set({ pastHistory: formattedHistory })
+    },
 })
 
 // Methods to manage test completion status and results storage
 const createResultMethods = (set) => ({
     setTestFinished: (status) => set({ isTestFinished: status }),
     setResults: (results) => set({ results: results }),
+    setResultsPerAsset: (resultsPerAsset) => set({ resultsPerAsset: resultsPerAsset }),
+    setResumeMode: (isResumeMode) => set({ isResumeMode }),
     setPosition: (pos) => console.log('Impostazione posizione:', pos),
 })
 
@@ -156,7 +188,10 @@ const useSessionStore = create(
             pastHistory: [],
             futureHistory: [],
             isTestFinished: false,
+            isResumeMode: false,
+            isSessionUploaded: false,
             results: null,
+            resultsPerAsset: null,
 
             // Position in evaluation flow
             currentNode: null,

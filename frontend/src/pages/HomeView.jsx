@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import styles from './HomeView.module.css'
 import UploadButton from '../components/common/UploadButton'
 import SessionService from '../services/SessionService'
+import NotificationManager from '../infrastructure/notifications/NotificationManager'
 
 // Custom hook for managing navigation logic in the home view
 function useHomeNavigation() {
@@ -13,8 +14,7 @@ function useHomeNavigation() {
             await SessionService.createSessionWithFile(file)
             navigate('/device/summary')
         } catch (err) {
-            console.error('Error loading device:', err.message) // TODO: da eliminare, solo per debug
-            alert('Failed to load device: ' + err.message)
+            NotificationManager.notifyError(err)
         }
     }
 
@@ -22,8 +22,14 @@ function useHomeNavigation() {
         navigate('/device/new')
     }
 
-    const handleLoadPreviousSession = () => {
-        // TODO: inserire logica per ripristinare una sessione salvata
+    const handleLoadPreviousSession = async (file) => {
+        try {
+            // TODO: ritorna qualcosa il metodo?
+            await SessionService.loadSessionFromFile(file)
+            navigate('/results')
+        } catch (err) {
+            NotificationManager.notifyError(err)
+        }
     }
 
     return {

@@ -1,21 +1,33 @@
+/* eslint-disable camelcase */
 import SessionService from '../../services/SessionService'
 import ExportService from '../../services/ExportService'
 import useSessionStore from '../../store/SessionStore'
+import NotificationManager from '../../infrastructure/notifications/NotificationManager'
 
 // Utility factory function to create an asynchronous handler for session actions
 export const createAsyncHandler =
-    (setIsLoading, setError, asyncFn, errorMsg, onSuccess) => async () => {
+    (
+        setIsLoading,
+        setIsSaving,
+        setError,
+        asyncFn,
+        errorMsg,
+        isSavingAction,
+        onSuccess
+    ) =>
+    async () => {
         try {
             setIsLoading(true)
+            setIsSaving(Boolean(isSavingAction))
             setError(null)
             await asyncFn()
             onSuccess?.()
         } catch (err) {
             setError(errorMsg)
-            console.error(errorMsg, err)
-            // TODO: Sistemare
+            NotificationManager.notifyError(err)
         } finally {
             setIsLoading(false)
+            setIsSaving(false)
         }
     }
 
@@ -54,11 +66,19 @@ const BASE_HANDLER_CONFIGS = [
     {
         name: 'handleSaveAndExitClick',
         fn: async () => {
-            const sessionId = useSessionStore.getState().sessionId
-            await ExportService.exportSessionAsJSON(sessionId)
+            const { sessionId, pastHistory } = useSessionStore.getState()
+            const answers = pastHistory.map((item) => ({
+                asset_index: item.assetIndex,
+                tree_index: item.treeIndex,
+                node_id: item.nodeId,
+                answer: item.answer,
+            }))
+
+            await ExportService.exportSessionAsJSON(sessionId, answers)
             await SessionService.saveAndExit()
         },
         errorMsg: 'Error saving and exiting:',
+        isSavingAction: true,
         onSuccess: (navigate) => () => navigate('/'),
     },
 ]

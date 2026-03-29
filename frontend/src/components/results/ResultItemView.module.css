@@ -26,11 +26,16 @@
     gap: 1rem;
 }
 
+.headerSectionCompact {
+    justify-content: flex-start !important;
+}
+
 .code {
     margin: 0;
     font-size: 1.125rem;
     color: #333;
     font-weight: 600;
+    margin-right: auto;
 }
 
 .status {
@@ -61,6 +66,11 @@
     color: #383d41;
 }
 
+.statusNotCompleted {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
 .actions {
     display: flex;
     gap: 0.75rem;
@@ -82,4 +92,14 @@
 
 .modifyButton:hover {
     background-color: var(--primary-hover);
+}
+
+.expandIcon {
+    font-size: 0.75rem;
+    color: #666;
+    transition: transform 0.2s ease;
+}
+
+.expandIcon.expanded {
+    transform: rotate(180deg);
 }

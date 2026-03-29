@@ -97,8 +97,17 @@ class Session:
 
         return answer_result
 
-    def go_back(self, target_node: Node) -> GoBackResult:
-        return self.navigator.go_back(target_node)
+    def go_back(
+        self,
+        target_node: Node,
+        target_asset_index: int | None = None,
+        target_tree_index: int | None = None,
+    ) -> GoBackResult:
+        return self.navigator.go_back(
+            target_node,
+            target_asset_index=target_asset_index,
+            target_tree_index=target_tree_index,
+        )
 
     def reset_changed_tree_and_dependents(self, asset_index: int, tree_index: int) -> None:
         assets = self.get_assets

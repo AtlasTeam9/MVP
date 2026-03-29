@@ -1,8 +1,12 @@
 import React from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useCurrentDevice } from '../services/DeviceService'
+import sessionService from '../services/SessionService'
 import { DeviceSelector } from '../components/deviceSummary/DeviceSelector'
 import { DeviceMainActions } from '../components/deviceSummary/DeviceMainActions'
 import { DeviceNavigationIcons } from '../components/deviceSummary/DeviceNavigationIcons'
+
+import BackIcon from '../components/common/BackIcon'
 import styles from './DeviceSummaryView.module.css'
 
 // Page to display the summary of a device, including the possibility of viewing its assets.
@@ -10,6 +14,15 @@ import styles from './DeviceSummaryView.module.css'
 // and a button for start the test. There are also the modify and home icons.
 
 export default function DeviceSummaryView() {
+    const location = useLocation()
+    const navigate = useNavigate()
+    const showBackIcon = Boolean(location.state?.fromDeviceAssetManagement)
+
+    const handleBackFromAssetManagement = async () => {
+        await sessionService.clearSession()
+        navigate('/device/assets')
+    }
+
     // Get the current device from the service
     const currentDevice = useCurrentDevice()
 
@@ -19,6 +32,9 @@ export default function DeviceSummaryView() {
 
     return (
         <div className={styles.container}>
+            {showBackIcon && (
+                <BackIcon className={styles.backIcon} onBack={handleBackFromAssetManagement} />
+            )}
             <header className={styles.header}>
                 <h1>Device Summary</h1>
             </header>

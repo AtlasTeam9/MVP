@@ -96,14 +96,23 @@ class SessionNavigator:
             session_finished=self.state.is_finished,
         )
 
-    def go_back(self, target_node: Node) -> GoBackResult:
+    def go_back(
+        self,
+        target_node: Node,
+        target_asset_index: int | None = None,
+        target_tree_index: int | None = None,
+    ) -> GoBackResult:
         """
         Torna a target_node cancellando tutte le risposte successive.
 
         Restituisce GoBackResult con found=False se il nodo non era
         nello stack (es. il frontend ha mandato un nodo sbagliato).
         """
-        found = self.state.pop_until(target_node)
+        found = self.state.pop_until(
+            target_node,
+            target_asset_index=target_asset_index,
+            target_tree_index=target_tree_index,
+        )
 
         if not found:
             return GoBackResult(found=False)

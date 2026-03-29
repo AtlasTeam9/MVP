@@ -8,7 +8,9 @@ import AssetFormView from './pages/AssetFormView'
 import DeviceSummaryView from './pages/DeviceSummaryView'
 import SessionRunnerView from './pages/SessionRunnerView'
 import ResultView from './pages/ResultView'
+import ModifySessionView from './pages/ModifySessionView'
 import TreeService from './services/TreeService'
+import NotificationManager from './infrastructure/notifications/NotificationManager'
 import styles from './AppRouter.module.css'
 import { useBeforeUnload } from './hooks/useBeforeUnload'
 
@@ -41,6 +43,12 @@ const ROUTES = [
         isProtected: true,
         requiresSessionId: true,
     },
+    {
+        path: '/session/modify',
+        view: <ModifySessionView />,
+        isProtected: true,
+        requiresSessionId: true,
+    },
 ]
 
 // Function to build a Route element from a route configuration
@@ -59,8 +67,8 @@ export default function AppRouter() {
     useBeforeUnload()
 
     useEffect(() => {
-        TreeService.loadTrees().catch(
-            (error) => console.error('Errore nel caricamento dei trees:', error) // TODO: sistemare
+        TreeService.loadTrees().catch((error) =>
+            NotificationManager.notifyError(error, { id: 'LOAD_TREES_ERROR' })
         )
     }, [])
 
