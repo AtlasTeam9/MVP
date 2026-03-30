@@ -1,16 +1,9 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    font-family: sans-serif;
-    padding: 2rem;
-    padding-bottom: 150px;
-    scrollbar-gutter: stable;
+    width: 100%;
 }
 
 .header {
-    margin-bottom: 2rem;
+    margin-bottom: var(--space-8);
 }
 
 .header h1 {

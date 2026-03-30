@@ -14,7 +14,9 @@ function BackIcon({ className, onBack }) {
         }
     }
 
-    const buttonClass = className ? `${styles.iconBtn} ${className}` : styles.iconBtn
+    const buttonClass = className
+        ? `${styles.iconBtn} ${styles.backIcon} ${className}`
+        : `${styles.iconBtn} ${styles.backIcon}`
 
     return (
         <button

@@ -1,10 +1,10 @@
-import React from 'react'
 import useTreeStore from '../store/TreeStore'
 import { ResultItemView } from '../components/results/ResultItemView'
 import { AssetResultsView } from '../components/results/AssetResultsView'
 import BackIcon from '../components/common/BackIcon'
 import { useModifySessionLogic } from '../hooks/useModifySessionLogic'
 import styles from './ModifySessionView.module.css'
+import resultListStyles from '../components/results/ResultListView.module.css'
 
 function ResultsList({ ...props }) {
     const {
@@ -18,7 +18,7 @@ function ResultsList({ ...props }) {
     const trees = useTreeStore((state) => state.trees)
 
     return (
-        <div className={styles.resultsListContainer}>
+        <div className={resultListStyles.listContainer}>
             {filteredResults.map((result) => {
                 // Find the tree for this requirement to get dependencies
                 const tree = trees.find((treeItem) => treeItem.id === result.code)
@@ -51,12 +51,16 @@ export default function ModifySessionView() {
     const logic = useModifySessionLogic()
 
     if (!logic.filteredResults || logic.filteredResults.length === 0) {
-        return <div className={styles.container}>No base requirements available</div>
+        return (
+            <div className={`page-shell page-shell--top ${styles.container}`}>
+                No base requirements available
+            </div>
+        )
     }
 
     return (
-        <div className={styles.container}>
-            <BackIcon className={styles.backIcon} onBack={logic.handleBack} />
+        <div className={`page-shell page-shell--top ${styles.container}`}>
+            <BackIcon onBack={logic.handleBack} />
             <header className={styles.header}>
                 <h1>Modify Session</h1>
             </header>

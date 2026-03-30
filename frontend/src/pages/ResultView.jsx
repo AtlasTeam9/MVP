@@ -1,4 +1,3 @@
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import useResultStore from '../store/ResultStore'
 import useSessionStore from '../store/SessionStore'
@@ -6,14 +5,15 @@ import { ResultListView } from '../components/results/ResultListView'
 import { ResultActions } from '../components/results/ResultActions'
 import { useExportResults } from '../hooks/useExportResults'
 import { useExportSession } from '../hooks/useExportSession'
-import deviceService from '../services/DeviceService'
-import sessionService from '../services/SessionService'
+import { resetSessionAndNavigateHome } from '../services/NavigationService'
 import styles from './ResultView.module.css'
 
-const createHomeHandler = (navigate) => async () => {
-    deviceService.clearDevice()
-    await sessionService.clearSession()
-    navigate('/')
+function EmptyResultsState() {
+    return (
+        <div className={`page-shell page-shell--top ${styles.container}`}>
+            No results available
+        </div>
+    )
 }
 
 export default function ResultView() {
@@ -38,14 +38,14 @@ export default function ResultView() {
     const handleModifySession = () => {
         navigate('/session/modify')
     }
-    const handleHome = createHomeHandler(navigate)
+    const handleHome = () => resetSessionAndNavigateHome(navigate)
 
     if (!results || results.length === 0) {
-        return <div className={styles.container}>No results available</div>
+        return <EmptyResultsState />
     }
 
     return (
-        <div className={styles.container}>
+        <div className={`page-shell page-shell--top ${styles.container}`}>
             <header className={styles.header}>
                 <h1>Test Results</h1>
             </header>

@@ -211,9 +211,12 @@ class SessionService {
             currentTreeIndex: useSessionStore.getState().currentTreeIndex,
         }
 
+        // Capture the flow before transition side effects clear future history and resume mode.
+        const shouldGoBackFlow = shouldUseGoBackFlow(useSessionStore)
+
         applyAnswerTransition(useSessionStore, answer)
 
-        if (shouldUseGoBackFlow(useSessionStore)) {
+        if (shouldGoBackFlow) {
             const goBackResponse = await postGoBackAnswer(apiClient, sessionId, answer, {
                 currentAssetIndex,
                 currentNode,

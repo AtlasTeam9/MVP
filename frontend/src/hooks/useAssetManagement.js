@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useCurrentDevice } from '../services/DeviceService'
 import deviceService from '../services/DeviceService'
 import sessionService from '../services/SessionService'
+import { resetSessionAndNavigateHome } from '../services/NavigationService'
 import useUIStore from '../store/UIStore'
 import NotificationManager from '../infrastructure/notifications/NotificationManager'
 
@@ -58,9 +59,7 @@ export function useAssetManagement() {
     }
 
     const onHome = async () => {
-        deviceService.clearDevice()
-        await sessionService.clearSession()
-        navigate('/')
+        await resetSessionAndNavigateHome(navigate)
     }
 
     return {

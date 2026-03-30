@@ -141,7 +141,7 @@ export default function DeviceFormView() {
 
     return (
         <>
-            <BackIcon className={styles.backIcon} onBack={onCancel} />
+            <BackIcon onBack={onCancel} />
             <form className={styles.container} onSubmit={handleSubmit}>
                 <h2>Create a new Device</h2>
 

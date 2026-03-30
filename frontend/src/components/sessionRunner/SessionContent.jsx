@@ -24,6 +24,7 @@ function SessionContent({
     const headerProps = {
         currentDevice,
         currentAssetIndex,
+        currentTreeIndex,
         onSaveExit,
         pastHistory,
         trees,

@@ -17,7 +17,7 @@ const getStatusClass = (stat) => {
 }
 
 // Component that renders a single requirement result item
-export function ResultItemView({ item, isExpanded, onToggleExpand }) {
+export function ResultItemView({ item, isExpanded, onToggleExpand, showExpandIcon = true }) {
     const { code, status } = item
     const isInteractive = typeof onToggleExpand === 'function'
 
@@ -39,7 +39,7 @@ export function ResultItemView({ item, isExpanded, onToggleExpand }) {
                     <span className={`${styles.status} ${getStatusClass(displayStatus)}`}>
                         {displayStatus}
                     </span>
-                    {onToggleExpand && (
+                    {onToggleExpand && showExpandIcon && (
                         <span
                             className={`${styles.expandIcon} ${isExpanded ? styles.expanded : ''}`}
                         >
