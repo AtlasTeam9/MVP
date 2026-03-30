@@ -142,14 +142,17 @@ class SessionService {
 
     // Private helper to navigate to a node and update device position
     #navigateToNode(treeIndex, assetIndex, nodeId) {
-        const nextNode = this.#getFirstNodeOfTree(treeIndex)
+        const targetNodeId = nodeId ?? 'node1'
+        const nextNode = useTreeStore
+            .getState()
+            .getNodeByTreeIndexAndNodeId(treeIndex, targetNodeId)
         if (!nextNode) {
             throw new StateError('First node of the tree not found in local state.', {
                 code: 'TREE_FIRST_NODE_NOT_FOUND',
-                context: { treeIndex, assetIndex, nodeId },
+                context: { treeIndex, assetIndex, nodeId: targetNodeId },
             })
         }
-        useSessionStore.getState().setDevicePosition(assetIndex, treeIndex, nodeId)
+        useSessionStore.getState().setDevicePosition(assetIndex, treeIndex, targetNodeId)
         useSessionStore.getState().setCurrentNode(nextNode)
     }
 
@@ -164,7 +167,7 @@ class SessionService {
 
         const { current_asset_index, current_tree_index, next_node_id } = response
         const assetChanged = current_asset_index !== previousAssetIndex
-        const nodeId = assetChanged ? next_node_id : 'node1'
+        const nodeId = assetChanged ? (next_node_id ?? 'node1') : 'node1'
 
         this.#navigateToNode(current_tree_index, current_asset_index, nodeId)
     }
