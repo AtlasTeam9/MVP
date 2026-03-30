@@ -1,7 +1,15 @@
 import React from 'react'
 import { ExportDialog } from './ExportDialog'
 import HomeIcon from '../common/HomeIcon'
-import styles from '../../pages/ResultView.module.css'
+import styles from './ResultActions.module.css'
+
+function ActionButton({ onClick, disabled, label }) {
+    return (
+        <button type="button" className={styles.actionButton} onClick={onClick} disabled={disabled}>
+            {label}
+        </button>
+    )
+}
 
 // Actions component for handling result view buttons
 export function ResultActions({
@@ -16,6 +24,7 @@ export function ResultActions({
     onExportSessionClick,
     onFormatSelect,
     onCloseDialog,
+    onHome,
 }) {
     const showModifySession = isTestFinished && isSessionUploaded
 
@@ -23,30 +32,22 @@ export function ResultActions({
         <>
             <div className={styles.actions}>
                 {!isTestFinished && (
-                    <button className={styles.actionButton} onClick={onResumeSession}>
-                        Resume Session
-                    </button>
+                    <ActionButton onClick={onResumeSession} label="Resume Session" />
                 )}
                 {showModifySession && (
-                    <button className={styles.actionButton} onClick={onModifySession}>
-                        Modify Session
-                    </button>
+                    <ActionButton onClick={onModifySession} label="Modify Session" />
                 )}
-                <button
-                    className={styles.actionButton}
+                <ActionButton
                     onClick={onExportClick}
                     disabled={isExporting}
-                >
-                    {isExporting ? 'Exporting...' : 'Export Results'}
-                </button>
-                <button
-                    className={styles.actionButton}
+                    label={isExporting ? 'Exporting...' : 'Export Results'}
+                />
+                <ActionButton
                     onClick={onExportSessionClick}
                     disabled={isExportingSession}
-                >
-                    {isExportingSession ? 'Exporting...' : 'Export Session'}
-                </button>
-                <HomeIcon />
+                    label={isExportingSession ? 'Exporting...' : 'Export Session'}
+                />
+                <HomeIcon onHome={onHome} />
             </div>
             {showFormatDialog && (
                 <ExportDialog onFormatSelect={onFormatSelect} onCancel={onCloseDialog} />

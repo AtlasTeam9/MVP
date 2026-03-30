@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../../../pages/SessionRunnerView.module.css'
+import styles from '../SessionRunnerComponents.module.css'
 import { NavButton } from './NavButton'
 import HomeIcon from '../../common/HomeIcon'
 import { useNavigationButtons } from './useNavigationButtons'
@@ -17,12 +17,12 @@ function NavigationFooter({ pastHistory, futureHistory, isLoading, onBack, onHom
 
     return (
         <footer className={styles.footer}>
-            {buttons.map((btn, idx) => {
-                if (idx === 1) {
-                    return <HomeIcon key={idx} />
+            {buttons.map((btn) => {
+                if (btn.id === 'home') {
+                    return <HomeIcon key={btn.id} onHome={btn.onClick} className={btn.className} />
                 }
                 return (
-                    <NavButton key={idx} {...btn}>
+                    <NavButton key={btn.id} {...btn}>
                         {btn.label}
                     </NavButton>
                 )

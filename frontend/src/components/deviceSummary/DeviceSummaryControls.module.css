@@ -1,0 +1,85 @@
+.deviceDropdown {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.dropdownButton {
+    width: 100%;
+    padding: 1rem 2rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.dropdownButton:hover {
+    background-color: var(--primary-hover);
+}
+
+.dropdownIcon {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.dropdownIconOpen {
+    transform: rotate(90deg);
+}
+
+.mainActions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 2rem;
+}
+
+.btnPrimary {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.btnPrimary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btnSecondary {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.btnSecondary:hover {
+    background-color: var(--secondary-hover);
+}
+
+.navigationIcons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}

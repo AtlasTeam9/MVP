@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Guard from './components/common/Guard'
+import Guard from './routing/Guard'
 import HomeView from './pages/HomeView'
 import DeviceFormView from './pages/DeviceFormView'
 import DeviceAssetManagementView from './pages/DeviceAssetManagementView'

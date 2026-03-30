@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import styles from '../../pages/HomeView.module.css'
+import styles from './UploadButton.module.css'
 
 function UploadButton({ onFileSelect, children }) {
     const fileInputRef = useRef(null)
@@ -25,7 +25,7 @@ function UploadButton({ onFileSelect, children }) {
                 onChange={handleFileChange}
                 aria-label="Upload device file"
             />
-            <button className={styles.button} onClick={handleClick}>
+            <button type="button" className={styles.button} onClick={handleClick}>
                 {children}
             </button>
         </>

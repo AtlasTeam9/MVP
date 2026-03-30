@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../../../pages/SessionRunnerView.module.css'
+import styles from '../SessionRunnerComponents.module.css'
 import { calculateCompletionPercentage } from '../../../infrastructure/utils/progressCalculator'
 
 // Component for rendering the session header with
@@ -29,7 +29,7 @@ function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit, pastHisto
                     )}
                 </div>
             </div>
-            <button onClick={onSaveExit} className={styles.btnExit}>
+            <button type="button" onClick={onSaveExit} className={styles.btnExit}>
                 Save & Exit
             </button>
         </header>

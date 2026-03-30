@@ -1,10 +1,10 @@
 import HomeIcon from '../common/HomeIcon'
-import styles from '../../pages/DeviceSummaryView.module.css'
+import styles from './DeviceSummaryControls.module.css'
 
-export function DeviceNavigationIcons() {
+export function DeviceNavigationIcons({ onHome }) {
     return (
         <div className={styles.navigationIcons}>
-            <HomeIcon />
+            <HomeIcon onHome={onHome} />
         </div>
     )
 }

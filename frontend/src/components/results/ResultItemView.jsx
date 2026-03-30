@@ -19,18 +19,20 @@ const getStatusClass = (stat) => {
 // Component that renders a single requirement result item
 export function ResultItemView({ item, isExpanded, onToggleExpand }) {
     const { code, status } = item
-    const isModifiable = false // TODO: implementare se serve
     const isInteractive = typeof onToggleExpand === 'function'
 
     // Determine display status: if empty or null, show NOT_COMPLETED
     const displayStatus = status && status.trim() !== '' ? status : 'NOT_COMPLETED'
 
+    const Wrapper = isInteractive ? 'button' : 'div'
+
     return (
         <div className={styles.itemContainer}>
-            <div
-                className={styles.contentWrapper}
+            <Wrapper
+                type={isInteractive ? 'button' : undefined}
+                className={`${styles.contentWrapper} ${isInteractive ? styles.contentWrapperInteractive : ''}`}
                 onClick={isInteractive ? onToggleExpand : undefined}
-                style={{ cursor: isInteractive ? 'pointer' : 'default' }}
+                aria-expanded={isInteractive ? isExpanded : undefined}
             >
                 <div className={styles.headerSection}>
                     <h3 className={styles.code}>{code}</h3>
@@ -45,13 +47,7 @@ export function ResultItemView({ item, isExpanded, onToggleExpand }) {
                         </span>
                     )}
                 </div>
-            </div>
-
-            {isModifiable && (
-                <div className={styles.actions}>
-                    <button className={styles.modifyButton}>Modify</button>
-                </div>
-            )}
+            </Wrapper>
         </div>
     )
 }

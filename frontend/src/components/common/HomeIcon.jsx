@@ -1,22 +1,31 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import deviceService from '../../services/DeviceService'
-import sessionService from '../../services/SessionService'
-import styles from '../../pages/DeviceSummaryView.module.css'
+import styles from './Icons.module.css'
+import homeIcon from '../../assets/icons/home.png'
 
-// Simple HomeIcon component that navigates to the home page and clears the device
-function HomeIcon() {
+// Reusable home icon with optional custom action.
+function HomeIcon({ onHome, className }) {
     const navigate = useNavigate()
 
-    const handleHomeClick = () => {
-        deviceService.clearDevice()
-        sessionService.clearSession()
+    const handleHomeClick = async () => {
+        if (onHome) {
+            await onHome()
+            return
+        }
         navigate('/')
     }
 
+    const buttonClass = className ? `${styles.iconBtn} ${className}` : styles.iconBtn
+
     return (
-        <button className={styles.iconBtn} onClick={handleHomeClick} title="Return to Homepage">
-            🏠
+        <button
+            type="button"
+            className={buttonClass}
+            onClick={handleHomeClick}
+            title="Return to homepage"
+            aria-label="Return to homepage"
+        >
+            <img src={homeIcon} alt="" className={styles.iconImage} aria-hidden="true" />
         </button>
     )
 }

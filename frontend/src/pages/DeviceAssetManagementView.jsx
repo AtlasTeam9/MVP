@@ -61,6 +61,12 @@ function useAssetManagement() {
         setShowUnsavedDialog(false)
     }
 
+    const onHome = async () => {
+        deviceService.clearDevice()
+        await sessionService.clearSession()
+        navigate('/')
+    }
+
     return {
         currentDevice,
         showUnsavedDialog,
@@ -71,6 +77,7 @@ function useAssetManagement() {
         onConfirmSaveBeforeSummary,
         onConfirmSkipSaveBeforeSummary,
         onCancelUnsavedDialog,
+        onHome,
     }
 }
 
@@ -162,6 +169,7 @@ function DeviceAssetManagementContent({
     onGoToSummary,
     onDeleteAsset,
     onSaveDevice,
+    onHome,
 }) {
     return (
         <div className={styles.container}>
@@ -187,7 +195,7 @@ function DeviceAssetManagementContent({
                 />
             </div>
             <div className={styles.navigationIcons}>
-                <HomeIcon />
+                <HomeIcon onHome={onHome} />
             </div>
         </div>
     )
@@ -205,6 +213,7 @@ export default function DeviceAssetManagementView() {
         onConfirmSaveBeforeSummary,
         onConfirmSkipSaveBeforeSummary,
         onCancelUnsavedDialog,
+        onHome,
     } = useAssetManagement()
 
     if (!currentDevice) {
@@ -223,6 +232,7 @@ export default function DeviceAssetManagementView() {
                 onGoToSummary={onGoToSummary}
                 onDeleteAsset={onDeleteAsset}
                 onSaveDevice={onSaveDevice}
+                onHome={onHome}
             />
             {showUnsavedDialog && (
                 <UnsavedChangesDialog

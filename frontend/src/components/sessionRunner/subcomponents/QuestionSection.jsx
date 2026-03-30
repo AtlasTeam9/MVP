@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../../../pages/SessionRunnerView.module.css'
+import styles from '../SessionRunnerComponents.module.css'
 import { QuestionDisplay } from './QuestionDisplay'
 import { AnswerButtons } from './AnswerButtons'
 

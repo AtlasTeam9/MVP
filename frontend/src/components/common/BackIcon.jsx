@@ -17,7 +17,13 @@ function BackIcon({ className, onBack }) {
     const buttonClass = className ? `${styles.iconBtn} ${className}` : styles.iconBtn
 
     return (
-        <button className={buttonClass} onClick={handleBackClick} title="Go back">
+        <button
+            type="button"
+            className={buttonClass}
+            onClick={handleBackClick}
+            title="Go back"
+            aria-label="Go back"
+        >
             ←
         </button>
     )

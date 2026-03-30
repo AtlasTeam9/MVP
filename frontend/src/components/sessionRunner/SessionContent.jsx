@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../../pages/SessionRunnerView.module.css'
+import styles from './SessionRunnerComponents.module.css'
 import { SessionHeader, QuestionSection, NavigationFooter } from './subcomponents'
 
 // Main component for rendering the session content,

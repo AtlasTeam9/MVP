@@ -1,6 +1,7 @@
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useCurrentDevice } from '../services/DeviceService'
+import deviceService from '../services/DeviceService'
 import sessionService from '../services/SessionService'
 import { DeviceSelector } from '../components/deviceSummary/DeviceSelector'
 import { DeviceMainActions } from '../components/deviceSummary/DeviceMainActions'
@@ -23,6 +24,12 @@ export default function DeviceSummaryView() {
         navigate('/device/assets')
     }
 
+    const handleHome = async () => {
+        deviceService.clearDevice()
+        await sessionService.clearSession()
+        navigate('/')
+    }
+
     // Get the current device from the service
     const currentDevice = useCurrentDevice()
 
@@ -43,7 +50,7 @@ export default function DeviceSummaryView() {
 
             <DeviceMainActions device={currentDevice} />
 
-            <DeviceNavigationIcons />
+            <DeviceNavigationIcons onHome={handleHome} />
         </div>
     )
 }

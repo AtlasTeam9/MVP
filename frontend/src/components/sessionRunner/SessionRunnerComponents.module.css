@@ -9,7 +9,6 @@
         'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* ============ HEADER ============ */
 .header {
     background-color: white;
     padding: 20px 30px;
@@ -94,7 +93,6 @@
     opacity: 0.9;
 }
 
-/* ============ MAIN CONTENT ============ */
 .mainContent {
     flex: 1;
     display: flex;
@@ -173,7 +171,6 @@
     margin: 0;
 }
 
-/* ============ ANSWER BUTTONS ============ */
 .answerButtons {
     display: flex;
     gap: 30px;
@@ -218,7 +215,6 @@
     box-shadow: none;
 }
 
-/* ============ FOOTER ============ */
 .footer {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -242,8 +238,7 @@
     justify-self: center;
 }
 
-.btnNav,
-.btnHome {
+.btnNav {
     border: 1px solid #ddd;
     padding: 12px 20px;
     border-radius: var(--border-radius);
@@ -256,72 +251,15 @@
     box-shadow: var(--box-shadow);
 }
 
-.btnNav:hover:not(:disabled),
-.btnHome:hover:not(:disabled) {
+.btnNav:hover:not(:disabled) {
     background-color: #f5f5f5;
 }
 
-.btnNav:disabled,
-.btnHome:disabled {
+.btnNav:disabled {
     opacity: 0.4;
     cursor: not-allowed;
 }
 
-/* ============ COMPLETION SCREEN ============ */
-.completionContainer {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 30px;
-    padding: 40px 30px;
-}
-
-.completionContainer h2 {
-    font-size: 36px;
-    margin: 0;
-    color: var(--primary-color);
-}
-
-.completionContainer p {
-    font-size: 18px;
-    color: var(--text-light);
-    margin: 0;
-}
-
-.btnPrimary,
-.btnSecondary {
-    border: none;
-    padding: 12px 30px;
-    border-radius: var(--border-radius);
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.btnPrimary {
-    background-color: var(--primary-color);
-    color: white;
-    box-shadow: var(--box-shadow);
-}
-
-.btnPrimary:hover {
-    background-color: var(--primary-hover);
-}
-
-.btnSecondary {
-    background-color: white;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-}
-
-.btnSecondary:hover {
-    background-color: #f8f9fa;
-}
-
-/* ============ RESPONSIVE ============ */
 @media (max-width: 768px) {
     .header {
         flex-direction: column;

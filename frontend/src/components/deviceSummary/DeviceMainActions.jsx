@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DeviceInfoOverlay } from './DeviceInfoOverlay'
-import styles from '../../pages/DeviceSummaryView.module.css'
+import styles from './DeviceSummaryControls.module.css'
 
 export function DeviceMainActions({ device }) {
     const navigate = useNavigate()
@@ -10,10 +10,18 @@ export function DeviceMainActions({ device }) {
     return (
         <>
             <div className={styles.mainActions}>
-                <button onClick={() => setShowDeviceInfo(true)} className={styles.btnPrimary}>
+                <button
+                    type="button"
+                    onClick={() => setShowDeviceInfo(true)}
+                    className={styles.btnPrimary}
+                >
                     Show device details
                 </button>
-                <button onClick={() => navigate('/session/test')} className={styles.btnPrimary}>
+                <button
+                    type="button"
+                    onClick={() => navigate('/session/test')}
+                    className={styles.btnSecondary}
+                >
                     START TEST
                 </button>
             </div>

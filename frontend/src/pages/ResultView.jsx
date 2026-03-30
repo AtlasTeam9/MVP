@@ -6,7 +6,15 @@ import { ResultListView } from '../components/results/ResultListView'
 import { ResultActions } from '../components/results/ResultActions'
 import { useExportResults } from '../hooks/useExportResults'
 import { useExportSession } from '../hooks/useExportSession'
+import deviceService from '../services/DeviceService'
+import sessionService from '../services/SessionService'
 import styles from './ResultView.module.css'
+
+const createHomeHandler = (navigate) => async () => {
+    deviceService.clearDevice()
+    await sessionService.clearSession()
+    navigate('/')
+}
 
 export default function ResultView() {
     const navigate = useNavigate()
@@ -30,6 +38,7 @@ export default function ResultView() {
     const handleModifySession = () => {
         navigate('/session/modify')
     }
+    const handleHome = createHomeHandler(navigate)
 
     if (!results || results.length === 0) {
         return <div className={styles.container}>No results available</div>
@@ -53,6 +62,7 @@ export default function ResultView() {
                 onExportSessionClick={handleExportSessionClick}
                 onFormatSelect={handleExportFormat}
                 onCloseDialog={() => setShowFormatDialog(false)}
+                onHome={handleHome}
             />
         </div>
     )
