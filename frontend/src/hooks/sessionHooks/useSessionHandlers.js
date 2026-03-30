@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createAsyncHandler, getHandlerConfigs } from './sessionHandlersConfig'
 import useUIStore from '../../store/UIStore'
@@ -11,7 +11,7 @@ export function useSessionHandlers() {
     const setSessionActionLoading = useUIStore((state) => state.setSessionActionLoading)
     const setSaving = useUIStore((state) => state.setSaving)
     const [error, setError] = useState(null)
-    const configs = getHandlerConfigs(navigate)
+    const configs = useMemo(() => getHandlerConfigs(navigate), [navigate])
 
     return configs.reduce(
         (handlers, cfg) => {

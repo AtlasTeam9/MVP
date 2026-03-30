@@ -48,19 +48,16 @@ const BASE_HANDLER_CONFIGS = [
         name: 'handleBackClick',
         fn: () => SessionService.previousStep(),
         errorMsg: 'Failed to go back. Please try again.',
-        label: '← Indietro',
     },
     {
         name: 'handleForwardClick',
         fn: () => SessionService.forwardStep(),
         errorMsg: 'Failed to go forward. Please try again.',
-        label: 'Avanti →',
     },
     {
         name: 'handleHomeClick',
         fn: () => SessionService.saveAndExit(),
         errorMsg: 'Error exiting session:',
-        label: '🏠',
         onSuccess: (navigate) => () => navigate('/'),
     },
     {

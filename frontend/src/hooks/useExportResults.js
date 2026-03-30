@@ -20,6 +20,8 @@ export function useExportResults(sessionId) {
                 await ExportService.exportResultsAsCSV(sessionId)
             } else if (format === 'pdf') {
                 await ExportService.exportResultsAsPDF(sessionId)
+            } else {
+                throw new Error('Unsupported export format')
             }
         } catch (error) {
             NotificationManager.notifyError(error)

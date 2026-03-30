@@ -1,85 +1,9 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useCurrentDevice } from '../services/DeviceService'
-import deviceService from '../services/DeviceService'
-import sessionService from '../services/SessionService'
-import useUIStore from '../store/UIStore'
-import NotificationManager from '../infrastructure/notifications/NotificationManager'
+import React from 'react'
 
 import styles from './DeviceAssetManagementView.module.css'
 import BackIcon from '../components/common/BackIcon'
 import HomeIcon from '../components/common/HomeIcon'
-
-async function createSessionAndNavigate(currentDevice, navigate) {
-    if (!currentDevice) return
-
-    try {
-        await sessionService.createSessionWithDevice(currentDevice)
-        navigate('/device/summary', { state: { fromDeviceAssetManagement: true } })
-    } catch (error) {
-        NotificationManager.notifyError(error)
-    }
-}
-
-// Custom hook to manage the logic of the Device Asset Management view
-function useAssetManagement() {
-    const navigate = useNavigate()
-    const [showUnsavedDialog, setShowUnsavedDialog] = useState(false)
-    const currentDevice = useCurrentDevice()
-
-    const proceedToSummary = async () => {
-        await createSessionAndNavigate(currentDevice, navigate)
-    }
-
-    const onGoToSummary = async () => {
-        if (useUIStore.getState().isDirty) {
-            setShowUnsavedDialog(true)
-            return
-        }
-
-        await proceedToSummary()
-    }
-
-    const onSaveDevice = () => {
-        if (!currentDevice) return
-
-        deviceService.saveDeviceToFile()
-    }
-
-    const onConfirmSaveBeforeSummary = async () => {
-        onSaveDevice()
-        setShowUnsavedDialog(false)
-        await proceedToSummary()
-    }
-
-    const onConfirmSkipSaveBeforeSummary = async () => {
-        setShowUnsavedDialog(false)
-        await proceedToSummary()
-    }
-
-    const onCancelUnsavedDialog = () => {
-        setShowUnsavedDialog(false)
-    }
-
-    const onHome = async () => {
-        deviceService.clearDevice()
-        await sessionService.clearSession()
-        navigate('/')
-    }
-
-    return {
-        currentDevice,
-        showUnsavedDialog,
-        onAddAsset: () => navigate('/asset/new'),
-        onGoToSummary,
-        onDeleteAsset: deviceService.removeAsset,
-        onSaveDevice,
-        onConfirmSaveBeforeSummary,
-        onConfirmSkipSaveBeforeSummary,
-        onCancelUnsavedDialog,
-        onHome,
-    }
-}
+import { useAssetManagement } from '../hooks/useAssetManagement'
 
 // Component to display the list of assets for the current device
 function AssetListDisplay({ assets, onDeleteAsset }) {

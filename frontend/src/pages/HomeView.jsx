@@ -1,43 +1,7 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import styles from './HomeView.module.css'
 import UploadButton from '../components/common/UploadButton'
-import SessionService from '../services/SessionService'
-import NotificationManager from '../infrastructure/notifications/NotificationManager'
-
-// Custom hook for managing navigation logic in the home view
-function useHomeNavigation() {
-    const navigate = useNavigate()
-
-    const handleLoadDevice = async (file) => {
-        try {
-            await SessionService.createSessionWithFile(file)
-            navigate('/device/summary')
-        } catch (err) {
-            NotificationManager.notifyError(err)
-        }
-    }
-
-    const handleCreateDevice = () => {
-        navigate('/device/new')
-    }
-
-    const handleLoadPreviousSession = async (file) => {
-        try {
-            // TODO: ritorna qualcosa il metodo?
-            await SessionService.loadSessionFromFile(file)
-            navigate('/results')
-        } catch (err) {
-            NotificationManager.notifyError(err)
-        }
-    }
-
-    return {
-        handleLoadDevice,
-        handleCreateDevice,
-        handleLoadPreviousSession,
-    }
-}
+import { useHomeNavigation } from '../hooks/useHomeNavigation'
 
 // Button group component for the home view
 function HomeActions({ actions }) {

@@ -1,72 +1,10 @@
-import React, { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import useResultStore from '../store/ResultStore'
+import React from 'react'
 import useTreeStore from '../store/TreeStore'
-import useDeviceStore from '../store/DeviceStore'
-import useSessionStore from '../store/SessionStore'
-import sessionService from '../services/SessionService'
 import { ResultItemView } from '../components/results/ResultItemView'
 import { AssetResultsView } from '../components/results/AssetResultsView'
 import BackIcon from '../components/common/BackIcon'
+import { useModifySessionLogic } from '../hooks/useModifySessionLogic'
 import styles from './ModifySessionView.module.css'
-
-// Helper function to filter results for modify session
-function getFilteredResults(results, trees) {
-    if (!results || !trees) return []
-    const noDependenciesTrees = trees
-        .filter((tree) => !tree.dependencies || tree.dependencies.length === 0)
-        .map((tree) => tree.id)
-
-    return results.filter((result) => {
-        if (noDependenciesTrees.includes(result.code)) return true
-        if (result.status === 'PASS' || result.status === 'FAIL') return true
-        return false
-    })
-}
-
-// Custom hook to manage the logic for Modify Session view
-function useModifySessionLogic() {
-    const navigate = useNavigate()
-    const results = useResultStore((state) => state.results)
-    const trees = useTreeStore((state) => state.trees)
-    const device = useDeviceStore((state) => state.currentDevice)
-    const resultsPerAsset = useSessionStore((state) => state.resultsPerAsset)
-    const [expandedRequirement, setExpandedRequirement] = useState(null)
-    const [selectedAsset, setSelectedAsset] = useState(null)
-
-    const filteredResults = useMemo(() => getFilteredResults(results, trees), [results, trees])
-
-    const handleToggleRequirement = (requirementId) => {
-        setExpandedRequirement(expandedRequirement === requirementId ? null : requirementId)
-        setSelectedAsset(null)
-    }
-
-    const handleSelectAsset = (assetId) => {
-        setSelectedAsset(assetId)
-    }
-
-    const handleResumeTest = () => {
-        if (!selectedAsset || !expandedRequirement || !device || !trees) return
-
-        const canResume = sessionService.resumeSession(expandedRequirement, selectedAsset)
-
-        if (!canResume) return
-
-        navigate('/session/test')
-    }
-
-    return {
-        filteredResults,
-        expandedRequirement,
-        device,
-        resultsPerAsset,
-        selectedAsset,
-        handleToggleRequirement,
-        handleSelectAsset,
-        handleResumeTest,
-        handleBack: () => navigate('/results'),
-    }
-}
 
 function ResultsList({ ...props }) {
     const {
