@@ -1,15 +1,14 @@
 services:
   backend:
-    container_name: mvp-backend
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      CORS_ORIGINS: ${CORS_ORIGINS-}
     init: true
+    user: "${UID:-1000}:${GID:-1000}"
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
     volumes:
-      - backend_sessions:/app/data/sessions
+      - "${BACKEND_DATA_DIR:-./data}:/app/data"
     restart: unless-stopped
-
-volumes:
-  backend_sessions:
