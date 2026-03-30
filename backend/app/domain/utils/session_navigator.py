@@ -32,8 +32,8 @@ class GoBackResult:
         node: Node | None = None,
         found: bool = False,
     ):
-        self.node = node  # nodo su cui l'utente deve rispondere di nuovo
-        self.found = found  # False se il nodo richiesto non era nello stack
+        self.node = node  # Node in which the user needs to respond again
+        self.found = found  # False if the requested node is not found on the stack.
 
 
 class SessionNavigator:
@@ -83,11 +83,11 @@ class SessionNavigator:
         self.state.push(node, ans)
 
         if isinstance(branch, Node):
-            # Ancora dentro il tree
+            # Still in the tree
             self.state.current_node = branch
             return AnswerResult(next_node=branch)
 
-        # Foglia: branch è un Result
+        # Leaf: branch is a Result
         result = branch
         self._advance_tree()
         return AnswerResult(

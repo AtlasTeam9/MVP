@@ -30,7 +30,7 @@ class DependencyManager:
 
         affected_tree_ids = {self._trees[tree_index].get_id}
 
-        # Propagazione in avanti: solo i tree successivi possono dipendere da uno precedente.
+        # Forward propagation: only subsequent trees can depend on a previous one.
         for i in range(tree_index + 1, len(self._trees)):
             tree = self._trees[i]
             if any(dep in affected_tree_ids for dep in tree.get_dependencies):
@@ -52,7 +52,7 @@ class DependencyManager:
             if not asset or not tree:
                 break
 
-            # Se le dipendenze sono OK, ci fermiamo e facciamo rispondere l'utente
+            # If the dependencies are OK, we make the user answer
             if self._dependencies.check(asset.get_id, tree):
                 break
 

@@ -52,17 +52,3 @@ Dalla cartella `frontend`:
 ```bash
 docker compose up --build
 ```
-
-Il frontend viene servito su `http://localhost:8080`.
-
-Per puntarlo a un backend su una porta diversa:
-
-```bash
-BACKEND_PORT=18000 docker compose up --build
-```
-
-Per cambiare porta:
-
-```bash
-FRONTEND_PORT=18080 docker compose up --build
-```

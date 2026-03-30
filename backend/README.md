@@ -15,23 +15,6 @@
 Dalla cartella `backend`:
 
 ```bash
-cp .env.example .env
-docker compose up
-```
-
-Per forzare il rebuild dell'immagine:
-
-```bash
 docker compose up --build
 ```
-
-Le sessioni salvate dal backend vengono scritte nella cartella definita da `BACKEND_DATA_DIR` nel file `.env`. Se non viene impostata, il backend usa `./data`, quindi i file finiscono in `data/sessions`. Se impostate un percorso diverso, create prima la cartella e assicuratevi che sia scrivibile dal vostro utente.
-
-Se il vostro utente Linux non usa `UID=1000` e `GID=1000`, impostate anche `UID` e `GID` nel file `.env`:
-
-```bash
-UID=1001
-GID=1001
-```
-
 `CORS_ORIGINS` e una lista separata da virgole degli origin consentiti. Se non viene impostata, il backend accetta richieste da qualsiasi origin.
