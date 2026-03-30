@@ -3,16 +3,19 @@ import styles from '../SessionRunnerComponents.module.css'
 import { NavButton } from './NavButton'
 import HomeIcon from '../../common/HomeIcon'
 import { useNavigationButtons } from './useNavigationButtons'
+import { useSessionRunnerContext } from '../SessionRunnerContext'
 
 // Component for rendering the navigation footer with Back, Home, and Forward buttons
-function NavigationFooter({ pastHistory, futureHistory, isLoading, onBack, onHome, onForward }) {
+function NavigationFooter() {
+    const ctx = useSessionRunnerContext()
+
     const buttons = useNavigationButtons(
-        pastHistory,
-        futureHistory,
-        isLoading,
-        onBack,
-        onHome,
-        onForward
+        ctx?.pastHistory ?? [],
+        ctx?.futureHistory ?? [],
+        ctx?.isLoading ?? false,
+        ctx?.onBack,
+        ctx?.onHome,
+        ctx?.onForward
     )
 
     return (

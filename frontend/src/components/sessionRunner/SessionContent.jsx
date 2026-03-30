@@ -1,43 +1,20 @@
 import React from 'react'
 import styles from './SessionRunnerComponents.module.css'
 import { SessionHeader, QuestionSection, NavigationFooter } from './subcomponents'
+import { SessionRunnerProvider } from './SessionRunnerContext'
 
 // Main component for rendering the session content,
 // including header, question section, and navigation footer
-function SessionContent({
-    currentDevice,
-    currentNode,
-    currentAssetIndex,
-    currentTreeIndex,
-    isLoading,
-    error,
-    onYes,
-    onNo,
-    onBack,
-    onForward,
-    onHome,
-    onSaveExit,
-    pastHistory,
-    futureHistory,
-    trees,
-}) {
-    const headerProps = {
-        currentDevice,
-        currentAssetIndex,
-        currentTreeIndex,
-        onSaveExit,
-        pastHistory,
-        trees,
-    }
-    const questionProps = { currentNode, currentTreeIndex, trees, error, isLoading, onYes, onNo }
-    const footerProps = { pastHistory, futureHistory, isLoading, onBack, onHome, onForward }
+function SessionContent({ sessionContextValue }) {
 
     return (
-        <div className={styles.container}>
-            <SessionHeader {...headerProps} />
-            <QuestionSection {...questionProps} />
-            <NavigationFooter {...footerProps} />
-        </div>
+        <SessionRunnerProvider value={sessionContextValue}>
+            <div className={styles.container}>
+                <SessionHeader />
+                <QuestionSection />
+                <NavigationFooter />
+            </div>
+        </SessionRunnerProvider>
     )
 }
 

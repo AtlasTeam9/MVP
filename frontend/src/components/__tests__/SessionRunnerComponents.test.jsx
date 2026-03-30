@@ -8,6 +8,11 @@ import { QuestionDisplay } from '../sessionRunner/subcomponents/QuestionDisplay'
 import { QuestionSection } from '../sessionRunner/subcomponents/QuestionSection'
 import { SessionHeader } from '../sessionRunner/subcomponents/SessionHeader'
 import { SessionContent } from '../sessionRunner/SessionContent'
+import { SessionRunnerProvider } from '../sessionRunner/SessionRunnerContext'
+
+function renderWithSessionRunnerContext(ui, value) {
+    return render(<SessionRunnerProvider value={value}>{ui}</SessionRunnerProvider>)
+}
 
 describe('Session runner components', () => {
     // Tipo: test di integrazione (stato UI + callback pulsanti)
@@ -15,15 +20,25 @@ describe('Session runner components', () => {
         const user = userEvent.setup()
         const onYes = vi.fn()
         const onNo = vi.fn()
+        const baseContextValue = {
+            currentNode: null,
+            isLoading: true,
+            onYes,
+            onNo,
+        }
 
-        const { rerender } = render(
-            <AnswerButtons isLoading currentNode={null} onYes={onYes} onNo={onNo} />
-        )
+        const { rerender } = renderWithSessionRunnerContext(<AnswerButtons />, baseContextValue)
 
         expect(screen.getByRole('button', { name: 'YES' })).toBeDisabled()
         expect(screen.getByRole('button', { name: 'NO' })).toBeDisabled()
 
-        rerender(<AnswerButtons isLoading={false} currentNode={{ id: 'n1' }} onYes={onYes} onNo={onNo} />)
+        rerender(
+            <SessionRunnerProvider
+                value={{ ...baseContextValue, isLoading: false, currentNode: { id: 'n1' } }}
+            >
+                <AnswerButtons />
+            </SessionRunnerProvider>
+        )
 
         await user.click(screen.getByRole('button', { name: 'YES' }))
         await user.click(screen.getByRole('button', { name: 'NO' }))
@@ -33,17 +48,25 @@ describe('Session runner components', () => {
 
     // Tipo: test di integrazione (render condizionale contenuto)
     it('QuestionDisplay shows loading and node details', () => {
-        const { rerender } = render(
-            <QuestionDisplay currentNode={null} currentTreeIndex={0} trees={[]} />
-        )
+        const baseContextValue = {
+            currentNode: null,
+            currentTreeIndex: 0,
+            trees: [],
+        }
+        const { rerender } = renderWithSessionRunnerContext(<QuestionDisplay />, baseContextValue)
+
         expect(screen.getByText('Loading question...')).toBeInTheDocument()
 
         rerender(
-            <QuestionDisplay
-                currentNode={{ id: 'node1', text: 'Question?', description: 'Details' }}
-                currentTreeIndex={0}
-                trees={[{ title: 'Tree title' }]}
-            />
+            <SessionRunnerProvider
+                value={{
+                    ...baseContextValue,
+                    currentNode: { id: 'node1', text: 'Question?', description: 'Details' },
+                    trees: [{ title: 'Tree title' }],
+                }}
+            >
+                <QuestionDisplay />
+            </SessionRunnerProvider>
         )
 
         expect(screen.getByText('Tree title')).toBeInTheDocument()
@@ -53,17 +76,15 @@ describe('Session runner components', () => {
 
     // Tipo: test di integrazione (render sezione con errore)
     it('QuestionSection renders error and answer area', () => {
-        render(
-            <QuestionSection
-                currentNode={{ id: 'n1', text: 'Question?' }}
-                currentTreeIndex={0}
-                trees={[{ title: 'Tree title' }]}
-                error="Network error"
-                isLoading={false}
-                onYes={() => {}}
-                onNo={() => {}}
-            />
-        )
+        renderWithSessionRunnerContext(<QuestionSection />, {
+            currentNode: { id: 'n1', text: 'Question?' },
+            currentTreeIndex: 0,
+            trees: [{ title: 'Tree title' }],
+            error: 'Network error',
+            isLoading: false,
+            onYes: () => {},
+            onNo: () => {},
+        })
 
         expect(screen.getByText('Network error')).toBeInTheDocument()
         expect(screen.getByText('Question?')).toBeInTheDocument()
@@ -79,15 +100,14 @@ describe('Session runner components', () => {
         }
         const trees = [{ nodes: { node1: {}, node2: {} } }]
 
-        render(
-            <SessionHeader
-                currentDevice={currentDevice}
-                currentAssetIndex={0}
-                onSaveExit={onSaveExit}
-                pastHistory={[{ assetIndex: 0, nodeId: 'node1' }]}
-                trees={trees}
-            />
-        )
+        renderWithSessionRunnerContext(<SessionHeader />, {
+            currentDevice,
+            currentAssetIndex: 0,
+            currentTreeIndex: 0,
+            onSaveExit,
+            pastHistory: [{ assetIndex: 0, nodeId: 'node1' }],
+            trees,
+        })
 
         expect(screen.getByText('Router')).toBeInTheDocument()
         expect(screen.getByText(/asset:/i)).toBeInTheDocument()
@@ -112,16 +132,18 @@ describe('Session runner components', () => {
         render(
             <MemoryRouter>
                 <SessionContent
-                    currentDevice={{ name: 'Router', assets: [{ id: 'a1', name: 'Firewall' }] }}
-                    currentNode={{ id: 'node1', text: 'Question?', description: null }}
-                    currentAssetIndex={0}
-                    currentTreeIndex={0}
-                    isLoading={false}
-                    error={null}
-                    pastHistory={[{ nodeId: 'node1' }]}
-                    futureHistory={[{ nodeId: 'node2' }]}
-                    trees={[{ title: 'Tree title', nodes: { node1: {} } }]}
-                    {...handlers}
+                    sessionContextValue={{
+                        currentDevice: { name: 'Router', assets: [{ id: 'a1', name: 'Firewall' }] },
+                        currentNode: { id: 'node1', text: 'Question?', description: null },
+                        currentAssetIndex: 0,
+                        currentTreeIndex: 0,
+                        isLoading: false,
+                        error: null,
+                        pastHistory: [{ nodeId: 'node1' }],
+                        futureHistory: [{ nodeId: 'node2' }],
+                        trees: [{ title: 'Tree title', nodes: { node1: {} } }],
+                        ...handlers,
+                    }}
                 />
             </MemoryRouter>
         )
@@ -137,5 +159,19 @@ describe('Session runner components', () => {
         expect(handlers.onBack).toHaveBeenCalledTimes(1)
         expect(handlers.onForward).toHaveBeenCalledTimes(1)
         expect(handlers.onHome).toHaveBeenCalledTimes(1)
+    })
+
+    it('SessionContent handles null context value safely', () => {
+        render(
+            <MemoryRouter>
+                <SessionContent sessionContextValue={null} />
+            </MemoryRouter>
+        )
+
+        expect(screen.getByText('Loading question...')).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: 'YES' })).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'NO' })).toBeDisabled()
+        expect(screen.getByRole('button', { name: /previous question/i })).toBeDisabled()
+        expect(screen.getByRole('button', { name: /next question/i })).toBeDisabled()
     })
 })

@@ -12,21 +12,27 @@ export function useSessionHandlers() {
     const setSaving = useUIStore((state) => state.setSaving)
     const [error, setError] = useState(null)
     const configs = useMemo(() => getHandlerConfigs(navigate), [navigate])
-
-    return configs.reduce(
-        (handlers, cfg) => {
-            handlers[cfg.name] = createAsyncHandler(
-                setSessionActionLoading,
-                setSaving,
-                setError,
-                cfg.fn,
-                cfg.errorMsg,
-                cfg.isSavingAction,
-                cfg.onSuccess,
-                cfg.showToast
-            )
-            return handlers
-        },
-        { isLoading, error }
+    const actionHandlers = useMemo(
+        () =>
+            configs.reduce((handlers, cfg) => {
+                handlers[cfg.name] = createAsyncHandler(
+                    setSessionActionLoading,
+                    setSaving,
+                    setError,
+                    cfg.fn,
+                    cfg.errorMsg,
+                    cfg.isSavingAction,
+                    cfg.onSuccess,
+                    cfg.showToast
+                )
+                return handlers
+            }, {}),
+        [configs, setSessionActionLoading, setSaving]
     )
+
+    return {
+        ...actionHandlers,
+        isLoading,
+        error,
+    }
 }

@@ -3,6 +3,17 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { NavigationFooter } from '../sessionRunner/subcomponents/NavigationFooter'
+import { SessionRunnerProvider } from '../sessionRunner/SessionRunnerContext'
+
+function renderNavigationFooter(contextValue) {
+    return render(
+        <MemoryRouter>
+            <SessionRunnerProvider value={contextValue}>
+                <NavigationFooter />
+            </SessionRunnerProvider>
+        </MemoryRouter>
+    )
+}
 
 describe('NavigationFooter', () => {
     // Tipo: test di integrazione (interazioni UI + callback)
@@ -12,18 +23,14 @@ describe('NavigationFooter', () => {
         const onForward = vi.fn()
         const user = userEvent.setup()
 
-        render(
-            <MemoryRouter>
-                <NavigationFooter
-                    pastHistory={[{ nodeId: 'node1' }]}
-                    futureHistory={[{ nodeId: 'node2' }]}
-                    isLoading={false}
-                    onBack={onBack}
-                    onHome={onHome}
-                    onForward={onForward}
-                />
-            </MemoryRouter>
-        )
+        renderNavigationFooter({
+            pastHistory: [{ nodeId: 'node1' }],
+            futureHistory: [{ nodeId: 'node2' }],
+            isLoading: false,
+            onBack,
+            onHome,
+            onForward,
+        })
 
         await user.click(screen.getByRole('button', { name: /previous question/i }))
         await user.click(screen.getByRole('button', { name: /return to homepage/i }))
@@ -36,18 +43,14 @@ describe('NavigationFooter', () => {
 
     // Tipo: test di integrazione (stato UI disabilitato)
     it('disables back and forward when history is empty', () => {
-        render(
-            <MemoryRouter>
-                <NavigationFooter
-                    pastHistory={[]}
-                    futureHistory={[]}
-                    isLoading={false}
-                    onBack={() => {}}
-                    onHome={() => {}}
-                    onForward={() => {}}
-                />
-            </MemoryRouter>
-        )
+        renderNavigationFooter({
+            pastHistory: [],
+            futureHistory: [],
+            isLoading: false,
+            onBack: () => {},
+            onHome: () => {},
+            onForward: () => {},
+        })
 
         expect(screen.getByRole('button', { name: /previous question/i })).toBeDisabled()
         expect(screen.getByRole('button', { name: /next question/i })).toBeDisabled()

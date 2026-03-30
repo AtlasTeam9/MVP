@@ -2,23 +2,18 @@ import React from 'react'
 import styles from '../SessionRunnerComponents.module.css'
 import { QuestionDisplay } from './QuestionDisplay'
 import { AnswerButtons } from './AnswerButtons'
+import { useSessionRunnerContext } from '../SessionRunnerContext'
 
 // Component for rendering the main question section with the question display and answer buttons
-function QuestionSection({ currentNode, currentTreeIndex, trees, error, isLoading, onYes, onNo }) {
+function QuestionSection() {
+    const ctx = useSessionRunnerContext()
+    const error = ctx?.error
+
     return (
         <main className={styles.mainContent}>
             {error && <div className={styles.errorMessage}>{error}</div>}
-            <QuestionDisplay
-                currentNode={currentNode}
-                currentTreeIndex={currentTreeIndex}
-                trees={trees}
-            />
-            <AnswerButtons
-                isLoading={isLoading}
-                currentNode={currentNode}
-                onYes={onYes}
-                onNo={onNo}
-            />
+            <QuestionDisplay />
+            <AnswerButtons />
         </main>
     )
 }
