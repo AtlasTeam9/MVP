@@ -33,7 +33,9 @@ class LoadSessionUseCase(ILoadSessionUseCase):
 
     def _validate_session_id(self, session_id: object) -> str:
         if not isinstance(session_id, str):
-            raise InvalidFileException("File sessione non valido: 'session_id' deve essere una stringa.")
+            raise InvalidFileException(
+                "File sessione non valido: 'session_id' deve essere una stringa."
+            )
 
         try:
             uuid.UUID(session_id, version=4)
@@ -219,7 +221,9 @@ class LoadSessionUseCase(ILoadSessionUseCase):
         session = self._factory.restore(device, session_id)
 
         self._restore_results(session, data.get("results", {}))
-        position = self._restore_position(session, data.get("position", {}), data.get("is_finished"))
+        position = self._restore_position(
+            session, data.get("position", {}), data.get("is_finished")
+        )
         self._restore_answers(session, data["answer"])
         self._restore_current_node(session, position)
 
