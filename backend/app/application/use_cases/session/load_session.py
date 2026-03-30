@@ -56,11 +56,11 @@ class LoadSessionUseCase(ILoadSessionUseCase):
             desc=validated_device.description,
         )
 
-        # Ricrea sempre la sessione dal file: è un'operazione di import esplicita,
-        # quindi sovrascriviamo qualsiasi stato precedente in cache o su disco.
+        # Always recreates the session of the file: it is an explicit import operation,
+        # so we overwrite any previous state in cache or on disk.
         session = self._factory.restore(device, session_id)
 
-        # 1. Ripristina i risultati
+        # 1. Recovers the results
         for asset_id, trees in data.get("results", {}).items():
             for tree_id, result_str in trees.items():
                 if result_str == "":
@@ -74,13 +74,13 @@ class LoadSessionUseCase(ILoadSessionUseCase):
                         f"tree '{tree_id}'."
                     )
 
-        # 2. Ripristina la posizione
+        # 2. Recovers the position.
         position = data.get("position", {})
         session.state.current_asset_index = position.get("current_asset_index", 0)
         session.state.current_tree_index = position.get("current_tree_index", 0)
         session.state.is_finished = data.get("is_finished", False)
 
-        # 2.1 Ripristina la cronologia risposte per abilitare go_back dopo il load.
+        # 2.1 Restores the response history to enable go_back after loading.
         raw_answers = data["answer"]
         if not isinstance(raw_answers, list):
             raise InvalidFileException("File sessione non valido: 'answer' deve essere una lista.")
@@ -129,7 +129,7 @@ class LoadSessionUseCase(ILoadSessionUseCase):
 
             session.state.navigation_stack.append((asset_index, tree_index, node, answer))
 
-        # 3. Ripristina il nodo corrente nell'albero attivo (solo se la sessione non è finita)
+        # 3. Recovers the current node in the active tree (only if the session is not finished)
         node_id = position.get("current_node_id", "")
         if node_id and not session.state.is_finished:
             current_tree = session.navigator.current_tree()
@@ -139,7 +139,7 @@ class LoadSessionUseCase(ILoadSessionUseCase):
                         session.state.current_node = node
                         break
 
-        # Persiste su disco e aggiorna la cache
+        # Persists on the disk and updates the cache
         self._session_service.save_session(session)
         all_tree_ids = [t.get_id for t in session.get_trees]
 

@@ -85,12 +85,12 @@ class Session:
 
         answer_result: AnswerResult = self.navigator.answer(ans)
 
-        # Se l'albero è finito, salviamo il risultato
+        # If the tree is completed, we save the result
         if answer_result.tree_completed and answer_result.tree_result is not None:
             if asset and tree:
                 self.results.record(asset.get_id, tree.get_id, answer_result.tree_result)
 
-            # Il navigatore è passato automaticamente al prossimo albero. Controlliamo se va saltato!
+            # The navigator is automatically passed to the next tree. We control if it should be skipped.
             self.skip_invalid_trees()
 
             answer_result.session_finished = self.state.is_finished

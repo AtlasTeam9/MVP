@@ -6,14 +6,14 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-# Colori
-HEADER_BG = colors.HexColor("#1A3A6B")  # blu scuro
+# Colors
+HEADER_BG = colors.HexColor("#1A3A6B")  # dark blue
 HEADER_FG = colors.white
-ROW_ALT_BG = colors.HexColor("#EEF2F8")  # blu chiarissimo per righe alternate
+ROW_ALT_BG = colors.HexColor("#EEF2F8")  # light blue for alternating rows
 ROW_BG = colors.white
-PASS_FG = colors.HexColor("#1D6A2E")  # verde scuro
-FAIL_FG = colors.HexColor("#8B1A1A")  # rosso scuro
-NA_FG = colors.HexColor("#5A5A5A")  # grigio
+PASS_FG = colors.HexColor("#1D6A2E")  # dark green
+FAIL_FG = colors.HexColor("#8B1A1A")  # dark green
+NA_FG = colors.HexColor("#5A5A5A")  # gray
 
 RESULT_COLORS = {
     "PASS": PASS_FG,
@@ -49,12 +49,12 @@ class PdfExporter:
         styles = getSampleStyleSheet()
         story = []
 
-        # Titolo del Documento
+        # Title of the document
         title_style = styles["Title"]
         story.append(Paragraph(f"EN18031 Compliance Results - {device_name}", title_style))
         story.append(Spacer(1, 0.5 * cm))
 
-        # Descrizione introduttiva
+        # Descriptive introduction
         story.append(Paragraph("Global Compliance Summary Report", styles["Heading2"]))
         story.append(
             Paragraph(
@@ -67,17 +67,17 @@ class PdfExporter:
         if not results:
             story.append(Paragraph("No results recorded.", styles["Normal"]))
         else:
-            # Prepariamo i dati della tabella unica
+            # We prepare the table's data
             table_data = [["Requirement / Tree ID", "Final Result"]]
 
             for tree_id, result in results.items():
                 table_data.append([tree_id, result])
 
-            # Larghezza colonne (distribuzione bilanciata per A4)
+            # Column width (equal distribution for A4)
             col_widths = [11 * cm, 5 * cm]
             table = Table(table_data, colWidths=col_widths)
 
-            # Definizione dello stile della tabella
+            # Definition of the table's style
             table_style = [
                 ("BACKGROUND", (0, 0), (-1, 0), HEADER_BG),
                 ("TEXTCOLOR", (0, 0), (-1, 0), HEADER_FG),
@@ -86,10 +86,10 @@ class PdfExporter:
                 ("ALIGN", (0, 0), (-1, 0), "CENTER"),
                 ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
                 ("TOPPADDING", (0, 0), (-1, 0), 8),
-                # Bordi
+                # Borders
                 ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#CCCCCC")),
                 ("BOX", (0, 0), (-1, -1), 1, HEADER_BG),
-                # Testo righe dati
+                # Text of the data rows
                 ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
                 ("FONTSIZE", (0, 1), (-1, -1), 9),
                 ("TOPPADDING", (0, 1), (-1, -1), 6),
@@ -97,13 +97,13 @@ class PdfExporter:
                 ("ALIGN", (1, 1), (1, -1), "CENTER"),
             ]
 
-            # Logica per righe alternate e colori degli stati
+            # Alternating row logic and their colors
             for row_idx, (tree_id, result) in enumerate(results.items(), start=1):
-                # Sfondo alternato
+                # Alternating background
                 bg = ROW_ALT_BG if row_idx % 2 == 0 else ROW_BG
                 table_style.append(("BACKGROUND", (0, row_idx), (-1, row_idx), bg))
 
-                # Colore del testo in base all'esito (PASS=verde, FAIL=rosso, ecc.)
+                # Color of the text that depends on the result (PASS=green, FAIL=red, etc.)
                 result_color = RESULT_COLORS.get(result, NA_FG)
                 table_style.append(("TEXTCOLOR", (1, row_idx), (1, row_idx), result_color))
                 table_style.append(("FONTNAME", (1, row_idx), (1, row_idx), "Helvetica-Bold"))

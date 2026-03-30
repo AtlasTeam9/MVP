@@ -14,7 +14,7 @@ class GoBackUseCase(IGoBackUseCase):
         if session is None:
             raise SessionNotFoundException(request.session_id)
 
-        # Cerca il nodo target nella navigation_stack cross-asset
+        # Searches for the target node in navigation_stack cross-asset
         target_node = None
         for asset_index, tree_index, node, _ in session.state.navigation_stack:
             if (
@@ -28,7 +28,7 @@ class GoBackUseCase(IGoBackUseCase):
         if target_node is None:
             return GoBackResponse(found=False, node_id=None)
 
-        # La modifica di una risposta invalida il tree corrente e i dipendenti successivi.
+        # Modifying a response invalidates the current tree and its subsequent dependents.
         session.reset_changed_tree_and_dependents(
             request.target_asset_index,
             request.target_tree_index,
