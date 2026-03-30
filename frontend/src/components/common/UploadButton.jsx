@@ -9,10 +9,13 @@ function UploadButton({ onFileSelect, children }) {
     }
 
     const handleFileChange = (event) => {
-        const file = event.target.files[0]
+        const input = event.target
+        const file = input.files[0]
         if (file) {
             onFileSelect(file)
         }
+        // Reset value so selecting the same file again still triggers onChange.
+        input.value = ''
     }
 
     return (

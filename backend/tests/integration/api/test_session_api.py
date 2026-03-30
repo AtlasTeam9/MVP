@@ -5,6 +5,7 @@ Il filesystem viene mockato per non toccare file reali.
 """
 
 import json
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -124,6 +125,22 @@ class TestCreateSession:
             response = await client.post(
                 "/api/v1/session/create_session_with_file",
                 files={"file": ("bad.json", f, "application/json")},
+            )
+
+        assert response.status_code == 422
+
+    @pytest.mark.integration
+    async def test_create_session_rejects_non_object_json_payload(
+        self, client, mock_storage, tmp_path
+    ):
+        """Restituisce 422 se il JSON ha radice lista (es. trees.json)."""
+        list_root_file = tmp_path / "trees_like.json"
+        list_root_file.write_text(json.dumps([{"id": "ACM-1"}]), encoding="utf-8")
+
+        with open(list_root_file, "rb") as f:
+            response = await client.post(
+                "/api/v1/session/create_session_with_file",
+                files={"file": ("trees_like.json", f, "application/json")},
             )
 
         assert response.status_code == 422
@@ -459,6 +476,25 @@ class TestExportSession:
                 "/api/v1/session/load_session_from_file",
                 files={"file": ("session.json", f, "application/json")},
             )
+
+        assert load_response.status_code == 422
+
+    @pytest.mark.integration
+    async def test_load_session_rejects_non_object_json_payload(self, client):
+        """Un JSON con radice lista (es. trees.json) deve restituire 422, non 500."""
+        invalid_payload = [{"id": "ACM-1", "nodes": {}}]
+        invalid_export_path = Path("invalid_session_list_payload.json")
+
+        invalid_export_path.write_text(json.dumps(invalid_payload), encoding="utf-8")
+        try:
+            with open(invalid_export_path, "rb") as f:
+                load_response = await client.post(
+                    "/api/v1/session/load_session_from_file",
+                    files={"file": ("session.json", f, "application/json")},
+                )
+        finally:
+            if invalid_export_path.exists():
+                invalid_export_path.unlink()
 
         assert load_response.status_code == 422
 

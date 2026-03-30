@@ -32,10 +32,15 @@ export function calculateCompletionPercentage(
     // Total evaluation nodes = each asset evaluates all nodes
     const totalEvaluationNodes = totalAssets * totalNodes
 
-    // Count nodes answered in current asset only
-    const nodesInCurrentAsset = pastHistory.filter(
+    // Count answered nodes in current asset only, without double-counting revisited nodes.
+    const currentAssetEntries = pastHistory.filter(
         (entry) => entry.assetIndex === currentAssetIndex
-    ).length
+    )
+    const uniqueAnsweredNodeIds = new Set(
+        currentAssetEntries.map((entry) => entry.nodeId).filter(Boolean)
+    )
+    const entriesWithoutNodeId = currentAssetEntries.filter((entry) => !entry.nodeId).length
+    const nodesInCurrentAsset = uniqueAnsweredNodeIds.size + entriesWithoutNodeId
 
     // Completed nodes:
     // - All nodes from previous assets (completed assets × totalNodes each)

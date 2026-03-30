@@ -54,8 +54,17 @@ const createAnswerMethods = (set, get) => ({
             assetIndex: currentAssetIndex,
         }
 
+        const filteredHistory = pastHistory.filter(
+            (entry) =>
+                !(
+                    entry.nodeId === currentNode.id &&
+                    entry.treeIndex === currentTreeIndex &&
+                    entry.assetIndex === currentAssetIndex
+                )
+        )
+
         set({
-            pastHistory: [...pastHistory, newEntry],
+            pastHistory: [...filteredHistory, newEntry],
         })
     },
 })

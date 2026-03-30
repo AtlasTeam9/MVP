@@ -33,7 +33,7 @@ export function mapToAppError(error) {
 
     if (axios.isAxiosError(error)) {
         if (!error.response) {
-            return new NetworkError('Impossibile contattare il server. Controlla la connessione.', {
+            return new NetworkError('Unable to reach the server. Please check your connection.', {
                 code: 'NETWORK_UNREACHABLE',
                 cause: error,
             })
@@ -43,40 +43,40 @@ export function mapToAppError(error) {
         const apiMessage = getApiMessage(error.response.data)
 
         if (status === 400 || status === 422) {
-            return new ValidationError(apiMessage || 'I dati inviati non sono validi.', {
+            return new ValidationError(apiMessage || 'The provided data is not valid.', {
                 code: `HTTP_${status}`,
                 cause: error,
             })
         }
 
         if (status === 404) {
-            return new StateError(apiMessage || 'Risorsa non trovata.', {
+            return new StateError(apiMessage || 'Resource not found.', {
                 code: 'HTTP_404',
                 cause: error,
             })
         }
 
         if (status >= 500) {
-            return new NetworkError(apiMessage || 'Errore interno del server.', {
+            return new NetworkError(apiMessage || 'Internal server error.', {
                 code: `HTTP_${status}`,
                 cause: error,
             })
         }
 
-        return new AppError(apiMessage || 'Errore inatteso nella comunicazione con il server.', {
+        return new AppError(apiMessage || 'Unexpected error while communicating with the server.', {
             code: `HTTP_${status}`,
             cause: error,
         })
     }
 
     if (error instanceof Error) {
-        return new StateError(error.message || 'Errore inatteso.', {
+        return new StateError(error.message || 'Unexpected error.', {
             code: 'UNEXPECTED_ERROR',
             cause: error,
         })
     }
 
-    return new AppError('Errore sconosciuto.', {
+    return new AppError('Unknown error.', {
         code: 'UNKNOWN_ERROR',
         cause: error,
     })

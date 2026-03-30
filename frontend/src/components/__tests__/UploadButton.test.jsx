@@ -28,6 +28,20 @@ describe('UploadButton', () => {
         expect(mockOnSelect).toHaveBeenCalledWith(file)
     })
 
+    it('allows selecting the same file twice in a row', async () => {
+        const mockOnSelect = vi.fn()
+        render(<UploadButton onFileSelect={mockOnSelect}>Upload</UploadButton>)
+
+        const user = userEvent.setup()
+        const file = new File(['{"id": 1}'], 'device.json', { type: 'application/json' })
+        const input = screen.getByLabelText('Upload device file')
+
+        await user.upload(input, file)
+        await user.upload(input, file)
+
+        expect(mockOnSelect).toHaveBeenCalledTimes(2)
+    })
+
     // Tipo: test di integrazione (vincolo attributi input)
     it('accepts only files with .json extension', () => {
         render(<UploadButton onFileSelect={() => {}}>Upload</UploadButton>)

@@ -14,10 +14,15 @@ class CreateSessionUseCase(ICreateSessionUseCase):
         self._session_service = session_service
 
     async def execute(self, request: CreateSessionRequest) -> CreateSessionResponse:
+        if not isinstance(request.device_data, dict):
+            raise InvalidDeviceFileException("Invalid device file: JSON root must be an object.")
+
         try:
             validated = DeviceSchema(**request.device_data)
         except ValidationError as e:
-            raise InvalidDeviceFileException(f"File dispositivo non valido: {e.errors()}")
+            raise InvalidDeviceFileException(f"Invalid device file: {e.errors()}") from e
+        except TypeError as e:
+            raise InvalidDeviceFileException(f"Invalid device file: {e}") from e
 
         device_data = validated
 

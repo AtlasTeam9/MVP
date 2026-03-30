@@ -118,6 +118,30 @@ describe('sessionHandlersConfig - createAsyncHandler error flow', () => {
         expect(setIsLoading).toHaveBeenLastCalledWith(false)
         expect(setIsSaving).toHaveBeenLastCalledWith(false)
     })
+
+    it('createAsyncHandler can suppress toast notifications', async () => {
+        const setIsLoading = vi.fn()
+        const setIsSaving = vi.fn()
+        const setError = vi.fn()
+        const testError = new Error('boom')
+        const asyncFn = vi.fn().mockRejectedValue(testError)
+
+        const handler = createAsyncHandler(
+            setIsLoading,
+            setIsSaving,
+            setError,
+            asyncFn,
+            'custom error',
+            false,
+            undefined,
+            false
+        )
+
+        await handler()
+
+        expect(setError).toHaveBeenCalledWith('custom error')
+        expect(mocks.notifications.notifyError).not.toHaveBeenCalled()
+    })
 })
 
 describe('sessionHandlersConfig - getHandlerConfigs', () => {
@@ -149,5 +173,19 @@ describe('sessionHandlersConfig - getHandlerConfigs', () => {
         expect(exportedAnswers[0]['answer']).toBe(true)
 
         expect(navigate).toHaveBeenCalledWith('/')
+    })
+
+    it('marks local runner actions to use inline-only errors', () => {
+        const configs = getHandlerConfigs(vi.fn())
+
+        const yesConfig = configs.find((cfg) => cfg.name === 'handleYesClick')
+        const noConfig = configs.find((cfg) => cfg.name === 'handleNoClick')
+        const backConfig = configs.find((cfg) => cfg.name === 'handleBackClick')
+        const forwardConfig = configs.find((cfg) => cfg.name === 'handleForwardClick')
+
+        expect(yesConfig.showToast).toBe(false)
+        expect(noConfig.showToast).toBe(false)
+        expect(backConfig.showToast).toBe(false)
+        expect(forwardConfig.showToast).toBe(false)
     })
 })

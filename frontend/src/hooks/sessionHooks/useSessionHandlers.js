@@ -22,7 +22,8 @@ export function useSessionHandlers() {
                 cfg.fn,
                 cfg.errorMsg,
                 cfg.isSavingAction,
-                cfg.onSuccess
+                cfg.onSuccess,
+                cfg.showToast
             )
             return handlers
         },

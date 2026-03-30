@@ -13,7 +13,8 @@ export const createAsyncHandler =
         asyncFn,
         errorMsg,
         isSavingAction,
-        onSuccess
+        onSuccess,
+        showToast = true
     ) =>
     async () => {
         try {
@@ -24,7 +25,9 @@ export const createAsyncHandler =
             onSuccess?.()
         } catch (err) {
             setError(errorMsg)
-            NotificationManager.notifyError(err)
+            if (showToast) {
+                NotificationManager.notifyError(err)
+            }
         } finally {
             setIsLoading(false)
             setIsSaving(false)
@@ -38,21 +41,25 @@ const BASE_HANDLER_CONFIGS = [
         name: 'handleYesClick',
         fn: () => SessionService.sendAnswer(true),
         errorMsg: 'Failed to submit answer. Please try again.',
+        showToast: false,
     },
     {
         name: 'handleNoClick',
         fn: () => SessionService.sendAnswer(false),
         errorMsg: 'Failed to submit answer. Please try again.',
+        showToast: false,
     },
     {
         name: 'handleBackClick',
         fn: () => SessionService.previousStep(),
         errorMsg: 'Failed to go back. Please try again.',
+        showToast: false,
     },
     {
         name: 'handleForwardClick',
         fn: () => SessionService.forwardStep(),
         errorMsg: 'Failed to go forward. Please try again.',
+        showToast: false,
     },
     {
         name: 'handleHomeClick',
