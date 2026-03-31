@@ -81,9 +81,9 @@ class Device:
         self,
         device_name: str,
         assets: list[Asset],
-        operating_sys: str | None = None,
-        firm_vers: str | None = None,
-        funcs: str | None = None,
+        operating_sys: str,
+        firm_vers: str,
+        funcs: str,
         desc: str | None = None,
     ):
         self._device_name = device_name
@@ -106,21 +106,21 @@ class Device:
 
     @property
     def get_operating_sys(self) -> str:
-        return self._os or "operating System not inserted"
+        return self._os
 
     def set_operating_sys(self, op_sys: str) -> None:
         self._os = op_sys
 
     @property
     def get_firmware_vers(self) -> str:
-        return self._firm_vers or "Firmware version not inserted"
+        return self._firm_vers
 
     def set_firmware_vers(self, firm_vers: str) -> None:
         self._firm_vers = firm_vers
 
     @property
     def get_funcionalities(self) -> str:
-        return self._funcs or "Functionalities not inserted"
+        return self._funcs
 
     def set_funcionalities(self, funcs: str) -> None:
         self._funcs = funcs

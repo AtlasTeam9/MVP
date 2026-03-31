@@ -23,6 +23,9 @@ def sample_session(session_factory):
     device = Device(
         device_name="Test",
         assets=[Asset("A1", "Asset 1", AssetType.NETWORK_FUN, True)],
+        operating_sys="Linux",
+        firm_vers="1.0.0",
+        funcs="Routing",
     )
     return session_factory.create(device=device)
 
@@ -35,6 +38,9 @@ def two_asset_session(session_factory):
             Asset("A1", "Asset 1", AssetType.NETWORK_FUN, True),
             Asset("A2", "Asset 2", AssetType.SECURITY_FUN, True),
         ],
+        operating_sys="Linux",
+        firm_vers="1.0.0",
+        funcs="Routing",
     )
     return session_factory.create(device=device)
 

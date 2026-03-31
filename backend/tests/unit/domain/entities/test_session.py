@@ -18,6 +18,9 @@ class TestSession:
             assets=[
                 Asset(asset_id="ASSET_1", name="a1", type=AssetType.NETWORK_FUN, is_sensitive=True)
             ],
+            operating_sys="Linux",
+            firm_vers="1.0.0",
+            funcs="Routing",
         )
 
         session = session_factory.create(
@@ -132,6 +135,9 @@ class TestSession:
                 Asset("a1", "Asset 1", AssetType.NETWORK_FUN, True),
                 Asset("a2", "Asset 2", AssetType.SECURITY_FUN, True),
             ],
+            operating_sys="Linux",
+            firm_vers="1.0.0",
+            funcs="Routing",
         )
         return session_factory.create(
             device=device,
