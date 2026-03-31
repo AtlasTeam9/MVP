@@ -1,25 +1,24 @@
 import React, { useState } from 'react'
 import styles from './AssetResultsView.module.css'
-import {
-    getAssetStatus,
-    getAssetStatusClass,
-    isAssetClickable,
-} from './assetResultsUtils'
+import { getAssetStatus, getAssetStatusClass, isAssetClickable } from './assetResultsUtils'
 
 // Asset item component
-function AssetItem({ asset, status, isSelected, clickable, onAssetClick }) {
+function AssetItem({ asset, status, isSelected, clickable, onAssetClick, readOnly }) {
+    const Wrapper = readOnly ? 'div' : 'button'
     return (
-        <button
-            type="button"
-            className={`${styles.assetItem} ${isSelected ? styles.selected : ''} ${!clickable ? styles.disabled : ''}`}
-            onClick={() => clickable && onAssetClick(asset.id)}
-            disabled={!clickable}
+        <Wrapper
+            type={readOnly ? undefined : 'button'}
+            className={`${styles.assetItem} ${readOnly ? styles.readOnly : ''} ${isSelected ? styles.selected : ''} ${!readOnly && !clickable ? styles.disabled : ''}`}
+            onClick={!readOnly && clickable ? () => onAssetClick(asset.id) : undefined}
+            disabled={!readOnly && !clickable ? true : undefined}
             title={
-                clickable
-                    ? 'Click this asset and resume from here'
-                    : "You can't resume the test from this asset due to NOT_APPLICABLE dependencies"
+                readOnly
+                    ? undefined
+                    : clickable
+                      ? 'Click this asset and resume from here'
+                      : "You can't resume the test from this asset due to NOT_APPLICABLE dependencies"
             }
-            aria-label={`Select asset ${asset.name}`}
+            aria-label={`Asset ${asset.name}`}
         >
             <div className={styles.assetInfo}>
                 <span className={styles.assetName}>{asset.name}</span>
@@ -27,7 +26,7 @@ function AssetItem({ asset, status, isSelected, clickable, onAssetClick }) {
             <span className={`${styles.status} ${getAssetStatusClass(status, styles)}`}>
                 {status}
             </span>
-        </button>
+        </Wrapper>
     )
 }
 
@@ -38,6 +37,7 @@ export function AssetResultsView({
     resultsPerAsset,
     onAssetSelect,
     dependencies = [],
+    readOnly = false,
 }) {
     const [selectedAssetId, setSelectedAssetId] = useState(null)
 
@@ -50,16 +50,20 @@ export function AssetResultsView({
             {assets.map((asset) => {
                 const assetResultsObj = resultsPerAsset[asset.id]
                 const status = getAssetStatus(asset.id, requirementId, resultsPerAsset)
-                const clickable = isAssetClickable(status, assetResultsObj, dependencies)
+                const clickable =
+                    !readOnly && isAssetClickable(status, assetResultsObj, dependencies)
+                const isSelected = !readOnly && selectedAssetId === asset.id
 
                 return (
                     <AssetItem
                         key={asset.id}
                         asset={asset}
                         status={status}
-                        isSelected={selectedAssetId === asset.id}
+                        isSelected={isSelected}
                         clickable={clickable}
+                        readOnly={readOnly}
                         onAssetClick={(assetId) => {
+                            if (readOnly) return
                             setSelectedAssetId(assetId)
                             onAssetSelect?.(assetId)
                         }}

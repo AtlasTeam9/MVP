@@ -22,6 +22,29 @@ import {
 } from './sessionHelpers'
 
 class SessionService {
+    #isPerAssetResults(results) {
+        if (!results || typeof results !== 'object') {
+            return false
+        }
+
+        return Object.values(results).some(
+            (value) => value && typeof value === 'object' && !Array.isArray(value)
+        )
+    }
+
+    async #setPerAssetResultsFromExport(sessionId) {
+        if (!sessionId) {
+            return
+        }
+
+        const payload = { answer: this.getFormattedAnswers() }
+        const response = await apiClient.post(`/session/${sessionId}/export`, payload)
+        const data = typeof response === 'string' ? JSON.parse(response) : response
+
+        if (data?.results) {
+            useSessionStore.getState().setResultsPerAsset(data.results)
+        }
+    }
     // Private helper method to set the current node from response or TreeStore
     #setCurrentNodeFromResponse(response, position) {
         if (response.current_node) {
@@ -157,10 +180,15 @@ class SessionService {
     }
 
     // Private helper to handle tree completion
-    #handleTreeCompleted(response, previousAssetIndex) {
+    async #handleTreeCompleted(response, previousAssetIndex) {
         if (response.session_finished) {
             const transformedResults = mapResultsToRequirementResults(response.results)
             useResultStore.getState().setResults(transformedResults)
+            if (this.#isPerAssetResults(response.results)) {
+                useSessionStore.getState().setResultsPerAsset(response.results)
+            } else {
+                await this.#setPerAssetResultsFromExport(useSessionStore.getState().sessionId)
+            }
             useSessionStore.getState().setTestFinished(true)
             return
         }
@@ -173,7 +201,7 @@ class SessionService {
     }
 
     // Private helper to handle go_back response
-    #handleGoBackResponse(response) {
+    async #handleGoBackResponse(response) {
         if (!response.found) {
             return
         }
@@ -181,6 +209,11 @@ class SessionService {
         if (response.session_finished) {
             const transformedResults = mapResultsToRequirementResults(response.results)
             useResultStore.getState().setResults(transformedResults)
+            if (this.#isPerAssetResults(response.results)) {
+                useSessionStore.getState().setResultsPerAsset(response.results)
+            } else {
+                await this.#setPerAssetResultsFromExport(useSessionStore.getState().sessionId)
+            }
             useSessionStore.getState().setTestFinished(true)
             return
         }
@@ -226,14 +259,14 @@ class SessionService {
                 currentTreeIndex,
             })
 
-            this.#handleGoBackResponse(goBackResponse)
+            await this.#handleGoBackResponse(goBackResponse)
             return
         }
 
         const forwardResponse = await postForwardAnswer(apiClient, sessionId, answer)
 
         if (forwardResponse.tree_completed) {
-            this.#handleTreeCompleted(forwardResponse, currentAssetIndex)
+            await this.#handleTreeCompleted(forwardResponse, currentAssetIndex)
             return
         }
 
@@ -343,7 +376,8 @@ class SessionService {
     // Get formatted answers from the session history for export
     getFormattedAnswers() {
         const { pastHistory } = useSessionStore.getState()
-        return pastHistory.map((item) => ({
+        const history = Array.isArray(pastHistory) ? pastHistory : []
+        return history.map((item) => ({
             asset_index: item.assetIndex,
             tree_index: item.treeIndex,
             node_id: item.nodeId,

@@ -12,6 +12,10 @@ const mocks = vi.hoisted(() => ({
         sessionId: 'session-1',
         isTestFinished: false,
         isSessionUploaded: false,
+        resultsPerAsset: {},
+    },
+    deviceState: {
+        currentDevice: { assets: [{ id: 'a1', name: 'Asset 1' }] },
     },
     exportResults: {
         isExporting: false,
@@ -44,6 +48,10 @@ vi.mock('../../store/SessionStore', () => ({
     default: (selector) => selector(mocks.sessionState),
 }))
 
+vi.mock('../../store/DeviceStore', () => ({
+    default: (selector) => selector(mocks.deviceState),
+}))
+
 vi.mock('../../hooks/useExportResults', () => ({
     useExportResults: () => mocks.exportResults,
 }))
@@ -64,8 +72,20 @@ vi.mock('../../services/SessionService', () => ({
     },
 }))
 
-vi.mock('../../components/results/ResultListView', () => ({
-    ResultListView: ({ items }) => <div>List size: {items.length}</div>,
+vi.mock('../../components/results/ResultItemView', () => ({
+    ResultItemView: ({ item, onToggleExpand }) => (
+        <button type="button" onClick={onToggleExpand}>
+            {item.code}
+        </button>
+    ),
+}))
+
+vi.mock('../../components/results/AssetResultsView', () => ({
+    AssetResultsView: ({ assets, requirementId, readOnly }) => (
+        <div>
+            Assets for {requirementId}: {assets?.length ?? 0} readOnly:{readOnly ? 'yes' : 'no'}
+        </div>
+    ),
 }))
 
 vi.mock('../../components/results/ResultActions', () => ({
@@ -99,6 +119,11 @@ describe('ResultView', () => {
             sessionId: 'session-1',
             isTestFinished: false,
             isSessionUploaded: false,
+            resultsPerAsset: {},
+        }
+
+        mocks.deviceState = {
+            currentDevice: { assets: [{ id: 'a1', name: 'Asset 1' }] },
         }
     })
 
@@ -115,7 +140,10 @@ describe('ResultView', () => {
         const user = userEvent.setup()
 
         expect(screen.getByText('Test Results')).toBeInTheDocument()
-        expect(screen.getByText('List size: 1')).toBeInTheDocument()
+        expect(screen.getByText('REQ1')).toBeInTheDocument()
+
+        await user.click(screen.getByText('REQ1'))
+        expect(screen.getByText('Assets for REQ1: 1 readOnly:yes')).toBeInTheDocument()
 
         await user.click(screen.getByText('Resume'))
         await user.click(screen.getByText('Modify'))

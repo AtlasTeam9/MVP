@@ -80,20 +80,20 @@ const goToPreviousNode = (set, get) => () => {
     const previousItem = pastHistory[pastHistory.length - 1]
     const newFutureHistory = currentNode
         ? [
-              {
-                  nodeId: currentNode.id,
-                  answer: previousItem?.answer ?? null,
-                  treeIndex: currentTreeIndex,
-                  assetIndex: currentAssetIndex,
-              },
-              ...futureHistory,
-          ]
+            {
+                nodeId: currentNode.id,
+                answer: previousItem?.answer ?? null,
+                treeIndex: currentTreeIndex,
+                assetIndex: currentAssetIndex,
+            },
+            ...futureHistory,
+        ]
         : futureHistory
 
     set({
         pastHistory: pastHistory.slice(0, -1),
         futureHistory: newFutureHistory,
-                currentNode: toNodeRef(previousItem.nodeId),
+        currentNode: toNodeRef(previousItem.nodeId),
         currentTreeIndex: previousItem.treeIndex,
         currentAssetIndex: previousItem.assetIndex,
     })
@@ -118,19 +118,19 @@ const goToNextNode = (set, get) => (nodeId) => {
 
     const newPastHistory = currentNode
         ? [
-              ...pastHistory,
-              {
-                  nodeId: currentNode.id,
-                  answer: pastHistory[pastHistory.length - 1]?.answer ?? null,
-                  treeIndex: currentTreeIndex,
-                  assetIndex: currentAssetIndex,
-              },
-          ]
+            ...pastHistory,
+            {
+                nodeId: currentNode.id,
+                answer: pastHistory[pastHistory.length - 1]?.answer ?? null,
+                treeIndex: currentTreeIndex,
+                assetIndex: currentAssetIndex,
+            },
+        ]
         : pastHistory
 
     set({
         pastHistory: newPastHistory,
-                currentNode: toNodeRef(nextItem.nodeId),
+        currentNode: toNodeRef(nextItem.nodeId),
         futureHistory: futureHistory.slice(1),
         currentTreeIndex: nextItem.treeIndex ?? 0,
         currentAssetIndex: nextItem.assetIndex ?? 0,

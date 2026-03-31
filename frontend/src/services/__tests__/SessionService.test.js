@@ -209,6 +209,24 @@ describe('SessionService.sendAnswer', () => {
         expect(mocks.sessionState.setCurrentNode).toHaveBeenCalledWith(nextNode)
     })
 
+    it('stores results per asset when session finishes', async () => {
+        const aggregatedResults = { REQ1: 'PASS' }
+        const exportResults = { 'asset-1': { REQ1: 'PASS' } }
+        mocks.shouldUseGoBackFlow.mockReturnValue(false)
+        mocks.postForwardAnswer.mockResolvedValue({
+            'tree_completed': true,
+            'session_finished': true,
+            'results': aggregatedResults,
+        })
+        mocks.apiClient.post.mockResolvedValue({ results: exportResults })
+
+        await SessionService.sendAnswer(true)
+
+        expect(mocks.resultState.setResults).toHaveBeenCalledWith(aggregatedResults)
+        expect(mocks.sessionState.setResultsPerAsset).toHaveBeenCalledWith(exportResults)
+        expect(mocks.sessionState.setTestFinished).toHaveBeenCalledWith(true)
+    })
+
     it('clearSession clears local state even when backend deletion fails', async () => {
         mocks.deleteRemoteSessionIfPresent.mockRejectedValue(new Error('backend unavailable'))
 
@@ -352,7 +370,7 @@ describe('SessionService save and clear flows', () => {
     })
 
     it('saveAndExit clears device and local stores when backend delete succeeds', async () => {
-        const clearDeviceSpy = vi.spyOn(deviceService, 'clearDevice').mockImplementation(() => {})
+        const clearDeviceSpy = vi.spyOn(deviceService, 'clearDevice').mockImplementation(() => { })
 
         await expect(SessionService.saveAndExit()).resolves.toBeUndefined()
 
@@ -364,7 +382,7 @@ describe('SessionService save and clear flows', () => {
     })
 
     it('saveAndExit still clears device and local stores when backend delete fails', async () => {
-        const clearDeviceSpy = vi.spyOn(deviceService, 'clearDevice').mockImplementation(() => {})
+        const clearDeviceSpy = vi.spyOn(deviceService, 'clearDevice').mockImplementation(() => { })
         mocks.deleteRemoteSessionIfPresent.mockRejectedValue(new Error('delete failed'))
 
         await expect(SessionService.saveAndExit()).resolves.toBeUndefined()
