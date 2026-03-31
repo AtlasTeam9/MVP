@@ -82,19 +82,19 @@ describe('deviceSchema — missing required fields', () => {
 
 // Unit tests for deviceSchema validation failures (length constraints)
 describe('deviceSchema — length constraints', () => {
-    it('fails if operatingSystem exceeds 50 characters', () => {
+    it('fails if operatingSystem exceeds 30 characters', () => {
         const result = deviceSchema.safeParse({
             ...validDevice,
-            operatingSystem: 'A'.repeat(51),
+            operatingSystem: 'A'.repeat(31),
         })
         expect(result.success).toBe(false)
-        expect(result.error.issues[0].message).toBe('Too long')
+        expect(result.error.issues[0].message).toBe('OS is too long')
     })
 
-    it('accepts operatingSystem of exactly 50 characters', () => {
+    it('accepts operatingSystem of exactly 30 characters', () => {
         const result = deviceSchema.safeParse({
             ...validDevice,
-            operatingSystem: 'A'.repeat(50),
+            operatingSystem: 'A'.repeat(30),
         })
         expect(result.success).toBe(true)
     })

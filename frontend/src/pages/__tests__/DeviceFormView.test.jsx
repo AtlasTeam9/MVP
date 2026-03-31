@@ -26,9 +26,9 @@ describe('DeviceFormView — rendering', () => {
 
     it('shows all required fields', () => {
         renderForm()
-        expect(screen.getByLabelText(/nome/i)).toBeInTheDocument()
+        expect(screen.getByLabelText(/name/i)).toBeInTheDocument()
         expect(screen.getByLabelText(/operating system/i)).toBeInTheDocument()
-        expect(screen.getByLabelText(/firmware/i)).toBeInTheDocument()
+        expect(screen.getByLabelText(/firmware version/i)).toBeInTheDocument()
         expect(screen.getByLabelText(/functionalities/i)).toBeInTheDocument()
     })
 
@@ -64,9 +64,9 @@ describe('DeviceFormView — validation', () => {
         renderForm()
         const user = userEvent.setup()
 
-        await user.type(screen.getByLabelText(/nome/i), 'Router')
+        await user.type(screen.getByLabelText(/name/i), 'Router')
         await user.type(screen.getByLabelText(/operating system/i), 'Linux')
-        await user.type(screen.getByLabelText(/firmware/i), '1.0.0')
+        await user.type(screen.getByLabelText(/firmware version/i), '1.0.0')
         await user.type(screen.getByLabelText(/functionalities/i), 'routing')
         await user.click(screen.getByText('Save'))
 
@@ -91,7 +91,7 @@ describe('DeviceFormView — actions', () => {
     it('resets the fields when clicking Reset', async () => {
         renderForm()
         const user = userEvent.setup()
-        const nameInput = screen.getByLabelText(/nome/i)
+        const nameInput = screen.getByLabelText(/name/i)
 
         await user.type(nameInput, 'Router')
         expect(nameInput).toHaveValue('Router')
@@ -104,9 +104,9 @@ describe('DeviceFormView — actions', () => {
         renderForm()
         const user = userEvent.setup()
 
-        await user.type(screen.getByLabelText(/nome/i), 'Router')
+        await user.type(screen.getByLabelText(/name/i), 'Router')
         await user.type(screen.getByLabelText(/operating system/i), 'Linux')
-        await user.type(screen.getByLabelText(/firmware/i), '1.0.0')
+        await user.type(screen.getByLabelText(/firmware version/i), '1.0.0')
         await user.type(screen.getByLabelText(/functionalities/i), 'routing')
         await user.click(screen.getByText('Save'))
 
