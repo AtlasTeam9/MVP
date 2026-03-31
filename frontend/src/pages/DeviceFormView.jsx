@@ -97,14 +97,14 @@ function InputField({ label, registration, error, isTextArea = false }) {
 function RequiredFields({ register, errors }) {
     return (
         <>
-            <InputField label="Nome *" registration={register('name')} error={errors?.name} />
+            <InputField label="Name *" registration={register('name')} error={errors?.name} />
             <InputField
-                label="Operating System *"
+                label="Operating system *"
                 registration={register('operatingSystem')}
                 error={errors?.operatingSystem}
             />
             <InputField
-                label="Firmware *"
+                label="Firmware version *"
                 registration={register('firmwareVersion')}
                 error={errors?.firmwareVersion}
             />
