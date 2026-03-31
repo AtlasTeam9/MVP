@@ -100,15 +100,27 @@ class TestDevice:
         assert device.get_description == "Main building switch"
 
     def test_device_default_properties(self, sample_assets):
-        device = Device("Basic Device", sample_assets)
+        device = Device(
+            device_name="Basic Device",
+            assets=sample_assets,
+            operating_sys="Linux",
+            firm_vers="1.0.0",
+            funcs="Logging",
+        )
 
-        assert device.get_operating_sys == "operating System not inserted"
-        assert device.get_firmware_vers == "Firmware version not inserted"
-        assert device.get_funcionalities == "Functionalities not inserted"
+        assert device.get_operating_sys == "Linux"
+        assert device.get_firmware_vers == "1.0.0"
+        assert device.get_funcionalities == "Logging"
         assert device.get_description == "Description not inserted"
 
     def test_device_setters(self, sample_assets):
-        device = Device("Temp Device", sample_assets)
+        device = Device(
+            device_name="Temp Device",
+            assets=sample_assets,
+            operating_sys="Linux",
+            firm_vers="1.0.0",
+            funcs="Routing",
+        )
 
         device.set_name("New Name")
         assert device.get_name == "New Name"
@@ -126,7 +138,13 @@ class TestDevice:
         assert device.get_description == "Updated device"
 
     def test_device_to_dict(self, sample_assets):
-        device = Device("Test Device", sample_assets)
+        device = Device(
+            device_name="Test Device",
+            assets=sample_assets,
+            operating_sys="Linux",
+            firm_vers="1.0.0",
+            funcs="Routing",
+        )
         result = device.to_dict()
 
         assert result["device_name"] == "Test Device"

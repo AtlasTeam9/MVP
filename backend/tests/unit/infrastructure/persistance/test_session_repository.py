@@ -29,6 +29,9 @@ class TestSessionRepository:
                 Asset("ASSET_01", "DHCP Client", AssetType.NETWORK_FUN, True),
                 Asset("ASSET_02", "SSH Client", AssetType.SECURITY_FUN, True),
             ],
+            operating_sys="Linux",
+            firm_vers="1.0.0",
+            funcs="Routing",
         )
         return session_factory.create(
             device=device, session_id="fd74b30b-8888-43ec-b265-01b2d702d9a3"

@@ -42,6 +42,9 @@ def sample_session(session_factory):
             Asset("ASSET_01", "DHCP", AssetType.NETWORK_FUN, True),
             Asset("ASSET_02", "SSH", AssetType.SECURITY_FUN, False),
         ],
+        operating_sys="Linux",
+        firm_vers="1.0.0",
+        funcs="Routing",
     )
     session = session_factory.create(
         device=device, session_id="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
@@ -129,6 +132,9 @@ class TestExportResultsUseCase:
         device = Device(
             device_name="Empty Device",
             assets=[Asset("A1", "Asset", AssetType.NETWORK_FUN, True)],
+            operating_sys="Linux",
+            firm_vers="1.0.0",
+            funcs="Routing",
         )
         session = session_factory.create(device=device)
         mock_service.get_session.return_value = session

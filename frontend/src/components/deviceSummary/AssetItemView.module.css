@@ -26,6 +26,7 @@
 }
 
 .assetName {
+    word-break: break-word;
     color: #333;
     font-weight: 500;
     flex: 1;
