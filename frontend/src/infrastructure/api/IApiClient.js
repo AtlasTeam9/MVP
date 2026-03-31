@@ -1,6 +1,6 @@
 /**
  * IApiClient Interface (Abstract Class)
- * Define must have methods for API communication: get and post.
+ * Define must have methods for API communication: get, post and delete.
  */
 export default class IApiClient {
     constructor() {
@@ -25,5 +25,14 @@ export default class IApiClient {
      */
     get() {
         throw new Error("Method 'get' not implemented.")
+    }
+
+    /**
+     * @param {string} url
+     * @param {Object} config
+     * @returns {Promise<Object>}
+     */
+    delete() {
+        throw new Error("Method 'delete' not implemented.")
     }
 }

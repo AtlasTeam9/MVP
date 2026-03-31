@@ -2,10 +2,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px;
+    padding: var(--space-6) var(--space-5);
     border-radius: 20px;
     max-width: 600px;
-    margin: 50px auto;
+    margin: var(--space-12) auto;
     height: fit-content;
     justify-content: center;
     background: white;
@@ -15,7 +15,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: var(--space-4);
 }
 
 .label {
@@ -34,7 +34,7 @@
 .input[type='textarea'],
 textarea {
     resize: none;
-    min-height: 120px;
+    min-height: 100px;
 }
 
 .inputError {
@@ -49,8 +49,8 @@ textarea {
 
 .buttonGroup {
     display: flex;
-    gap: 15px;
-    margin-top: 20px;
+    gap: var(--space-4);
+    margin-top: var(--space-5);
     width: 100%;
     justify-content: flex-end;
 }
@@ -104,7 +104,8 @@ textarea {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 15px;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
 }
 
 .toggleLabel {
@@ -156,10 +157,4 @@ textarea {
 
 .toggleSwitch input:checked + .toggleSlider:before {
     transform: translateX(22px);
-}
-
-.backIcon {
-    position: fixed;
-    left: 20px;
-    top: 40px;
 }

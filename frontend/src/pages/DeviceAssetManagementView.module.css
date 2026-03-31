@@ -1,17 +1,14 @@
 .container {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
+    width: 100%;
+    padding: var(--space-10) var(--space-5);
     max-width: 800px;
     margin: 0 auto;
-    min-height: 100svh;
 }
 
 .header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: var(--space-10);
     width: 100%;
 }
 
@@ -40,12 +37,12 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: var(--space-7);
 }
 
 .assetSection {
     background: #f9f9f9;
-    padding: 20px;
+    padding: var(--space-5);
     border-radius: var(--border-radius);
     border: 1px solid #efefef;
     height: 320px;
@@ -55,14 +52,14 @@
 
 .emptyAssets {
     text-align: center;
-    padding: 40px 20px;
+    padding: var(--space-10) var(--space-5);
     color: #999;
 }
 
 .assetListDisplay {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: var(--space-4);
     height: 100%;
     min-height: 0;
 }
@@ -110,34 +107,25 @@
     transition: color 0.2s ease;
 }
 
+.deleteIcon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
+}
+
 .deleteBtn:hover {
     color: #d9534f;
 }
 
 .buttonGroup {
     display: flex;
-    gap: 15px;
+    gap: var(--space-4);
     justify-content: center;
     flex-wrap: wrap;
 }
 
-.btnPrimary {
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: 500;
-    color: white;
-    background-color: var(--primary-color);
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s ease;
-}
-
-.btnPrimary:hover {
-    background-color: var(--primary-hover);
-}
-
+.btnPrimary,
 .btnSecondary {
     padding: 12px 24px;
     font-size: 16px;
@@ -151,88 +139,16 @@
     transition: background-color 0.2s ease;
 }
 
+.btnPrimary:hover,
 .btnSecondary:hover {
     background-color: var(--primary-hover);
 }
 
 .navigationIcons {
     display: flex;
-    gap: 12px;
+    gap: var(--space-3);
     justify-content: center;
-    margin-top: 30px;
-}
-
-.iconBtn {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--border-radius);
-    background-color: var(--primary-color);
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.2s ease;
-}
-
-.iconBtn:hover {
-    background-color: var(--primary-hover);
-}
-
-.backIcon {
-    position: fixed;
-    left: 20px;
-    top: 40px;
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-}
-
-.modal {
-    width: 90%;
-    max-width: 420px;
-    padding: 1.5rem;
-    border-radius: 12px;
-    background: #1a3a4d;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.modalHeader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-}
-
-.modalTitle {
-    margin: 0;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.modalCloseBtn {
-    margin-left: 1rem;
-    padding: 0;
-    border: none;
-    background: none;
-    color: white;
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
+    margin-top: var(--space-7);
 }
 
 .modalText {

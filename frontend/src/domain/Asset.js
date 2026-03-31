@@ -6,10 +6,10 @@ export const AssetType = {
     SECURITY_PARAMETER: 'Security Parameter',
 
     fromString(value) {
-        const val = value.toLowerCase()
-        if (val.startsWith('network function')) return AssetType.NETWORK_FUNCTION
+        const val = String(value).trim().toLowerCase()
         if (val.startsWith('network function configuration'))
             return AssetType.NETWORK_FUNCTION_CONFIGURATION
+        if (val.startsWith('network function')) return AssetType.NETWORK_FUNCTION
         if (val.startsWith('security function')) return AssetType.SECURITY_FUNCTION
         if (val.startsWith('security parameter')) return AssetType.SECURITY_PARAMETER
 

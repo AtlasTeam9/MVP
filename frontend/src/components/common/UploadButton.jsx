@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import styles from '../../pages/HomeView.module.css'
+import styles from './UploadButton.module.css'
 
 function UploadButton({ onFileSelect, children }) {
     const fileInputRef = useRef(null)
@@ -9,10 +9,13 @@ function UploadButton({ onFileSelect, children }) {
     }
 
     const handleFileChange = (event) => {
-        const file = event.target.files[0]
+        const input = event.target
+        const file = input.files[0]
         if (file) {
             onFileSelect(file)
         }
+        // Reset value so selecting the same file again still triggers onChange.
+        input.value = ''
     }
 
     return (
@@ -25,7 +28,7 @@ function UploadButton({ onFileSelect, children }) {
                 onChange={handleFileChange}
                 aria-label="Upload device file"
             />
-            <button className={styles.button} onClick={handleClick}>
+            <button type="button" className={styles.button} onClick={handleClick}>
                 {children}
             </button>
         </>

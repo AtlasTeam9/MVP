@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
-import Guard from '../common/Guard'
+import Guard from '../Guard'
 
 // Helper: set up Guard with a given route configuration and optional child content
 function renderGuard(routeConfig, children = <div>Protected content</div>) {

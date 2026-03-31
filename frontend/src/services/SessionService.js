@@ -3,34 +3,54 @@ import useSessionStore from '../store/SessionStore'
 import useDeviceStore from '../store/DeviceStore'
 import useTreeStore from '../store/TreeStore'
 import useResultStore from '../store/ResultStore'
+
 import apiClient from '../infrastructure/api/AxiosApiClient'
-import deviceService from './DeviceService'
-import Device from '../domain/Device'
-import Asset from '../domain/Asset'
 import StateError from '../infrastructure/errors/StateError'
+import { Node } from '../domain/Node'
+
+import deviceService from './DeviceService'
+
+import {
+    applyAnswerTransition,
+    clearLocalSessionState,
+    createDeviceFromApiResponse,
+    deleteRemoteSessionIfPresent,
+    mapResultsToRequirementResults,
+    postForwardAnswer,
+    postGoBackAnswer,
+    shouldUseGoBackFlow,
+} from './sessionHelpers'
 
 class SessionService {
-    // Private method to extract device data from API response and create a Device object
-    #createDeviceFromResponse(deviceData) {
-        // Convert asset dictionaries to Asset instances
-        const assetInstances = (deviceData.assets || []).map(
-            (asset) =>
-                new Asset(asset.id, asset.name, asset.type, asset.is_sensitive, asset.description)
-        )
-        return new Device(
-            deviceData.device_name,
-            assetInstances,
-            deviceData.operating_system,
-            deviceData.firmware_version,
-            deviceData.functionalities,
-            deviceData.description
+    #isPerAssetResults(results) {
+        if (!results || typeof results !== 'object') {
+            return false
+        }
+
+        return Object.values(results).some(
+            (value) => value && typeof value === 'object' && !Array.isArray(value)
         )
     }
 
+    async #setPerAssetResultsFromExport(sessionId) {
+        if (!sessionId) {
+            return
+        }
+
+        const payload = { answer: this.getFormattedAnswers() }
+        const response = await apiClient.post(`/session/${sessionId}/export`, payload)
+        const data = typeof response === 'string' ? JSON.parse(response) : response
+
+        if (data?.results) {
+            useSessionStore.getState().setResultsPerAsset(data.results)
+        }
+    }
     // Private helper method to set the current node from response or TreeStore
     #setCurrentNodeFromResponse(response, position) {
         if (response.current_node) {
-            useSessionStore.getState().setCurrentNode(response.current_node)
+            useSessionStore
+                .getState()
+                .setCurrentNode(Node.fromApi(position?.current_node_id, response.current_node))
             return
         }
 
@@ -41,21 +61,13 @@ class SessionService {
         if (nodeFromStore) {
             useSessionStore.getState().setCurrentNode(nodeFromStore)
         } else {
-            useSessionStore.getState().setCurrentNode({
-                id: position.current_node_id,
-                text: 'Loading question...',
-            })
+            useSessionStore
+                .getState()
+                .setCurrentNode(new Node(position.current_node_id, 'Loading question...'))
         }
     }
 
-    // Private method to initialize stores and return session data from API response
-    #initializeSessionFromResponse(response) {
-        const { session_id: sessionId, device, position } = response
-        const deviceObj = this.#createDeviceFromResponse(device)
-
-        useSessionStore.getState().setSessionId(sessionId)
-        useSessionStore.getState().setSessionUploaded(false)
-        useDeviceStore.getState().setDevice(deviceObj)
+    #setSessionPositionFromResponse(position) {
         useSessionStore
             .getState()
             .setDevicePosition(
@@ -63,6 +75,38 @@ class SessionService {
                 position.current_tree_index,
                 position.current_node_id
             )
+    }
+
+    #syncCurrentNodeFromTree(currentTreeIndex, errorCode, errorMessage) {
+        const { currentNode } = useSessionStore.getState()
+
+        if (!currentNode?.id) {
+            return
+        }
+
+        const nodeFromTree = useTreeStore
+            .getState()
+            .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
+
+        if (!nodeFromTree) {
+            throw new StateError(errorMessage, {
+                code: errorCode,
+                context: { currentTreeIndex, nodeId: currentNode.id },
+            })
+        }
+
+        useSessionStore.getState().setCurrentNode(nodeFromTree)
+    }
+
+    // Private method to initialize stores and return session data from API response
+    #initializeSessionFromResponse(response) {
+        const { session_id: sessionId, device, position } = response
+        const deviceObj = createDeviceFromApiResponse(device)
+
+        useSessionStore.getState().setSessionId(sessionId)
+        useSessionStore.getState().setSessionUploaded(false)
+        useDeviceStore.getState().setDevice(deviceObj)
+        this.#setSessionPositionFromResponse(position)
 
         this.#setCurrentNodeFromResponse(response, position)
 
@@ -92,18 +136,6 @@ class SessionService {
         return this.#initializeSessionFromResponse(response)
     }
 
-    // TODO: aspettare risposta bluewind
-    resumeSession(requirementId, assetId) {
-        void requirementId
-        void assetId
-        // TODO: Logica per riprendere una sessione specifica
-    }
-
-    importSessionFromFile(content) {
-        void content
-        // TODO: Validazione file JSON e popolamento dello store
-    }
-
     // Private helper to get the first node of a tree by index
     #getFirstNodeOfTree(treeIndex) {
         const node = useTreeStore.getState().getNodeByTreeIndexAndNodeId(treeIndex, 'node1')
@@ -119,7 +151,7 @@ class SessionService {
             .getNodeByTreeIndexAndNodeId(current_tree_index, next_node_id)
 
         if (!nextNode) {
-            throw new StateError('Nodo successivo non trovato nello stato locale.', {
+            throw new StateError('Successive node not found in local state..', {
                 code: 'TREE_NEXT_NODE_NOT_FOUND',
                 context: { current_tree_index, next_node_id },
             })
@@ -133,59 +165,55 @@ class SessionService {
 
     // Private helper to navigate to a node and update device position
     #navigateToNode(treeIndex, assetIndex, nodeId) {
-        const nextNode = this.#getFirstNodeOfTree(treeIndex)
+        const targetNodeId = nodeId ?? 'node1'
+        const nextNode = useTreeStore
+            .getState()
+            .getNodeByTreeIndexAndNodeId(treeIndex, targetNodeId)
         if (!nextNode) {
-            throw new StateError('Nodo iniziale dell albero non trovato nello stato locale.', {
+            throw new StateError('First node of the tree not found in local state.', {
                 code: 'TREE_FIRST_NODE_NOT_FOUND',
-                context: { treeIndex, assetIndex, nodeId },
+                context: { treeIndex, assetIndex, nodeId: targetNodeId },
             })
         }
-        useSessionStore.getState().setDevicePosition(assetIndex, treeIndex, nodeId)
+        useSessionStore.getState().setDevicePosition(assetIndex, treeIndex, targetNodeId)
         useSessionStore.getState().setCurrentNode(nextNode)
     }
 
     // Private helper to handle tree completion
-    #handleTreeCompleted(response, previousAssetIndex) {
+    async #handleTreeCompleted(response, previousAssetIndex) {
         if (response.session_finished) {
-            // Transform backend results to RequirementResult format and save to store
-            const transformedResults = this.#transformResultsToRequirementResults(response.results)
+            const transformedResults = mapResultsToRequirementResults(response.results)
             useResultStore.getState().setResults(transformedResults)
+            if (this.#isPerAssetResults(response.results)) {
+                useSessionStore.getState().setResultsPerAsset(response.results)
+            } else {
+                await this.#setPerAssetResultsFromExport(useSessionStore.getState().sessionId)
+            }
             useSessionStore.getState().setTestFinished(true)
             return
         }
 
         const { current_asset_index, current_tree_index, next_node_id } = response
         const assetChanged = current_asset_index !== previousAssetIndex
-        const nodeId = assetChanged ? next_node_id : 'node1'
+        const nodeId = assetChanged ? (next_node_id ?? 'node1') : 'node1'
 
         this.#navigateToNode(current_tree_index, current_asset_index, nodeId)
     }
 
-    // Private helper to transform backend results into RequirementResult format
-    #transformResultsToRequirementResults(backendResults) {
-        // backendResults structure: {requirementId: status}
-        // Example: {"ACM-1": "PASS", "ACM-2": "FAIL", ...}
-        const results = []
-
-        for (const [code, status] of Object.entries(backendResults)) {
-            results.push({
-                code: code,
-                status: status,
-            })
-        }
-
-        return results
-    }
-
     // Private helper to handle go_back response
-    #handleGoBackResponse(response) {
+    async #handleGoBackResponse(response) {
         if (!response.found) {
             return
         }
 
         if (response.session_finished) {
-            const transformedResults = this.#transformResultsToRequirementResults(response.results)
+            const transformedResults = mapResultsToRequirementResults(response.results)
             useResultStore.getState().setResults(transformedResults)
+            if (this.#isPerAssetResults(response.results)) {
+                useSessionStore.getState().setResultsPerAsset(response.results)
+            } else {
+                await this.#setPerAssetResultsFromExport(useSessionStore.getState().sessionId)
+            }
             useSessionStore.getState().setTestFinished(true)
             return
         }
@@ -212,109 +240,66 @@ class SessionService {
 
     // Answer the current question and move to the next node
     async sendAnswer(answer) {
-        const sessionId = useSessionStore.getState().sessionId
-        const currentAssetIndex = useSessionStore.getState().currentAssetIndex
-        const currentNode = useSessionStore.getState().currentNode
-        const currentTreeIndex = useSessionStore.getState().currentTreeIndex
-
-        // Check if futureHistory is not empty, meaning user went back and is
-        // answering a previous question, OR if we're in resume mode
-        // (resuming from selected asset)
-        const futureHistory = useSessionStore.getState().futureHistory
-        const isResumeMode = useSessionStore.getState().isResumeMode
-        const hasGoingBack = futureHistory.length > 0 || isResumeMode
-
-        // Save the current question and answer to pastHistory
-        useSessionStore.getState().selectAnswer(answer)
-
-        // Clear future history since we're creating a new path by answering
-        useSessionStore.getState().clearFuture()
-
-        // Exit resume mode after first answer
-        if (isResumeMode) {
-            useSessionStore.getState().setResumeMode(false)
+        const { sessionId, currentAssetIndex, currentNode, currentTreeIndex } = {
+            sessionId: useSessionStore.getState().sessionId,
+            currentAssetIndex: useSessionStore.getState().currentAssetIndex,
+            currentNode: useSessionStore.getState().currentNode,
+            currentTreeIndex: useSessionStore.getState().currentTreeIndex,
         }
 
-        let response
-        if (hasGoingBack) {
-            // User went back and is changing a previous answer, OR resuming from selected asset
-            // use go_back endpoint
-            response = await apiClient.post(`/session/${sessionId}/go_back`, {
-                target_asset_index: currentAssetIndex,
-                target_node_id: currentNode?.id,
-                target_tree_index: currentTreeIndex,
-                new_answer: answer,
-            })
-            this.#handleGoBackResponse(response)
-        } else {
-            // Normal forward progression - use answer endpoint
-            response = await apiClient.post(`/session/${sessionId}/answer`, {
-                answer,
+        // Capture the flow before transition side effects clear future history and resume mode.
+        const shouldGoBackFlow = shouldUseGoBackFlow(useSessionStore)
+
+        applyAnswerTransition(useSessionStore, answer)
+
+        if (shouldGoBackFlow) {
+            const goBackResponse = await postGoBackAnswer(apiClient, sessionId, answer, {
+                currentAssetIndex,
+                currentNode,
+                currentTreeIndex,
             })
 
-            // Backend provides current position information:
-            // current_asset_index, current_tree_index, next_node_id
-            // This allows proper navigation when trees are skipped due to NA/FAIL results
-            if (response.tree_completed) {
-                this.#handleTreeCompleted(response, currentAssetIndex)
-            } else {
-                this.#handleNextNodeSameTree(response)
-            }
+            await this.#handleGoBackResponse(goBackResponse)
+            return
         }
+
+        const forwardResponse = await postForwardAnswer(apiClient, sessionId, answer)
+
+        if (forwardResponse.tree_completed) {
+            await this.#handleTreeCompleted(forwardResponse, currentAssetIndex)
+            return
+        }
+
+        this.#handleNextNodeSameTree(forwardResponse)
     }
 
     // Go back to a previous node and change answer
     async previousStep() {
-        // Call the store's navigation method
         useSessionStore.getState().goToPreviousNode()
-
-        // Get the updated state - goToPreviousNode has already set currentNode
         const { currentNode, currentTreeIndex } = useSessionStore.getState()
 
-        // Fetch the full node data from TreeStore using the node ID and tree index
-        if (currentNode && currentNode.id) {
-            const nodeFromTree = useTreeStore
-                .getState()
-                .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
-
-            if (nodeFromTree) {
-                useSessionStore.getState().setCurrentNode(nodeFromTree)
-            } else {
-                throw new StateError('Nodo precedente non trovato nello stato locale.', {
-                    code: 'TREE_PREVIOUS_NODE_NOT_FOUND',
-                    context: { currentTreeIndex, nodeId: currentNode.id },
-                })
-            }
+        if (currentNode?.id) {
+            this.#syncCurrentNodeFromTree(
+                currentTreeIndex,
+                'TREE_PREVIOUS_NODE_NOT_FOUND',
+                'Previous node not found in local state.'
+            )
         }
     }
 
     // Go forward in the future history (if user went back previously)
     async forwardStep() {
-        // Call the store's navigation method
         useSessionStore.getState().goToNextNode()
-
-        // Get the updated state - goToNextNode has already set currentNode
         const { currentNode, currentTreeIndex } = useSessionStore.getState()
 
-        // Fetch the full node data from TreeStore using the node ID and tree index
-        if (currentNode && currentNode.id) {
-            const nodeFromTree = useTreeStore
-                .getState()
-                .getNodeByTreeIndexAndNodeId(currentTreeIndex, currentNode.id)
-
-            if (nodeFromTree) {
-                useSessionStore.getState().setCurrentNode(nodeFromTree)
-            } else {
-                throw new StateError('Nodo successivo non trovato nello stato locale.', {
-                    code: 'TREE_FORWARD_NODE_NOT_FOUND',
-                    context: { currentTreeIndex, nodeId: currentNode.id },
-                })
-            }
+        if (currentNode?.id) {
+            this.#syncCurrentNodeFromTree(
+                currentTreeIndex,
+                'TREE_FORWARD_NODE_NOT_FOUND',
+                'Next node not found in local state.'
+            )
         }
     }
-
-    // Modify a previous answer by going back and re-answering
-    async modifyPreviousAnswer() {}
 
     // Load a previously saved session from a JSON file
     async loadSessionFromFile(file) {
@@ -331,7 +316,7 @@ class SessionService {
         useSessionStore.getState().setSessionUploaded(true)
 
         // Create Device object from response data and set in DeviceStore
-        const deviceObj = this.#createDeviceFromResponse(response.device)
+        const deviceObj = createDeviceFromApiResponse(response.device)
         useDeviceStore.getState().setDevice(deviceObj)
 
         // Import past history (previous answers) into SessionStore
@@ -346,18 +331,18 @@ class SessionService {
         // For finished sessions, position is invalid (asset_index out of bounds, node_id empty)
         // The position will be set when user selects asset in ModifySessionView
         if (!response.is_finished) {
-            useSessionStore
-                .getState()
-                .setDevicePosition(current_asset_index, current_tree_index, current_node_id)
+            this.#setSessionPositionFromResponse({
+                current_asset_index,
+                current_tree_index,
+                current_node_id,
+            })
 
             // Load the current node from TreeStore using tree index and node ID
             this.#setCurrentNodeFromResponse(response, response.position)
         }
 
         // Transform aggregate_results to RequirementResult format and save to ResultStore
-        const transformedResults = this.#transformResultsToRequirementResults(
-            response.aggregate_results
-        )
+        const transformedResults = mapResultsToRequirementResults(response.aggregate_results)
         useResultStore.getState().setResults(transformedResults)
 
         // Save results per asset in SessionStore for detailed view
@@ -374,23 +359,14 @@ class SessionService {
     // Delete session and clear stores (same behavior as HomeIcon)
     async saveAndExit() {
         try {
-            const sessionId = useSessionStore.getState().sessionId
-
-            // Delete session on backend
-            if (sessionId) {
-                await apiClient.delete(`/session/${sessionId}/delete`)
-            }
+            await deleteRemoteSessionIfPresent(useSessionStore, apiClient)
         } catch {
             // Continue clearing local stores even if backend delete fails
         } finally {
-            // Always clear local stores
             deviceService.clearDevice()
-            this.clearSession()
+            clearLocalSessionState(useSessionStore, useResultStore)
         }
     }
-
-    // Fetch final results after session is finished
-    async fetchFinalResults() {}
 
     // Get the current session ID
     getSessionId() {
@@ -400,7 +376,8 @@ class SessionService {
     // Get formatted answers from the session history for export
     getFormattedAnswers() {
         const { pastHistory } = useSessionStore.getState()
-        return pastHistory.map((item) => ({
+        const history = Array.isArray(pastHistory) ? pastHistory : []
+        return history.map((item) => ({
             asset_index: item.assetIndex,
             tree_index: item.treeIndex,
             node_id: item.nodeId,
@@ -411,20 +388,46 @@ class SessionService {
     // Clear all session-related data from stores and delete session on backend
     async clearSession() {
         try {
-            const sessionId = useSessionStore.getState().sessionId
-
-            // Delete session on backend
-            if (sessionId) {
-                await apiClient.delete(`/session/${sessionId}/delete`)
-            }
+            await deleteRemoteSessionIfPresent(useSessionStore, apiClient)
         } catch {
             // Continue clearing local stores even if backend delete fails
         } finally {
-            // Always clear local stores
-            useSessionStore.getState().clearStore()
-            useResultStore.getState().clearStore()
+            clearLocalSessionState(useSessionStore, useResultStore)
         }
+    }
+
+    resumeSession(requirementId, assetId) {
+        const currentDevice = useDeviceStore.getState().currentDevice
+        const trees = useTreeStore.getState().trees
+
+        if (!assetId || !requirementId || !currentDevice || !trees) {
+            return false
+        }
+
+        const assetIndex = currentDevice.assets.findIndex((asset) => asset.id === assetId)
+        const treeIndex = trees.findIndex((tree) => tree.id === requirementId)
+
+        if (assetIndex === -1 || treeIndex === -1) {
+            return false
+        }
+
+        const firstNode = this.#getFirstNodeOfTree(treeIndex)
+
+        if (!firstNode) {
+            return false
+        }
+
+        useSessionStore.getState().setDevicePosition(assetIndex, treeIndex, 'node1')
+        useSessionStore.getState().setCurrentNode(firstNode)
+        useSessionStore.getState().truncateHistoryByPosition(assetIndex, treeIndex)
+        useSessionStore.getState().clearFuture()
+        useSessionStore.getState().setResumeMode(true)
+        useSessionStore.getState().setSessionUploaded(false)
+        useSessionStore.getState().setTestFinished(false)
+
+        return true
     }
 }
 
-export default new SessionService() // Esportato come Singleton
+// Exported as a singleton instance
+export default new SessionService()

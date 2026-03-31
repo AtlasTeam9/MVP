@@ -1,5 +1,3 @@
-import Device from '../domain/Device'
-import { deviceSchema } from '../domain/schemas/DeviceSchema'
 import useDeviceStore from '../store/DeviceStore'
 import useUIStore from '../store/UIStore'
 import exportService from './ExportService'
@@ -10,37 +8,6 @@ export function useCurrentDevice() {
 }
 
 class DeviceService {
-    // Converts snake_case JSON data to camelCase for internal use
-    normalizeDeviceData(data) {
-        return {
-            name: data.device_name,
-            operatingSystem: data.operating_system,
-            firmwareVersion: data.firmware_version,
-            functionalities: data.functionalities,
-            assets: data.assets,
-            description: data.description,
-        }
-    }
-
-    // Upload of a device file (JSON) - delega la logica al backend
-    async receiveFile(file) {
-        if (!this.validateFile(file)) throw new Error('Invalid file type')
-        // La logica di caricamento e validazione è ora gestita dal SessionService e dal backend
-        // Questo metodo rimane per compatibilità
-        return file
-    }
-
-    // Validates that the file is a JSON file
-    validateFile(file) {
-        return file && file.type === 'application/json'
-    }
-
-    // Validates the device data structure
-    validateDeviceData(data) {
-        const result = deviceSchema.safeParse(data)
-        return result.success
-    }
-
     // Create a new device and save it to the DeviceStore
     createDevice(device) {
         useDeviceStore.getState().setDevice(device)

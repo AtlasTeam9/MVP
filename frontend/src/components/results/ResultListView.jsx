@@ -6,8 +6,8 @@ import styles from './ResultListView.module.css'
 export function ResultListView({ items }) {
     return (
         <div className={styles.listContainer}>
-            {items.map((item, index) => (
-                <ResultItemView key={index} item={item} />
+            {items.map((item) => (
+                <ResultItemView key={item.code} item={item} />
             ))}
         </div>
     )

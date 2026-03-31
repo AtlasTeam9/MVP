@@ -41,10 +41,10 @@ describe('Device — toDict() without assets or description', () => {
         const dev = new Device('Router', [], 'Linux', '1.0', 'routing', 'Desc')
         const dict = dev.toDict()
         expect(dict).toEqual({
-            deviceName: 'Router',
+            'device_name': 'Router',
             assets: [],
-            operatingSystem: 'Linux',
-            firmwareVersion: '1.0',
+            'operating_system': 'Linux',
+            'firmware_version': '1.0',
             functionalities: 'routing',
             description: 'Desc',
         })
@@ -59,16 +59,16 @@ describe('Device — toDict() without assets or description', () => {
 // Unit test for toDict() with assets
 describe('Device — toDict() with assets', () => {
     it('serialize correctly the included assets', () => {
-        const asset = new Asset('a1', 'eth0', AssetType.NETWORK, false, 'LAN interface')
+        const asset = new Asset('a1', 'eth0', AssetType.NETWORK_FUNCTION, false, 'LAN interface')
         const dev = new Device('Router', [asset], 'Linux', '1.0', 'routing')
         const dict = dev.toDict()
         expect(dict.assets).toHaveLength(1)
         expect(dict.assets[0]).toEqual({
             id: 'a1',
             name: 'eth0',
-            type: 'Network',
-            isSensitive: false,
-            desc: 'LAN interface',
+            type: AssetType.NETWORK_FUNCTION,
+            'is_sensitive': false,
+            description: 'LAN interface',
         })
     })
 })
@@ -81,9 +81,22 @@ describe('Device — get assets()', () => {
     })
 
     it('returns the assets passed to the constructor', () => {
-        const a1 = new Asset('1', 'eth0', AssetType.NETWORK, false, 'LAN interface')
-        const a2 = new Asset('2', 'wlan0', AssetType.SECURITY, true, 'Wireless interface')
+        const a1 = new Asset('1', 'eth0', AssetType.NETWORK_FUNCTION, false, 'LAN interface')
+        const a2 = new Asset('2', 'wlan0', AssetType.SECURITY_FUNCTION, true, 'Wireless interface')
         const dev = new Device('Device', [a1, a2], 'Linux', '1.0', 'functionality')
         expect(dev.assets).toHaveLength(2)
+    })
+
+    it('adds and removes assets by id', () => {
+        const asset1 = new Asset('1', 'eth0', AssetType.NETWORK_FUNCTION, false, 'LAN interface')
+        const asset2 = new Asset('2', 'wlan0', AssetType.SECURITY_FUNCTION, true, 'WiFi interface')
+        const dev = new Device('Device', [asset1], 'Linux', '1.0', 'functionality')
+
+        dev.addAsset(asset2)
+        expect(dev.assets).toHaveLength(2)
+
+        dev.deleteAsset('1')
+        expect(dev.assets).toHaveLength(1)
+        expect(dev.assets[0].name).toBe('wlan0')
     })
 })

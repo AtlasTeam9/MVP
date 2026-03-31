@@ -20,7 +20,6 @@ const initialData = {
 // Helper function to convert form data into an Asset instance
 const buildAsset = (data) => {
     const id = Date.now().toString() // Generate a simple unique ID
-    // TODO: capire come gestire il campo id
     return new Asset(id, data.name, data.type, data.isSensitive, data.desc || null)
 }
 
@@ -56,11 +55,15 @@ function useAssetForm() {
 
 // Component for iOS-style toggle switch used for the "Is Sensitive" field
 function ToggleSwitch({ registration, label }) {
+    const inputId = registration.name
+
     return (
         <div className={styles.toggleContainer}>
-            <label className={styles.toggleLabel}>{label}</label>
+            <label className={styles.toggleLabel} htmlFor={inputId}>
+                {label}
+            </label>
             <label className={styles.toggleSwitch}>
-                <input type="checkbox" {...registration} />
+                <input id={inputId} type="checkbox" {...registration} />
                 <span className={styles.toggleSlider}></span>
             </label>
         </div>
@@ -177,7 +180,7 @@ export default function AssetFormView() {
 
     return (
         <>
-            <BackIcon className={styles.backIcon} onBack={onCancel} />
+            <BackIcon onBack={onCancel} />
             <form className={styles.container} onSubmit={handleSubmit}>
                 <h2>Add New Asset</h2>
 

@@ -1,78 +1,9 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useCurrentDevice } from '../services/DeviceService'
-import deviceService from '../services/DeviceService'
-import sessionService from '../services/SessionService'
-import useUIStore from '../store/UIStore'
-import NotificationManager from '../infrastructure/notifications/NotificationManager'
-
 import styles from './DeviceAssetManagementView.module.css'
 import BackIcon from '../components/common/BackIcon'
 import HomeIcon from '../components/common/HomeIcon'
-
-async function createSessionAndNavigate(currentDevice, navigate) {
-    if (!currentDevice) return
-
-    try {
-        await sessionService.createSessionWithDevice(currentDevice)
-        navigate('/device/summary', { state: { fromDeviceAssetManagement: true } })
-    } catch (error) {
-        NotificationManager.notifyError(error)
-    }
-}
-
-// Custom hook to manage the logic of the Device Asset Management view
-function useAssetManagement() {
-    const navigate = useNavigate()
-    const [showUnsavedDialog, setShowUnsavedDialog] = useState(false)
-    const currentDevice = useCurrentDevice()
-
-    const proceedToSummary = async () => {
-        await createSessionAndNavigate(currentDevice, navigate)
-    }
-
-    const onGoToSummary = async () => {
-        if (useUIStore.getState().isDirty) {
-            setShowUnsavedDialog(true)
-            return
-        }
-
-        await proceedToSummary()
-    }
-
-    const onSaveDevice = () => {
-        if (!currentDevice) return
-
-        deviceService.saveDeviceToFile()
-    }
-
-    const onConfirmSaveBeforeSummary = async () => {
-        onSaveDevice()
-        setShowUnsavedDialog(false)
-        await proceedToSummary()
-    }
-
-    const onConfirmSkipSaveBeforeSummary = async () => {
-        setShowUnsavedDialog(false)
-        await proceedToSummary()
-    }
-
-    const onCancelUnsavedDialog = () => {
-        setShowUnsavedDialog(false)
-    }
-
-    return {
-        currentDevice,
-        showUnsavedDialog,
-        onAddAsset: () => navigate('/asset/new'),
-        onGoToSummary,
-        onDeleteAsset: deviceService.removeAsset,
-        onSaveDevice,
-        onConfirmSaveBeforeSummary,
-        onConfirmSkipSaveBeforeSummary,
-        onCancelUnsavedDialog,
-    }
-}
+import { Modal } from '../components/common/Modal'
+import { useAssetManagement } from '../hooks/useAssetManagement'
+import binIcon from '../assets/icons/bin.png'
 
 // Component to display the list of assets for the current device
 function AssetListDisplay({ assets, onDeleteAsset }) {
@@ -89,14 +20,16 @@ function AssetListDisplay({ assets, onDeleteAsset }) {
             <h4 className={styles.assetListTitle}>Assets ({assets.length})</h4>
             <div className={styles.assetItems}>
                 {assets.map((asset) => (
-                    <div key={asset.name} className={styles.assetItem}>
+                    <div key={asset.id} className={styles.assetItem}>
                         <span className={styles.assetName}>{asset.name}</span>
                         <button
+                            type="button"
                             className={styles.deleteBtn}
-                            onClick={() => onDeleteAsset(asset.name)}
+                            onClick={() => onDeleteAsset(asset.id)}
                             title="Delete asset"
+                            aria-label={`Delete asset ${asset.name}`}
                         >
-                            🗑️
+                            <img src={binIcon} alt="" className={styles.deleteIcon} aria-hidden="true" />
                         </button>
                     </div>
                 ))}
@@ -110,15 +43,15 @@ function AssetListDisplay({ assets, onDeleteAsset }) {
 function AssetActionButtons({ assets, onAddAsset, onGoToSummary, onSaveDevice }) {
     return (
         <div className={styles.buttonGroup}>
-            <button className={styles.btnPrimary} onClick={onAddAsset}>
+            <button type="button" className={styles.btnPrimary} onClick={onAddAsset}>
                 Add new asset
             </button>
             {assets && assets.length > 0 && (
                 <>
-                    <button className={styles.btnSecondary} onClick={onGoToSummary}>
+                    <button type="button" className={styles.btnSecondary} onClick={onGoToSummary}>
                         Go to summary
                     </button>
-                    <button className={styles.btnSecondary} onClick={onSaveDevice}>
+                    <button type="button" className={styles.btnSecondary} onClick={onSaveDevice}>
                         Save Device
                     </button>
                 </>
@@ -129,28 +62,24 @@ function AssetActionButtons({ assets, onAddAsset, onGoToSummary, onSaveDevice })
 
 function UnsavedChangesDialog({ onConfirmSave, onConfirmSkipSave, onCancel }) {
     return (
-        <div className={styles.overlay} onClick={onCancel}>
-            <div className={styles.modal} onClick={(event) => event.stopPropagation()}>
-                <div className={styles.modalHeader}>
-                    <h2 className={styles.modalTitle}>Unsaved changes</h2>
-                    <button className={styles.modalCloseBtn} onClick={onCancel}>
-                        ✕
-                    </button>
-                </div>
-                <p className={styles.modalText}>
-                    There are unsaved changes to the device. Do you want to save before going to
-                    the summary?
-                </p>
-                <div className={styles.modalActions}>
-                    <button className={styles.modalButton} onClick={onConfirmSave}>
-                        YES
-                    </button>
-                    <button className={styles.modalButtonSecondary} onClick={onConfirmSkipSave}>
-                        NO
-                    </button>
-                </div>
+        <Modal title="Unsaved changes" onClose={onCancel} maxWidth="420px" titleSize="1.1rem">
+            <p className={styles.modalText}>
+                There are unsaved changes to the device. Do you want to save before going to the
+                summary?
+            </p>
+            <div className={styles.modalActions}>
+                <button type="button" className={styles.modalButton} onClick={onConfirmSave}>
+                    YES
+                </button>
+                <button
+                    type="button"
+                    className={styles.modalButtonSecondary}
+                    onClick={onConfirmSkipSave}
+                >
+                    NO
+                </button>
             </div>
-        </div>
+        </Modal>
     )
 }
 
@@ -162,10 +91,11 @@ function DeviceAssetManagementContent({
     onGoToSummary,
     onDeleteAsset,
     onSaveDevice,
+    onHome,
 }) {
     return (
-        <div className={styles.container}>
-            <BackIcon className={styles.backIcon} />
+        <div className={`page-shell page-shell--top ${styles.container}`}>
+            <BackIcon />
             <header className={styles.header}>
                 <div className={styles.headerTitle}>
                     <h1>Device Asset Management</h1>
@@ -187,7 +117,7 @@ function DeviceAssetManagementContent({
                 />
             </div>
             <div className={styles.navigationIcons}>
-                <HomeIcon />
+                <HomeIcon onHome={onHome} />
             </div>
         </div>
     )
@@ -205,11 +135,12 @@ export default function DeviceAssetManagementView() {
         onConfirmSaveBeforeSummary,
         onConfirmSkipSaveBeforeSummary,
         onCancelUnsavedDialog,
+        onHome,
     } = useAssetManagement()
 
     if (!currentDevice) {
         return (
-            <div className={styles.container}>
+            <div className={`page-shell page-shell--top ${styles.container}`}>
                 <p>No device loaded. Please create or select a device first.</p>
             </div>
         )
@@ -223,6 +154,7 @@ export default function DeviceAssetManagementView() {
                 onGoToSummary={onGoToSummary}
                 onDeleteAsset={onDeleteAsset}
                 onSaveDevice={onSaveDevice}
+                onHome={onHome}
             />
             {showUnsavedDialog && (
                 <UnsavedChangesDialog

@@ -10,12 +10,7 @@ export default defineConfig({
         setupFiles: './src/test/setup.js',
         coverage: {
             reporter: ['text', 'html'],
-            include: [
-                'src/domain/**',
-                'src/infrastructure/**',
-                'src/components/**',
-                'src/pages/**',
-            ],
+            include: ['src/**'],
             exclude: ['src/test/**', '**/*.module.css'],
         },
     },

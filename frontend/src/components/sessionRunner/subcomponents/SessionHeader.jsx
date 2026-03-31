@@ -1,17 +1,26 @@
 import React from 'react'
-import styles from '../../../pages/SessionRunnerView.module.css'
+import styles from '../SessionRunnerComponents.module.css'
 import { calculateCompletionPercentage } from '../../../infrastructure/utils/progressCalculator'
+import { useSessionRunnerContext } from '../SessionRunnerContext'
 
 // Component for rendering the session header with
 // device and asset information, completion percentage, and Save & Exit button
-function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit, pastHistory, trees }) {
+function SessionHeader() {
+    const ctx = useSessionRunnerContext()
+    const device = ctx?.currentDevice
+    const assetIndex = ctx?.currentAssetIndex ?? 0
+    const treeIndex = ctx?.currentTreeIndex ?? 0
+    const pastHistory = ctx?.pastHistory ?? []
+    const trees = ctx?.trees ?? []
+
     const completionPercentage = calculateCompletionPercentage(
-        currentAssetIndex,
+        assetIndex,
         pastHistory,
         trees,
-        currentDevice?.assets
+        device?.assets,
+        treeIndex
     )
-    const currentAsset = currentDevice?.assets?.[currentAssetIndex]
+    const currentAsset = device?.assets?.[assetIndex]
 
     return (
         <header className={styles.header}>
@@ -21,7 +30,7 @@ function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit, pastHisto
                     <div className={styles.completionPercentage}>{completionPercentage}%</div>
                 </div>
                 <div className={styles.deviceInfo}>
-                    <h2 className={styles.deviceName}>{currentDevice?.name}</h2>
+                    <h2 className={styles.deviceName}>{device?.name}</h2>
                     {currentAsset && (
                         <p className={styles.assetName}>
                             <strong>Asset:</strong> {currentAsset.name}
@@ -29,7 +38,7 @@ function SessionHeader({ currentDevice, currentAssetIndex, onSaveExit, pastHisto
                     )}
                 </div>
             </div>
-            <button onClick={onSaveExit} className={styles.btnExit}>
+            <button type="button" onClick={ctx?.onSaveExit} className={styles.btnExit}>
                 Save & Exit
             </button>
         </header>

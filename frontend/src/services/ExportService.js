@@ -2,6 +2,30 @@ import apiClient from '../infrastructure/api/AxiosApiClient'
 import StateError from '../infrastructure/errors/StateError'
 
 class ExportService {
+    isEmptyPayload(payload) {
+        if (payload === null || payload === undefined) {
+            return true
+        }
+
+        if (payload instanceof Blob) {
+            return payload.size === 0
+        }
+
+        if (typeof payload === 'string') {
+            return payload.length === 0
+        }
+
+        if (payload instanceof ArrayBuffer) {
+            return payload.byteLength === 0
+        }
+
+        if (ArrayBuffer.isView(payload)) {
+            return payload.byteLength === 0
+        }
+
+        return false
+    }
+
     /**
      * Export results of the session in a specific format (csv, pdf)
      * @param {string} sessionId - ID of the session
@@ -13,7 +37,7 @@ class ExportService {
             responseType: 'blob',
         })
 
-        if (!blob || (blob.size === 0 && blob.length === 0)) {
+        if (this.isEmptyPayload(blob)) {
             throw new StateError('Il server ha ritornato una risposta vuota.', {
                 code: 'EXPORT_EMPTY_RESPONSE',
                 context: { format },
@@ -56,7 +80,7 @@ class ExportService {
             }
         )
 
-        if (!blob || (blob.size === 0 && blob.length === 0)) {
+        if (this.isEmptyPayload(blob)) {
             throw new StateError('Il server ha ritornato una risposta vuota.', {
                 code: 'EXPORT_EMPTY_RESPONSE',
                 context: { format: 'json' },

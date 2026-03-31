@@ -6,12 +6,13 @@ const validDevice = {
     name: 'Router',
     operatingSystem: 'Linux',
     firmwareVersion: '1.0.0',
-    functionality: 'routing',
+    functionalities: 'routing',
 }
 
 // Helper function to omit a specific key (field) from an object
 function omit(obj, key) {
-    const { [key]: _, ...rest } = obj
+    const { [key]: omittedField, ...rest } = obj
+    void omittedField
     return rest
 }
 
@@ -48,7 +49,7 @@ describe('deviceSchema — missing required fields', () => {
     })
 
     it('fails if functionality is missing', () => {
-        expect(deviceSchema.safeParse(omit(validDevice, 'functionality')).success).toBe(false)
+        expect(deviceSchema.safeParse(omit(validDevice, 'functionalities')).success).toBe(false)
     })
 })
 
@@ -73,9 +74,9 @@ describe('deviceSchema — missing required fields', () => {
     })
 
     it('fails if functionality is an empty string', () => {
-        const result = deviceSchema.safeParse({ ...validDevice, functionality: '' })
+        const result = deviceSchema.safeParse({ ...validDevice, functionalities: '' })
         expect(result.success).toBe(false)
-        expect(result.error.issues[0].message).toBe('Functionality is required')
+        expect(result.error.issues[0].message).toBe('Functionalities are required')
     })
 })
 

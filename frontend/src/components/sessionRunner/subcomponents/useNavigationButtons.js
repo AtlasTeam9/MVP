@@ -1,26 +1,39 @@
-import styles from '../../../pages/SessionRunnerView.module.css'
+import styles from '../SessionRunnerComponents.module.css'
 
 // Custom hook to generate navigation button configurations based on history and loading state
 
 // Array of configurations for the Back, Home, and Forward buttons
 const BUTTON_BASE_CONFIGS = [
-    { className: styles.btnNav, title: 'Previous question', label: '← Previous question' },
-    { className: styles.btnHome, title: 'Return to home', label: '🏠' },
-    { className: styles.btnNav, title: 'Next question', label: 'Next question →' },
+    {
+        id: 'back',
+        className: styles.btnNav,
+        title: 'Previous question',
+        label: '← Previous question',
+    },
+    { id: 'home', title: 'Return to home' },
+    { id: 'forward', className: styles.btnNav, title: 'Next question', label: 'Next question →' },
 ]
 
 // Hook to create button configurations for navigation buttons
 function useNavigationButtons(pastHistory, futureHistory, isLoading, onBack, onHome, onForward) {
-    const handlers = [onBack, onHome, onForward]
-    const disabledStates = [
-        pastHistory.length === 0 || isLoading,
-        isLoading,
-        futureHistory.length === 0 || isLoading,
-    ]
-    return BUTTON_BASE_CONFIGS.map((config, i) => ({
+    const buttonRuntimeConfig = {
+        back: {
+            onClick: onBack,
+            disabled: pastHistory.length === 0 || isLoading,
+        },
+        home: {
+            onClick: onHome,
+            disabled: isLoading,
+        },
+        forward: {
+            onClick: onForward,
+            disabled: futureHistory.length === 0 || isLoading,
+        },
+    }
+
+    return BUTTON_BASE_CONFIGS.map((config) => ({
         ...config,
-        onClick: handlers[i],
-        disabled: disabledStates[i],
+        ...buttonRuntimeConfig[config.id],
     }))
 }
 

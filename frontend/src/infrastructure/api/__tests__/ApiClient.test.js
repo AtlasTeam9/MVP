@@ -3,7 +3,10 @@ import IApiClient from '../IApiClient'
 
 // Creation of a mock for axios
 vi.mock('axios', () => ({
-    default: { create: vi.fn(() => axiosInstance) },
+    default: {
+        create: vi.fn(() => axiosInstance),
+        isAxiosError: (error) => Boolean(error?.isAxiosError),
+    },
 }))
 
 let axiosInstance
@@ -11,7 +14,7 @@ let AxiosApiClient
 
 async function setupAxiosMock() {
     vi.resetModules()
-    axiosInstance = { get: vi.fn(), post: vi.fn() }
+    axiosInstance = { get: vi.fn(), post: vi.fn(), delete: vi.fn() }
     const mod = await import('../AxiosApiClient')
     AxiosApiClient = mod.default
 }
@@ -30,6 +33,9 @@ describe('IApiClient — instantiation', () => {
                 return Promise.resolve({})
             }
             post() {
+                return Promise.resolve({})
+            }
+            delete() {
                 return Promise.resolve({})
             }
         }
@@ -54,6 +60,15 @@ describe('IApiClient — unimplemented methods', () => {
         const client = new BrokenClient()
         expect(() => client.post()).toThrow("Method 'post' not implemented.")
     })
+
+    it('throws error if delete() is not implemented in the subclass', () => {
+        class BrokenClient extends IApiClient {
+            get() {}
+            post() {}
+        }
+        const client = new BrokenClient()
+        expect(() => client.delete()).toThrow("Method 'delete' not implemented.")
+    })
 })
 
 // Setup the Axios mock before each testsuite to ensure isolation and reset of mock states
@@ -65,18 +80,20 @@ describe('AxiosApiClient — get()', () => {
         axiosInstance.get.mockResolvedValue({ data: { id: 1, name: 'Router' } })
         const data = await AxiosApiClient.get('/devices')
         expect(data).toEqual({ id: 1, name: 'Router' })
-        expect(axiosInstance.get).toHaveBeenCalledWith('/devices', { params: {} })
+        expect(axiosInstance.get).toHaveBeenCalledWith('/devices', {})
     })
 
     it('passes query parameters correctly', async () => {
         axiosInstance.get.mockResolvedValue({ data: [] })
         await AxiosApiClient.get('/devices', { active: true })
-        expect(axiosInstance.get).toHaveBeenCalledWith('/devices', { params: { active: true } })
+        expect(axiosInstance.get).toHaveBeenCalledWith('/devices', { active: true })
     })
 
     it('propagates network errors', async () => {
-        axiosInstance.get.mockRejectedValue(new Error('Network Error'))
-        await expect(AxiosApiClient.get('/devices')).rejects.toThrow('Network Error')
+        axiosInstance.get.mockRejectedValue({ isAxiosError: true })
+        await expect(AxiosApiClient.get('/devices')).rejects.toThrow(
+            'Unable to reach the server. Please check your connection.'
+        )
     })
 })
 
@@ -87,11 +104,31 @@ describe('AxiosApiClient — post()', () => {
         axiosInstance.post.mockResolvedValue({ data: { id: 42, ...payload } })
         const data = await AxiosApiClient.post('/devices', payload)
         expect(data).toMatchObject({ id: 42, deviceName: 'Switch' })
-        expect(axiosInstance.post).toHaveBeenCalledWith('/devices', payload)
+        expect(axiosInstance.post).toHaveBeenCalledWith('/devices', payload, {
+            headers: { 'Content-Type': 'application/json' },
+        })
     })
 
     it('propagates network errors', async () => {
-        axiosInstance.post.mockRejectedValue(new Error('Network Error'))
-        await expect(AxiosApiClient.post('/devices', {})).rejects.toThrow('Network Error')
+        axiosInstance.post.mockRejectedValue({ isAxiosError: true })
+        await expect(AxiosApiClient.post('/devices', {})).rejects.toThrow(
+            'Unable to reach the server. Please check your connection.'
+        )
+    })
+})
+
+describe('AxiosApiClient — delete()', () => {
+    it('deletes resource and returns the response', async () => {
+        axiosInstance.delete.mockResolvedValue({ data: { deleted: true } })
+        const data = await AxiosApiClient.delete('/session/1/delete')
+        expect(data).toEqual({ deleted: true })
+        expect(axiosInstance.delete).toHaveBeenCalledWith('/session/1/delete', {})
+    })
+
+    it('propagates network errors', async () => {
+        axiosInstance.delete.mockRejectedValue({ isAxiosError: true })
+        await expect(AxiosApiClient.delete('/session/1/delete')).rejects.toThrow(
+            'Unable to reach the server. Please check your connection.'
+        )
     })
 })

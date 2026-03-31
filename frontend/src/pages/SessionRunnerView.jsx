@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCurrentDevice } from '../services/DeviceService'
 import { useSessionState } from '../hooks/sessionHooks/useSessionState'
@@ -16,7 +16,7 @@ export default function SessionRunnerView() {
     const handlers = useSessionHandlers()
 
     // When test is finished, navigate to results page
-    React.useEffect(() => {
+    useEffect(() => {
         if (state.isTestFinished) {
             navigate('/results')
         }

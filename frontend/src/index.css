@@ -5,6 +5,8 @@
     /* Colori principali */
     --primary-color: #154c8b;
     --primary-hover: #0056b3;
+    --secondary-color: #ad7c0a;
+    --secondary-hover: #8c5a00;
     --background-color: #f8f9fa;
     --text-color: #333333;
     --text-light: #6c757d;
@@ -12,6 +14,20 @@
     /* Bordi e ombre */
     --border-radius: 8px;
     --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* Spacing scale */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-7: 1.875rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    --page-bottom-space: 9.375rem;
 }
 
 /* ==========================================
@@ -36,5 +52,26 @@ body {
     position: relative;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.page-shell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100svh;
+    padding: var(--space-8);
+    scrollbar-gutter: stable;
+}
+
+.page-shell--top {
+    justify-content: flex-start;
+    text-align: center;
+    padding-bottom: var(--page-bottom-space);
+}
+
+.page-shell--center {
+    justify-content: center;
+    text-align: center;
 }

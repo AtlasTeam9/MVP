@@ -6,6 +6,7 @@
 }
 
 .assetItem {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -15,10 +16,16 @@
     border-radius: 6px;
     margin-bottom: 10px;
     transition: box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
-.assetItem:hover {
+.assetItem:not(.readOnly):hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.assetItem:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .assetItem.selected {
@@ -67,4 +74,12 @@
 .statusNotCompleted {
     background-color: #fff3cd;
     color: #856404;
+}
+
+.disabled {
+    cursor: not-allowed;
+}
+
+.readOnly {
+    cursor: default;
 }

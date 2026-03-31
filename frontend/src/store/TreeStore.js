@@ -1,26 +1,42 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { DecisionTree } from '../domain/DecisionTree'
 
 // Helper function to search for a node by tree index and node ID
 function findNodeInTree(trees, treeIndex, nodeId) {
     if (treeIndex < 0 || treeIndex >= trees.length) {
-        console.warn(`Invalid tree index: ${treeIndex}`)
         return null
     }
 
     const tree = trees[treeIndex]
-    if (!tree || !tree.nodes || !tree.nodes[nodeId]) {
-        console.warn(`Node not found: tree="${tree?.id}", nodeId="${nodeId}"`)
+    if (!tree) {
+        return null
+    }
+
+    if (typeof tree.getNodeById === 'function') {
+        return tree.getNodeById(nodeId)
+    }
+
+    // Backward-compatible fallback for legacy plain-object trees.
+    if (!tree.nodes || !tree.nodes[nodeId]) {
         return null
     }
 
     const nodeData = tree.nodes[nodeId]
-    const result = {
+    return {
         id: nodeId,
-        text: nodeData.question || '',
+        text: nodeData.text || nodeData.question || '',
         description: nodeData.description || null,
+        type: nodeData.type,
     }
-    return result
+}
+
+function normalizeTree(tree) {
+    if (tree instanceof DecisionTree) {
+        return tree
+    }
+
+    return DecisionTree.fromApi(tree)
 }
 
 const useTreeStore = create(
@@ -32,7 +48,8 @@ const useTreeStore = create(
 
             // Actions
             setTrees: (trees) => {
-                set({ trees })
+                const normalizedTrees = Array.isArray(trees) ? trees.map(normalizeTree) : []
+                set({ trees: normalizedTrees })
             },
             setError: (error) => set({ error }),
 
