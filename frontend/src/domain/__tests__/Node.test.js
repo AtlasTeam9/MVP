@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { Node, NodeType } from '../Node'
+import { Node, NodeType } from '@domain/Node'
 
 describe('NodeType', () => {
     it('contains expected constants', () => {

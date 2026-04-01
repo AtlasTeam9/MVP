@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { deviceSchema } from '../schemas/DeviceSchema'
+import { deviceSchema } from '@domain/schemas/DeviceSchema'
 
 // Create a valid device object to use in tests
 const validDevice = {

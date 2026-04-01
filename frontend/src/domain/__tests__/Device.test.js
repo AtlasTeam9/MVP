@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import Device from '../Device'
-import Asset, { AssetType } from '../Asset'
+import Device from '@domain/Device'
+import Asset, { AssetType } from '@domain/Asset'
 
 // Unit test for contructor
 describe('Device — constructor and default values', () => {

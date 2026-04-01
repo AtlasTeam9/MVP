@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import axios from 'axios'
-import AppError from '../../errors/AppError'
-import { NotificationManager } from '../NotificationManager'
-import { getUserErrorMessage } from '../notificationMessages'
+import AppError from '@application/errors/AppError'
+import { NotificationManager } from '@infrastructure/notifications/NotificationManager'
+import { getUserErrorMessage } from '@infrastructure/notifications/notificationMessages'
 
 // Unit tests
 

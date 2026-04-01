@@ -54,4 +54,52 @@ export default defineConfig([
             'id-length': ['warn', { min: 2, exceptions: ['i', 'j', 'k', 'x', 'y', '_'] }],
         },
     },
+    {
+        files: ['src/**/*.{js,jsx}'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['src/hooks/*'],
+                            message:
+                                'Import hooks from src/application/hooks instead of src/hooks.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        files: ['src/presentation/**/*.{js,jsx}'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['src/hooks/*'],
+                            message:
+                                'Import hooks from src/application/hooks instead of src/hooks.',
+                        },
+                        {
+                            group: [
+                                '../state/*',
+                                '../../state/*',
+                                '../../../state/*',
+                                '../infrastructure/*',
+                                '../../infrastructure/*',
+                                '../../../infrastructure/*',
+                                '@state/*',
+                                '@infrastructure/*',
+                            ],
+                            message:
+                                'Presentation should access state and infrastructure through application hooks/services.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
 ])

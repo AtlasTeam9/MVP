@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import axios from 'axios'
-import { mapToAppError } from '../errorMapper'
-import AppError from '../AppError'
-import NetworkError from '../NetworkError'
-import ValidationError from '../ValidationError'
-import StateError from '../StateError'
+import { mapToAppError } from '@infrastructure/errors/errorMapper'
+import AppError from '@application/errors/AppError'
+import NetworkError from '@application/errors/NetworkError'
+import ValidationError from '@application/errors/ValidationError'
+import StateError from '@application/errors/StateError'
 
 // Unit tests
 

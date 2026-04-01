@@ -1,8 +1,9 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Toaster } from 'sonner'
-import './index.css'
-import AppRouter from './AppRouter.jsx'
+import './presentation/index.css'
+import AppRouter from '@presentation/AppRouter.jsx'
+import '@application/services/AppServices'
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>

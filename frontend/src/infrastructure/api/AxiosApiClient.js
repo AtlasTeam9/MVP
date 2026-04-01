@@ -1,6 +1,6 @@
 import axios from 'axios'
-import IApiClient from './IApiClient'
-import { mapToAppError } from '../errors/errorMapper'
+import { IApiClient } from '@application/ports/IApiClient'
+import { mapToAppError } from '@infrastructure/errors/errorMapper'
 
 class AxiosApiClient extends IApiClient {
     constructor() {

@@ -1,4 +1,4 @@
-import { Node } from './Node'
+import { Node } from '@domain/Node'
 
 export class DecisionTree {
     constructor(id, title, nodes = {}, dependencies = []) {

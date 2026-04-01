@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { DecisionTree } from '../DecisionTree'
-import { Node } from '../Node'
+import { DecisionTree } from '@domain/DecisionTree'
+import { Node } from '@domain/Node'
 
 describe('DecisionTree', () => {
     it('creates a tree with default empty nodes map', () => {

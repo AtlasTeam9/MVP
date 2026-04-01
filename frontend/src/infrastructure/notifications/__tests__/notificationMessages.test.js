@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getUserErrorMessage } from '../notificationMessages'
+import { getUserErrorMessage } from '@infrastructure/notifications/notificationMessages'
 
 const mappedCases = [
     ['NETWORK_UNREACHABLE', 'Unable to reach the server. Please check your connection.'],
