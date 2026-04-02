@@ -8,7 +8,7 @@ import { selectCurrentDevice } from '@state/selectors/deviceSelectors'
 import { selectResults } from '@state/selectors/resultSelectors'
 import { selectResultsPerAsset } from '@state/selectors/sessionSelectors'
 import { selectDependenciesByRequirement, selectTrees } from '@state/selectors/treeSelectors'
-import { filterResumableResults } from '@shared/utils/treeUtils'
+import { filterResumableResults } from '@domain/treeRules'
 import sessionService from '@application/services/SessionService'
 
 export function getFilteredResults(results, trees) {
@@ -62,5 +62,3 @@ export function useModifySessionLogic() {
         handleBack: () => navigate('/results'),
     }
 }
-
-

@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import SessionService from '@application/services/SessionService'
-import { notificationService } from '@application/services/AppServices'
+import { useAppServices } from '@application/services/NotificationContext'
 
 export function useHomeNavigation() {
     const navigate = useNavigate()
+    const { notificationService } = useAppServices()
 
     const handleLoadDevice = async (file) => {
         try {
@@ -33,4 +34,3 @@ export function useHomeNavigation() {
         handleLoadPreviousSession,
     }
 }
-

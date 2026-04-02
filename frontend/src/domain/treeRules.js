@@ -1,23 +1,3 @@
-export function buildDependenciesByRequirement(trees = []) {
-    if (!Array.isArray(trees)) {
-        return {}
-    }
-
-    return trees.reduce((acc, tree) => {
-        if (!tree || typeof tree !== 'object') {
-            return acc
-        }
-
-        const requirementId = tree.id || tree.requirement_id
-        if (!requirementId) {
-            return acc
-        }
-
-        acc[requirementId] = Array.isArray(tree.dependencies) ? tree.dependencies : []
-        return acc
-    }, {})
-}
-
 export function filterResumableResults(results = [], trees = []) {
     const safeResults = Array.isArray(results) ? results : []
     const safeTrees = Array.isArray(trees) ? trees : []

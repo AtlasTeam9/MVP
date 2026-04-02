@@ -102,4 +102,134 @@ export default defineConfig([
             ],
         },
     },
+    {
+        files: ['src/application/**/*.{js,jsx}'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['@presentation/*', '../presentation/*', '../../presentation/*'],
+                            message:
+                                'Application must not depend on Presentation. Keep dependency direction Presentation -> Application.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        files: ['src/domain/**/*.{js,jsx}'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: [
+                                '@presentation/*',
+                                '@application/*',
+                                '@infrastructure/*',
+                                '@state/*',
+                                '../presentation/*',
+                                '../../presentation/*',
+                                '../application/*',
+                                '../../application/*',
+                                '../infrastructure/*',
+                                '../../infrastructure/*',
+                                '../state/*',
+                                '../../state/*',
+                            ],
+                            message:
+                                'Domain must remain isolated: only Domain and Shared dependencies are allowed.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        files: ['src/state/**/*.{js,jsx}'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: [
+                                '@presentation/*',
+                                '@application/*',
+                                '@infrastructure/*',
+                                '../presentation/*',
+                                '../../presentation/*',
+                                '../application/*',
+                                '../../application/*',
+                                '../infrastructure/*',
+                                '../../infrastructure/*',
+                            ],
+                            message:
+                                'State should not depend on Presentation, Application or Infrastructure.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        files: ['src/infrastructure/**/*.{js,jsx}'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: [
+                                '@presentation/*',
+                                '@state/*',
+                                '../presentation/*',
+                                '../../presentation/*',
+                                '../state/*',
+                                '../../state/*',
+                            ],
+                            message: 'Infrastructure must not depend on Presentation or State.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        files: ['src/shared/**/*.{js,jsx}'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: [
+                                '@presentation/*',
+                                '@application/*',
+                                '@domain/*',
+                                '@infrastructure/*',
+                                '@state/*',
+                                '../presentation/*',
+                                '../../presentation/*',
+                                '../application/*',
+                                '../../application/*',
+                                '../domain/*',
+                                '../../domain/*',
+                                '../infrastructure/*',
+                                '../../infrastructure/*',
+                                '../state/*',
+                                '../../state/*',
+                            ],
+                            message:
+                                'Shared must be framework-agnostic and cannot depend on project layers.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
 ])

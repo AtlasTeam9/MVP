@@ -1,4 +1,4 @@
-import { buildDependenciesByRequirement } from '@shared/utils/treeUtils'
+import { buildDependenciesByRequirement } from '@shared/treeUtils'
 
 export const selectTrees = (state) => (Array.isArray(state?.trees) ? state.trees : [])
 

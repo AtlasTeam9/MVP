@@ -1,10 +1,11 @@
 import ExportService from '@application/services/ExportService'
 import SessionService from '@application/services/SessionService'
+import { useAppServices } from '@application/services/NotificationContext'
 import useUIStore from '@state/UIStore'
 import { selectIsExportingSession, selectSetExportingSession } from '@state/selectors/uiSelectors'
-import { notificationService } from '@application/services/AppServices'
 
 export function useExportSession(sessionId) {
+    const { notificationService } = useAppServices()
     const isExportingSession = useUIStore(selectIsExportingSession)
     const setExportingSession = useUIStore(selectSetExportingSession)
 
@@ -25,5 +26,3 @@ export function useExportSession(sessionId) {
         handleExportSessionClick,
     }
 }
-
-

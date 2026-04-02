@@ -4,11 +4,11 @@ import { useCurrentDevice } from '@application/hooks/useCurrentDevice'
 import deviceService from '@application/services/DeviceService'
 import sessionService from '@application/services/SessionService'
 import { resetSessionAndNavigateHome } from '@application/services/NavigationService'
+import { useAppServices } from '@application/services/NotificationContext'
 import useUIStore from '@state/UIStore'
 import { selectIsDirty } from '@state/selectors/uiSelectors'
-import { notificationService } from '@application/services/AppServices'
 
-async function createSessionAndNavigate(currentDevice, navigate) {
+async function createSessionAndNavigate(currentDevice, navigate, notificationService) {
     if (!currentDevice) return
 
     try {
@@ -22,11 +22,12 @@ async function createSessionAndNavigate(currentDevice, navigate) {
 export function useAssetManagement() {
     const navigate = useNavigate()
     const [showUnsavedDialog, setShowUnsavedDialog] = useState(false)
+    const { notificationService } = useAppServices()
     const currentDevice = useCurrentDevice()
     const isDirty = useUIStore(selectIsDirty)
 
     const proceedToSummary = async () => {
-        await createSessionAndNavigate(currentDevice, navigate)
+        await createSessionAndNavigate(currentDevice, navigate, notificationService)
     }
 
     const onGoToSummary = async () => {
@@ -76,5 +77,3 @@ export function useAssetManagement() {
         onHome,
     }
 }
-
-
