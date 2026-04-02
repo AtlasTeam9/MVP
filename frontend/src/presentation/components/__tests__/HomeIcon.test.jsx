@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import HomeIcon from '@presentation/components/common/HomeIcon'
 
 describe('HomeIcon', () => {
-    // Tipo: test di integrazione (UI + callback)
+    // Integration test (UI + callback)
     it('calls custom onHome handler when provided', async () => {
         const onHome = vi.fn()
         const user = userEvent.setup()
@@ -21,7 +21,7 @@ describe('HomeIcon', () => {
         expect(onHome).toHaveBeenCalledTimes(1)
     })
 
-    // Tipo: test di integrazione (UI + routing)
+    // Integration test (UI + routing)
     it('navigates to home when no handler is provided', async () => {
         const user = userEvent.setup()
 

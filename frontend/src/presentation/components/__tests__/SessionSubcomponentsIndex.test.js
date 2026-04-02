@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import * as subs from '@presentation/components/sessionRunner/subcomponents'
 
 describe('sessionRunner subcomponents index', () => {
-    // Tipo: test di unità (contratto di re-export del modulo)
+    // Unit test (module re-export contract)
     it('re-exports expected members', () => {
         expect(typeof subs.SessionHeader).toBe('function')
         expect(typeof subs.QuestionDisplay).toBe('function')

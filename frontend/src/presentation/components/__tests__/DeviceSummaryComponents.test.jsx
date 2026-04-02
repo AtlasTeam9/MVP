@@ -31,7 +31,7 @@ const device = {
 }
 
 describe('Device summary components', () => {
-    // Tipo: test di integrazione (render combinato componenti)
+    // Integration test (combined component rendering)
     it('renders AssetInfo and DeviceInfo details', () => {
         render(
             <>
@@ -46,7 +46,7 @@ describe('Device summary components', () => {
         expect(screen.getByText('Linux')).toBeInTheDocument()
     })
 
-    // Tipo: test di integrazione (modal + callback di chiusura)
+    // Integration test (modal + close callback)
     it('renders overlays and closes via close button', async () => {
         const user = userEvent.setup()
         const onCloseAsset = vi.fn()
@@ -67,7 +67,7 @@ describe('Device summary components', () => {
         expect(onCloseDevice).toHaveBeenCalledTimes(1)
     })
 
-    // Tipo: test di integrazione (interazioni utente su item)
+    // Integration test (item user interactions)
     it('AssetItemView opens overlay and supports delete action', async () => {
         const user = userEvent.setup()
         const onDelete = vi.fn()
@@ -81,7 +81,7 @@ describe('Device summary components', () => {
         expect(onDelete).toHaveBeenCalledWith('a1')
     })
 
-    // Tipo: test di integrazione (dropdown e lista asset)
+    // Integration test (dropdown and asset list)
     it('AssetListView and DeviceSelector render asset list', async () => {
         const user = userEvent.setup()
 
@@ -98,7 +98,7 @@ describe('Device summary components', () => {
         expect(screen.getAllByText('Security Function').length).toBeGreaterThan(0)
     })
 
-    // Tipo: test di integrazione (navigazione + callback home)
+    // Integration test (navigation + home callback)
     it('DeviceMainActions navigates to session test and DeviceNavigationIcons triggers home', async () => {
         const user = userEvent.setup()
         const onHome = vi.fn()

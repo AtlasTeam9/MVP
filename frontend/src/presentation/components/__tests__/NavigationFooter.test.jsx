@@ -16,7 +16,7 @@ function renderNavigationFooter(contextValue) {
 }
 
 describe('NavigationFooter', () => {
-    // Tipo: test di integrazione (interazioni UI + callback)
+    // Integration test (UI interactions + callback)
     it('triggers back, home and forward handlers', async () => {
         const onBack = vi.fn()
         const onHome = vi.fn()
@@ -41,7 +41,7 @@ describe('NavigationFooter', () => {
         expect(onForward).toHaveBeenCalledTimes(1)
     })
 
-    // Tipo: test di integrazione (stato UI disabilitato)
+    // Integration test (disabled UI state)
     it('disables back and forward when history is empty', () => {
         renderNavigationFooter({
             pastHistory: [],

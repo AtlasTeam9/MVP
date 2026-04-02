@@ -22,7 +22,7 @@ describe('Common components', () => {
         expect(screen.getByText('Device form')).toBeInTheDocument()
     })
 
-    // Tipo: test di integrazione (UI + callback)
+    // Integration test (UI + callback)
     it('BackIcon calls custom onBack handler when provided', async () => {
         const user = userEvent.setup()
         const onBack = vi.fn()
@@ -36,7 +36,7 @@ describe('Common components', () => {
         expect(onBack).toHaveBeenCalledTimes(1)
     })
 
-    // Tipo: test di integrazione (UI + eventi tastiera)
+    // Integration test (UI + keyboard events)
     it('Modal closes on overlay click and Escape key', async () => {
         const user = userEvent.setup()
         const onClose = vi.fn()

@@ -2,6 +2,7 @@
 import StateError from '@application/errors/StateError'
 import { Node } from '@domain/Node'
 
+// Detects the per-asset backend shape: { assetId: { requirementId: status } }.
 export function isPerAssetResults(results) {
     if (!results || typeof results !== 'object') {
         return false
@@ -12,6 +13,7 @@ export function isPerAssetResults(results) {
     )
 }
 
+// Rebuilds per-asset results through the export endpoint when not present in the live response.
 export async function setPerAssetResultsFromExport({
     sessionId,
     getFormattedAnswers,
@@ -31,6 +33,8 @@ export async function setPerAssetResultsFromExport({
     }
 }
 
+// Restores the current node from API payload, then from local trees,
+// then falls back to a placeholder.
 export function setCurrentNodeFromResponse(response, position, { useSessionStore, useTreeStore }) {
     if (response.current_node) {
         useSessionStore
@@ -127,6 +131,8 @@ export function navigateToNode(treeIndex, assetIndex, nodeId, { useSessionStore,
     useSessionStore.getState().setCurrentNode(nextNode)
 }
 
+// Handles the tree-completed transition: finish session or advance
+// to the next tree/asset entry point.
 export async function handleTreeCompleted(response, previousAssetIndex, deps) {
     const {
         mapResultsToRequirementResults,
@@ -168,6 +174,7 @@ export async function handleTreeCompleted(response, previousAssetIndex, deps) {
     })
 }
 
+// Applies go_back response effects. If response.found is false, local state remains unchanged.
 export async function handleGoBackResponse(response, deps) {
     const {
         mapResultsToRequirementResults,

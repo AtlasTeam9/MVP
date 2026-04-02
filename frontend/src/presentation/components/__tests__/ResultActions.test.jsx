@@ -31,19 +31,19 @@ function renderActions(overrides = {}) {
 }
 
 describe('ResultActions', () => {
-    // Tipo: test di integrazione (render condizionale UI)
+    // Integration test (conditional UI rendering)
     it('shows Resume Session button when test is not finished', () => {
         renderActions({ isTestFinished: false })
         expect(screen.getByRole('button', { name: /resume session/i })).toBeInTheDocument()
     })
 
-    // Tipo: test di integrazione (render condizionale UI)
+    // Integration test (conditional UI rendering)
     it('shows Modify Session button only when test is finished and uploaded', () => {
         renderActions({ isTestFinished: true, isSessionUploaded: true })
         expect(screen.getByRole('button', { name: /modify session/i })).toBeInTheDocument()
     })
 
-    // Tipo: test di integrazione (interazione UI + callback)
+    // Integration test (UI interaction + callback)
     it('calls onHome when home icon is clicked', async () => {
         const user = userEvent.setup()
         const props = renderActions()

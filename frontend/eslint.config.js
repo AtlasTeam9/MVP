@@ -23,34 +23,34 @@ export default defineConfig([
             },
         },
         rules: {
-            // ── Regole originali Vite ──────────────────────────────────────────
+            // ── Original Vite rules ───────────────────────────────────────────
             'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
 
-            // ── Norme di Progetto sez. 2.2.4.1 ───────────────────────────────
+            // ── Project rules, section 2.2.4.1 ───────────────────────────────
 
-            // Lunghezza massima riga: 100 caratteri
+            // Maximum line length: 100 characters
             'max-len': ['error', { code: 100, ignoreUrls: true, ignoreStrings: true }],
 
-            // Variabili e metodi: camelCase
+            // Variables and methods: camelCase
             camelcase: ['error', { properties: 'always' }],
 
-            // Metodi max 30 righe
+            // Maximum method length: 30 lines
             'max-lines-per-function': [
                 'warn',
                 { max: 50, skipBlankLines: true, skipComments: true },
             ],
 
-            // Max 3 livelli di annidamento
+            // Maximum nesting depth: 3 levels
             'max-depth': ['error', 3],
 
-            // Evitare variabili globali
+            // Avoid global mutable variables
             'no-var': 'error',
             'prefer-const': 'error',
 
-            // Gestione errori esplicita
+            // Explicit error handling
             'no-console': 'warn',
 
-            // Nomi variabili descrittivi (min 2 caratteri)
+            // Descriptive variable names (min 2 characters)
             'id-length': ['warn', { min: 2, exceptions: ['i', 'j', 'k', 'x', 'y', '_'] }],
         },
     },

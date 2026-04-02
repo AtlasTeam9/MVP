@@ -24,14 +24,12 @@ const mapImportedAnswer = (answerEntry) => ({
     answer: answerEntry.answer,
 })
 
-// Methods to manage session state
 const createSessionMethods = (set) => ({
     setSessionId: (sessionId) => set({ sessionId }),
     setCurrentNode: (node) => set({ currentNode: node }),
     setSessionUploaded: (isSessionUploaded) => set({ isSessionUploaded }),
 })
 
-// Methods to manage device position in the evaluation flow
 const createDeviceMethods = (set) => ({
     setDevicePosition: (assetIndex, treeIndex, nodeId) =>
         set({
@@ -41,7 +39,6 @@ const createDeviceMethods = (set) => ({
         }),
 })
 
-// Methods to manage user answers and navigation through the session
 const createAnswerMethods = (set, get) => ({
     selectAnswer: (choice) => {
         const { currentNode, pastHistory, currentTreeIndex, currentAssetIndex } = get()
@@ -69,7 +66,6 @@ const createAnswerMethods = (set, get) => ({
     },
 })
 
-// Methods to manage navigation to the previous node in the session history
 const goToPreviousNode = (set, get) => () => {
     const { pastHistory, futureHistory, currentNode, currentTreeIndex, currentAssetIndex } = get()
 
@@ -78,16 +74,17 @@ const goToPreviousNode = (set, get) => () => {
     }
 
     const previousItem = pastHistory[pastHistory.length - 1]
+    // Preserve the current cursor as the first forward candidate before rewinding.
     const newFutureHistory = currentNode
         ? [
-            {
-                nodeId: currentNode.id,
-                answer: previousItem?.answer ?? null,
-                treeIndex: currentTreeIndex,
-                assetIndex: currentAssetIndex,
-            },
-            ...futureHistory,
-        ]
+              {
+                  nodeId: currentNode.id,
+                  answer: previousItem?.answer ?? null,
+                  treeIndex: currentTreeIndex,
+                  assetIndex: currentAssetIndex,
+              },
+              ...futureHistory,
+          ]
         : futureHistory
 
     set({
@@ -99,7 +96,6 @@ const goToPreviousNode = (set, get) => () => {
     })
 }
 
-// Methods to manage navigation to the next node in the session history
 const goToNextNode = (set, get) => (nodeId) => {
     const { futureHistory, pastHistory, currentNode, currentTreeIndex, currentAssetIndex } = get()
 
@@ -116,16 +112,17 @@ const goToNextNode = (set, get) => (nodeId) => {
 
     const nextItem = futureHistory[0]
 
+    // Push current cursor into past history when consuming future history.
     const newPastHistory = currentNode
         ? [
-            ...pastHistory,
-            {
-                nodeId: currentNode.id,
-                answer: pastHistory[pastHistory.length - 1]?.answer ?? null,
-                treeIndex: currentTreeIndex,
-                assetIndex: currentAssetIndex,
-            },
-        ]
+              ...pastHistory,
+              {
+                  nodeId: currentNode.id,
+                  answer: pastHistory[pastHistory.length - 1]?.answer ?? null,
+                  treeIndex: currentTreeIndex,
+                  assetIndex: currentAssetIndex,
+              },
+          ]
         : pastHistory
 
     set({
@@ -137,14 +134,12 @@ const goToNextNode = (set, get) => (nodeId) => {
     })
 }
 
-// Methods to manage navigation and history clearing
 const createNavigationMethods = (set, get) => ({
     goToPreviousNode: goToPreviousNode(set, get),
     goToNextNode: goToNextNode(set, get),
     clearFuture: () => set({ futureHistory: [] }),
 })
 
-// Methods to manage session history truncation and clearing
 const createHistoryMethods = (set, get) => ({
     clearStore: () => set({ ...INITIAL_SESSION_STATE }),
 
@@ -175,7 +170,6 @@ const createHistoryMethods = (set, get) => ({
     },
 })
 
-// Methods to manage test completion status and results storage
 const createResultMethods = (set) => ({
     setTestFinished: (status) => set({ isTestFinished: status }),
     setResults: (results) => set({ results }),
@@ -189,13 +183,11 @@ const createResultMethods = (set) => ({
         }),
 })
 
-// Combine all methods into a single store
 const useSessionStore = create(
     devtools(
         (set, get) => ({
             ...INITIAL_SESSION_STATE,
 
-            // Merge all methods
             ...createSessionMethods(set),
             ...createDeviceMethods(set),
             ...createAnswerMethods(set, get),

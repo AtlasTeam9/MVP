@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ExportDialog } from '@presentation/components/results/ExportDialog'
 
 describe('ExportDialog', () => {
-    // Tipo: test di integrazione (azioni UI + callback formato)
+    // Integration test (UI actions + format callback)
     it('calls onFormatSelect with selected format', async () => {
         const onFormatSelect = vi.fn()
         const onCancel = vi.fn()
@@ -19,7 +19,7 @@ describe('ExportDialog', () => {
         expect(onFormatSelect).toHaveBeenCalledWith('pdf')
     })
 
-    // Tipo: test di integrazione (azione UI + callback chiusura)
+    // Integration test (UI action + close callback)
     it('calls onCancel when close button is clicked', async () => {
         const onFormatSelect = vi.fn()
         const onCancel = vi.fn()

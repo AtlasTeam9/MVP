@@ -15,7 +15,7 @@ function renderWithSessionRunnerContext(ui, value) {
 }
 
 describe('Session runner components', () => {
-    // Tipo: test di integrazione (stato UI + callback pulsanti)
+    // Integration test (UI state + button callbacks)
     it('AnswerButtons enable/disable and trigger callbacks', async () => {
         const user = userEvent.setup()
         const onYes = vi.fn()
@@ -46,7 +46,7 @@ describe('Session runner components', () => {
         expect(onNo).toHaveBeenCalledTimes(1)
     })
 
-    // Tipo: test di integrazione (render condizionale contenuto)
+    // Integration test (conditional content rendering)
     it('QuestionDisplay shows loading and node details', () => {
         const baseContextValue = {
             currentNode: null,
@@ -74,7 +74,7 @@ describe('Session runner components', () => {
         expect(screen.getByText('Details')).toBeInTheDocument()
     })
 
-    // Tipo: test di integrazione (render sezione con errore)
+    // Integration test (error section rendering)
     it('QuestionSection renders error and answer area', () => {
         renderWithSessionRunnerContext(<QuestionSection />, {
             currentNode: { id: 'n1', text: 'Question?' },
@@ -90,7 +90,7 @@ describe('Session runner components', () => {
         expect(screen.getByText('Question?')).toBeInTheDocument()
     })
 
-    // Tipo: test di integrazione (calcolo visibile + callback uscita)
+    // Integration test (visible progress + exit callback)
     it('SessionHeader computes percentage and calls save and exit', async () => {
         const user = userEvent.setup()
         const onSaveExit = vi.fn()
@@ -117,7 +117,7 @@ describe('Session runner components', () => {
         expect(onSaveExit).toHaveBeenCalledTimes(1)
     })
 
-    // Tipo: test di integrazione (orchestrazione contenuto sessione)
+    // Integration test (session content orchestration)
     it('SessionContent renders and delegates interactions', async () => {
         const user = userEvent.setup()
         const handlers = {

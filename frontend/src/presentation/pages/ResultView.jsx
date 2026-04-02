@@ -5,6 +5,7 @@ import { useResultViewLogic } from '@application/hooks/useResultViewLogic'
 import styles from '@presentation/pages/ResultView.module.css'
 import resultListStyles from '@presentation/components/results/ResultListView.module.css'
 
+// Rendered when no result payload is available yet or the result list is empty.
 function EmptyResultsState() {
     return (
         <div className={`page-shell page-shell--top ${styles.container}`}>No results available</div>

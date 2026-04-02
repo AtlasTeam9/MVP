@@ -3,8 +3,7 @@ import { SessionContent } from '@presentation/components/sessionRunner/SessionCo
 import { useSessionRunnerTrees } from '@application/hooks/useSessionRunnerTrees'
 import { buildSessionContextValueFromSources } from '@presentation/components/sessionRunner/sessionContextValueBuilder'
 
-// Adapter component to connect the SessionContent presentation component
-// with the session runner state and handlers
+// Presentation boundary: compose state, handlers, and trees into the context contract used by SessionContent.
 function SessionContentAdapter({ currentDevice, state, handlers }) {
     const trees = useSessionRunnerTrees()
     const sessionContextValue = useMemo(

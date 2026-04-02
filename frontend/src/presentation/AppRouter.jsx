@@ -13,7 +13,6 @@ import styles from '@presentation/AppRouter.module.css'
 import { useBeforeUnload } from '@application/hooks/useBeforeUnload'
 import { useTreeBootstrap } from '@application/hooks/useTreeBootstrap'
 
-// Route configuration
 const ROUTES = [
     { path: '/', view: <HomeView />, isProtected: false },
     { path: '/device/new', view: <DeviceFormView />, isProtected: false },
@@ -50,7 +49,6 @@ const ROUTES = [
     },
 ]
 
-// Function to build a Route element from a route configuration
 const buildRoute = (route, index) => {
     return (
         <Route
@@ -61,7 +59,6 @@ const buildRoute = (route, index) => {
     )
 }
 
-// Main App Router component
 export default function AppRouter() {
     useBeforeUnload()
     useTreeBootstrap()

@@ -31,7 +31,6 @@ import {
 } from '@application/services/sessionHelpers'
 
 class SessionService {
-    // Private method to initialize stores and return session data from API response
     #initializeSessionFromResponse(response) {
         const { session_id: sessionId, device, position } = response
         const deviceObj = createDeviceFromApiResponse(device)
@@ -46,12 +45,10 @@ class SessionService {
         return { sessionId, device: deviceObj, position }
     }
 
-    // Create a new session by uploading a device file (JSON)
     async createSessionWithFile(file) {
         const formData = new FormData()
         formData.append('file', file)
 
-        // API call to create a session with the uploaded file
         const response = await apiClientService.post('/session/create_session_with_file', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         })
@@ -59,17 +56,18 @@ class SessionService {
         return this.#initializeSessionFromResponse(response)
     }
 
-    // Create a new session from a Device object (direct API call without file)
     async createSessionWithDevice(device) {
         const devicePayload = device.toDict()
 
-        // API call to create a session with the device object directly
         const response = await apiClientService.post('/session/create_session', devicePayload)
 
         return this.#initializeSessionFromResponse(response)
     }
 
-    // Answer the current question and move to the next node
+    /**
+     * Submits an answer and orchestrates navigation.
+     * Uses go_back flow while resuming edited history; otherwise uses forward flow.
+     */
     async sendAnswer(answer) {
         const { sessionId, currentAssetIndex, currentNode, currentTreeIndex } = {
             sessionId: useSessionStore.getState().sessionId,
@@ -123,7 +121,6 @@ class SessionService {
         handleNextNodeSameTree(forwardResponse, { useSessionStore, useTreeStore })
     }
 
-    // Go back to a previous node and change answer
     async previousStep() {
         useSessionStore.getState().goToPreviousNode()
         const { currentNode, currentTreeIndex } = useSessionStore.getState()
@@ -138,7 +135,6 @@ class SessionService {
         }
     }
 
-    // Go forward in the future history (if user went back previously)
     async forwardStep() {
         useSessionStore.getState().goToNextNode()
         const { currentNode, currentTreeIndex } = useSessionStore.getState()
@@ -153,31 +149,29 @@ class SessionService {
         }
     }
 
-    // Load a previously saved session from a JSON file
+    /**
+     * Loads a persisted session payload and restores local stores.
+     * Handles both unfinished and already finished sessions.
+     */
     async loadSessionFromFile(file) {
         const formData = new FormData()
         formData.append('file', file)
 
-        // API call to load session from file
         const response = await apiClientService.post('/session/load_session_from_file', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         })
 
         const mappedResponse = mapLoadSessionResponse(response)
 
-        // Set sessionId in SessionStore
         useSessionStore.getState().setSessionId(mappedResponse.sessionId)
         useSessionStore.getState().setSessionUploaded(true)
 
-        // Create Device object from response data and set in DeviceStore
         useDeviceStore.getState().setDevice(mappedResponse.device)
 
-        // Import past history (previous answers) into SessionStore
         if (mappedResponse.answers.length > 0) {
             useSessionStore.getState().importPastHistory(mappedResponse.answers)
         }
 
-        // Set the device position based on where the session left off
         const { current_asset_index, current_tree_index, current_node_id } =
             mappedResponse.position || {}
 
@@ -194,28 +188,23 @@ class SessionService {
                 { useSessionStore }
             )
 
-            // Load the current node from TreeStore using tree index and node ID
             setCurrentNodeFromResponse(response, mappedResponse.position, {
                 useSessionStore,
                 useTreeStore,
             })
         }
 
-        // Save transformed aggregate results in ResultStore
         useResultStore.getState().setResults(mappedResponse.results)
 
-        // Save results per asset in SessionStore for detailed view
         if (mappedResponse.resultsPerAsset) {
             useSessionStore.getState().setResultsPerAsset(mappedResponse.resultsPerAsset)
         }
 
-        // Set test finished status based on is_finished flag
         useSessionStore.getState().setTestFinished(mappedResponse.isFinished)
 
         return { results: mappedResponse.results, isFinished: mappedResponse.isFinished }
     }
 
-    // Delete session and clear stores (same behavior as HomeIcon)
     async saveAndExit() {
         try {
             await deleteRemoteSessionIfPresent(useSessionStore, apiClientService)
@@ -227,12 +216,10 @@ class SessionService {
         }
     }
 
-    // Get the current session ID
     getSessionId() {
         return useSessionStore.getState().sessionId
     }
 
-    // Get formatted answers from the session history for export
     getFormattedAnswers() {
         const { pastHistory } = useSessionStore.getState()
         const history = Array.isArray(pastHistory) ? pastHistory : []
@@ -244,7 +231,6 @@ class SessionService {
         }))
     }
 
-    // Clear all session-related data from stores and delete session on backend
     async clearSession() {
         try {
             await deleteRemoteSessionIfPresent(useSessionStore, apiClientService)
@@ -255,6 +241,10 @@ class SessionService {
         }
     }
 
+    /**
+     * Moves the session cursor to a specific requirement/asset pair.
+     * Keeps only history that happened before that position.
+     */
     resumeSession(requirementId, assetId) {
         const currentDevice = useDeviceStore.getState().currentDevice
         const trees = useTreeStore.getState().trees
@@ -288,7 +278,6 @@ class SessionService {
     }
 }
 
-// Exported as a singleton instance
 export default new SessionService()
 
 

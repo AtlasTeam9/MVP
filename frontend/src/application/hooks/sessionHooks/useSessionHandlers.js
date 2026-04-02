@@ -8,8 +8,7 @@ import {
     selectSetSessionActionLoading,
 } from '@state/selectors/uiSelectors'
 
-// Custom hook to create session handlers for Yes/No clicks and navigation,
-// managing loading and error states
+// Creates async session action handlers with shared loading, saving, and error orchestration.
 export function useSessionHandlers() {
     const navigate = useNavigate()
     const isLoading = useUIStore(selectIsSessionActionLoading)

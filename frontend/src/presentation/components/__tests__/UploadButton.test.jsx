@@ -5,13 +5,13 @@ import UploadButton from '@presentation/components/common/UploadButton'
 
 // Integration test for the UploadButton component
 describe('UploadButton', () => {
-    // Tipo: test di integrazione (render UI)
+    // Integration test (UI rendering)
     it('shows the correct text', () => {
         render(<UploadButton onFileSelect={() => {}}>Upload JSON</UploadButton>)
         expect(screen.getByRole('button', { name: /upload json/i })).toBeInTheDocument()
     })
 
-    // Tipo: test di integrazione (input file + callback)
+    // Integration test (file input + callback)
     it('calls onFileSelect when a file is selected', async () => {
         const mockOnSelect = vi.fn()
         render(<UploadButton onFileSelect={mockOnSelect}>Upload</UploadButton>)
@@ -42,7 +42,7 @@ describe('UploadButton', () => {
         expect(mockOnSelect).toHaveBeenCalledTimes(2)
     })
 
-    // Tipo: test di integrazione (vincolo attributi input)
+    // Integration test (input attribute constraints)
     it('accepts only files with .json extension', () => {
         render(<UploadButton onFileSelect={() => {}}>Upload</UploadButton>)
         const input = screen.getByLabelText('Upload device file')
