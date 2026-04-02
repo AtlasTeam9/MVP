@@ -2,14 +2,35 @@ import { Node } from '@domain/Node'
 
 export class DecisionTree {
     constructor(id, title, nodes = {}, dependencies = []) {
-        this.id = id
-        this.title = title
-        this.nodes = nodes
-        this.dependencies = dependencies
+        this.#id = id
+        this.#title = title
+        this.#nodes = { ...nodes }
+        this.#dependencies = [...dependencies]
+    }
+
+    #id
+    #title
+    #nodes
+    #dependencies
+
+    get id() {
+        return this.#id
+    }
+
+    get title() {
+        return this.#title
+    }
+
+    get nodes() {
+        return { ...this.#nodes }
+    }
+
+    get dependencies() {
+        return [...this.#dependencies]
     }
 
     getNodeById(nodeId) {
-        return this.nodes?.[nodeId] || null
+        return this.#nodes?.[nodeId] || null
     }
 
     static fromApi(treeData = {}) {

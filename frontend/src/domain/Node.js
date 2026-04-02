@@ -5,10 +5,31 @@ export const NodeType = {
 
 export class Node {
     constructor(id, text, description = null, type = NodeType.QUESTION) {
-        this.id = id
-        this.text = text
-        this.description = description
-        this.type = type
+        this.#id = id
+        this.#text = text
+        this.#description = description
+        this.#type = type
+    }
+
+    #id
+    #text
+    #description
+    #type
+
+    get id() {
+        return this.#id
+    }
+
+    get text() {
+        return this.#text
+    }
+
+    get description() {
+        return this.#description
+    }
+
+    get type() {
+        return this.#type
     }
 
     static fromApi(nodeId, nodeData = {}) {
