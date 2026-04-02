@@ -1,7 +1,5 @@
 # Code coverage
 
-## Backend
-
 [![codecov](https://codecov.io/github/AtlasTeam9/MVP/graph/badge.svg?token=KXBGN88XAD)](https://codecov.io/github/AtlasTeam9/MVP)
 
 # MVP
