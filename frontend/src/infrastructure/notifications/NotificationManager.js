@@ -1,6 +1,6 @@
 import { toast } from 'sonner'
-import { mapToAppError } from '../errors/errorMapper'
-import { getUserErrorMessage } from './notificationMessages'
+import { mapToAppError } from '@infrastructure/errors/errorMapper'
+import { getUserErrorMessage } from '@infrastructure/notifications/notificationMessages'
 
 export class NotificationManager {
     constructor(toastInstance = toast) {

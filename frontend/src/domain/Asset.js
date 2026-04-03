@@ -19,36 +19,42 @@ export const AssetType = {
 
 class Asset {
     constructor(id, name, type, isSensitive, desc = null) {
-        this._id = id
-        this._name = name
-        this._type = type
-        this._isSensitive = isSensitive
-        this._desc = desc
+        this.#id = id
+        this.#name = name
+        this.#type = type
+        this.#isSensitive = isSensitive
+        this.#desc = desc
     }
 
+    #id
+    #name
+    #type
+    #isSensitive
+    #desc
+
     get id() {
-        return this._id
+        return this.#id
     }
     get name() {
-        return this._name
+        return this.#name
     }
     get type() {
-        return this._type
+        return this.#type
     }
     get isSensitive() {
-        return this._isSensitive
+        return this.#isSensitive
     }
     get desc() {
-        return this._desc
+        return this.#desc
     }
 
     toDict() {
         return {
-            id: this._id,
-            name: this._name,
-            type: this._type,
-            is_sensitive: this._isSensitive,
-            description: this._desc,
+            id: this.#id,
+            name: this.#name,
+            type: this.#type,
+            is_sensitive: this.#isSensitive,
+            description: this.#desc,
         }
     }
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { assetSchema } from '../schemas/AssetSchema'
+import { assetSchema } from '@domain/schemas/AssetSchema'
 
 const validAsset = {
     name: 'Firewall Rule Set',

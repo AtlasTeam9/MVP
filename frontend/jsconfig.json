@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "ignoreDeprecations": "6.0",
+        "baseUrl": ".",
+        "paths": {
+            "@application/*": ["src/application/*"],
+            "@presentation/*": ["src/presentation/*"],
+            "@state/*": ["src/state/*"],
+            "@domain/*": ["src/domain/*"],
+            "@infrastructure/*": ["src/infrastructure/*"],
+            "@shared/*": ["src/shared/*"]
+        }
+    },
+    "include": ["src"]
+}

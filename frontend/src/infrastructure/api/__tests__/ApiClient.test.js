@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import IApiClient from '../IApiClient'
+import { IApiClient } from '@application/ports/IApiClient'
 
 // Creation of a mock for axios
 vi.mock('axios', () => ({
@@ -15,7 +15,7 @@ let AxiosApiClient
 async function setupAxiosMock() {
     vi.resetModules()
     axiosInstance = { get: vi.fn(), post: vi.fn(), delete: vi.fn() }
-    const mod = await import('../AxiosApiClient')
+    const mod = await import('@infrastructure/api/AxiosApiClient')
     AxiosApiClient = mod.default
 }
 

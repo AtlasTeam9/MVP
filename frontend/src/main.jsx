@@ -1,12 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Toaster } from 'sonner'
-import './index.css'
-import AppRouter from './AppRouter.jsx'
+import './presentation/index.css'
+import AppRouter from '@presentation/AppRouter.jsx'
+import { NotificationProvider } from '@application/services/NotificationContext'
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
-        <AppRouter />
-        <Toaster position="top-right" richColors />
+        <NotificationProvider>
+            <AppRouter />
+            <Toaster position="top-right" richColors />
+        </NotificationProvider>
     </StrictMode>
 )

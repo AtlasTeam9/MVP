@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import Asset, { AssetType } from '../Asset'
+import Asset, { AssetType } from '@domain/Asset'
 
 // Unit tests for AssetType
 describe('AssetType — fromString()', () => {
