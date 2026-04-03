@@ -9,7 +9,8 @@ import sessionService from '@application/services/SessionService'
 
 import styles from '@presentation/pages/DeviceFormView.module.css'
 import Device from '@domain/Device'
-import BackIcon from '@presentation/components/common/BackIcon'
+import FormPageLayout from '@presentation/components/forms/FormPageLayout'
+import InputField from '@presentation/components/forms/fields/InputField'
 
 // Standard form data structure for a Device, used for both creation and editing
 const initialData = {
@@ -77,42 +78,32 @@ function useDeviceForm() {
     }
 }
 
-// Components for form fields, separated into required and optional for better organization
-function InputField({ label, registration, error, isTextArea = false }) {
-    const InputTag = isTextArea ? 'textarea' : 'input'
-    return (
-        <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor={registration.name}>
-                {label}
-            </label>
-            <InputTag
-                id={registration.name}
-                className={`${styles.input} ${error ? styles.inputError : ''}`}
-                {...registration}
-            />
-            {error && <span className={styles.errorMessage}>{error.message}</span>}
-        </div>
-    )
-}
-
 function RequiredFields({ register, errors }) {
     return (
         <>
-            <InputField label="Name *" registration={register('name')} error={errors?.name} />
+            <InputField
+                label="Name *"
+                registration={register('name')}
+                error={errors?.name}
+                styles={styles}
+            />
             <InputField
                 label="Operating system *"
                 registration={register('operatingSystem')}
                 error={errors?.operatingSystem}
+                styles={styles}
             />
             <InputField
                 label="Firmware version *"
                 registration={register('firmwareVersion')}
                 error={errors?.firmwareVersion}
+                styles={styles}
             />
             <InputField
                 label="Functionalities *"
                 registration={register('functionalities')}
                 error={errors?.functionalities}
+                styles={styles}
             />
         </>
     )
@@ -121,7 +112,12 @@ function RequiredFields({ register, errors }) {
 function OptionalFields({ register }) {
     return (
         <>
-            <InputField label="Description" registration={register('description')} isTextArea />
+            <InputField
+                label="Description"
+                registration={register('description')}
+                isTextArea
+                styles={styles}
+            />
         </>
     )
 }
@@ -141,23 +137,15 @@ export default function DeviceFormView() {
     const { register, handleSubmit, resetForm, onCancel, errors } = useDeviceForm()
 
     return (
-        <>
-            <BackIcon onBack={onCancel} />
-            <form className={styles.container} onSubmit={handleSubmit}>
-                <h2>Create a new Device</h2>
-
-                <DeviceFormFields register={register} errors={errors} />
-
-                <div className={styles.buttonGroup}>
-                    <button type="button" className={styles.btnSecondary} onClick={resetForm}>
-                        Reset
-                    </button>
-                    <button type="submit" className={styles.btnPrimary}>
-                        Save
-                    </button>
-                </div>
-            </form>
-        </>
+        <FormPageLayout
+            onBack={onCancel}
+            title="Create a new Device"
+            onSubmit={handleSubmit}
+            onReset={resetForm}
+            styles={styles}
+        >
+            <DeviceFormFields register={register} errors={errors} />
+        </FormPageLayout>
     )
 }
 

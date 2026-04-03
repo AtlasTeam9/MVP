@@ -7,7 +7,10 @@ import Asset, { AssetType } from '@domain/Asset'
 import deviceService from '@application/services/DeviceService'
 
 import styles from '@presentation/pages/DeviceFormView.module.css'
-import BackIcon from '@presentation/components/common/BackIcon'
+import FormPageLayout from '@presentation/components/forms/FormPageLayout'
+import InputField from '@presentation/components/forms/fields/InputField'
+import SelectField from '@presentation/components/forms/fields/SelectField'
+import CheckboxField from '@presentation/components/forms/fields/CheckboxField'
 
 // Standard form data structure for an Asset
 const initialData = {
@@ -53,75 +56,6 @@ function useAssetForm() {
     }
 }
 
-// Component for iOS-style toggle switch used for the "Is Sensitive" field
-function ToggleSwitch({ registration, label }) {
-    const inputId = registration.name
-
-    return (
-        <div className={styles.toggleContainer}>
-            <label className={styles.toggleLabel} htmlFor={inputId}>
-                {label}
-            </label>
-            <label className={styles.toggleSwitch}>
-                <input id={inputId} type="checkbox" {...registration} />
-                <span className={styles.toggleSlider}></span>
-            </label>
-        </div>
-    )
-}
-
-// Component for select fields (Asset "Type" field)
-function SelectField({ label, registration, error, options }) {
-    return (
-        <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor={registration.name}>
-                {label}
-            </label>
-            <select
-                id={registration.name}
-                className={`${styles.input} ${error ? styles.inputError : ''}`}
-                {...registration}
-            >
-                <option value="">Select a type...</option>
-                {options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                        {option.label}
-                    </option>
-                ))}
-            </select>
-            {error && <span className={styles.errorMessage}>{error.message}</span>}
-        </div>
-    )
-}
-
-// Component for checkbox fields with toggle ("IsSensitive" field)
-function CheckboxField({ label, registration, error }) {
-    return (
-        <div className={styles.formGroup}>
-            <ToggleSwitch registration={registration} label={label} />
-            {error && <span className={styles.errorMessage}>{error.message}</span>}
-        </div>
-    )
-}
-
-// Component for text and textarea input fields ("Name" and "Description" fields)
-function InputField({ label, registration, error, isTextArea = false }) {
-    const InputTag = isTextArea ? 'textarea' : 'input'
-    return (
-        <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor={registration.name}>
-                {label}
-            </label>
-            <InputTag
-                id={registration.name}
-                className={`${styles.input} ${error ? styles.inputError : ''}`}
-                {...registration}
-            />
-            {error && <span className={styles.errorMessage}>{error.message}</span>}
-        </div>
-    )
-}
-
 function RequiredFields({ register, errors }) {
     const assetTypeOptions = [
         { value: AssetType.NETWORK_FUNCTION, label: AssetType.NETWORK_FUNCTION },
@@ -135,17 +69,24 @@ function RequiredFields({ register, errors }) {
 
     return (
         <>
-            <InputField label="Name *" registration={register('name')} error={errors?.name} />
+            <InputField
+                label="Name *"
+                registration={register('name')}
+                error={errors?.name}
+                styles={styles}
+            />
             <SelectField
                 label="Type *"
                 registration={register('type')}
                 error={errors?.type}
                 options={assetTypeOptions}
+                styles={styles}
             />
             <CheckboxField
                 label="Is Sensitive *"
                 registration={register('isSensitive')}
                 error={errors?.isSensitive}
+                styles={styles}
             />
         </>
     )
@@ -159,6 +100,7 @@ function OptionalFields({ register, errors }) {
                 registration={register('desc')}
                 isTextArea
                 error={errors?.desc}
+                styles={styles}
             />
         </>
     )
@@ -179,23 +121,15 @@ export default function AssetFormView() {
     const { register, handleSubmit, resetForm, onCancel, errors } = useAssetForm()
 
     return (
-        <>
-            <BackIcon onBack={onCancel} />
-            <form className={styles.container} onSubmit={handleSubmit}>
-                <h2>Add New Asset</h2>
-
-                <AssetFormFields register={register} errors={errors} />
-
-                <div className={styles.buttonGroup}>
-                    <button type="button" className={styles.btnSecondary} onClick={resetForm}>
-                        Reset
-                    </button>
-                    <button type="submit" className={styles.btnPrimary}>
-                        Save
-                    </button>
-                </div>
-            </form>
-        </>
+        <FormPageLayout
+            onBack={onCancel}
+            title="Add New Asset"
+            onSubmit={handleSubmit}
+            onReset={resetForm}
+            styles={styles}
+        >
+            <AssetFormFields register={register} errors={errors} />
+        </FormPageLayout>
     )
 }
 
