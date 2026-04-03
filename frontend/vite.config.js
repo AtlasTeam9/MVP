@@ -20,7 +20,7 @@ export default defineConfig({
         globals: true,
         setupFiles: './src/test/setup.js',
         coverage: {
-            reporter: ['text', 'html'],
+            reporter: ['text', 'html', 'lcov'],
             include: ['src/**'],
             exclude: ['src/test/**', '**/*.module.css'],
         },
