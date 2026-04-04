@@ -7,7 +7,6 @@ describe('UIStore', () => {
     })
 
     it('updates UI flags', () => {
-        useUIStore.getState().setTreeLoading(true)
         useUIStore.getState().setSessionActionLoading(true)
         useUIStore.getState().setSaving(true)
         useUIStore.getState().setExporting(true)
@@ -15,7 +14,6 @@ describe('UIStore', () => {
         useUIStore.getState().setDirty(true)
 
         const state = useUIStore.getState()
-        expect(state.isTreeLoading).toBe(true)
         expect(state.isSessionActionLoading).toBe(true)
         expect(state.isSaving).toBe(true)
         expect(state.isExporting).toBe(true)

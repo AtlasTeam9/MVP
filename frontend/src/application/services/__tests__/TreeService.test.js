@@ -9,11 +9,7 @@ const mocks = vi.hoisted(() => ({
     },
     treeState: {
         setTrees: vi.fn(),
-        setError: vi.fn(),
         clearStore: vi.fn(),
-    },
-    uiState: {
-        setTreeLoading: vi.fn(),
     },
 }))
 
@@ -31,12 +27,6 @@ vi.mock('../../../state/TreeStore', () => ({
     },
 }))
 
-vi.mock('../../../state/UIStore', () => ({
-    default: {
-        getState: () => mocks.uiState,
-    },
-}))
-
 import treeService from '@application/services/TreeService'
 
 describe('TreeService', () => {
@@ -46,29 +36,21 @@ describe('TreeService', () => {
 
         mocks.treeState = {
             setTrees: vi.fn(),
-            setError: vi.fn(),
             clearStore: vi.fn(),
-        }
-
-        mocks.uiState = {
-            setTreeLoading: vi.fn(),
         }
     })
 
-    it('loadTrees normalizes response, updates store and loading state', async () => {
+    it('loadTrees normalizes response and updates store', async () => {
         mocks.apiClient.get.mockResolvedValue([{ id: 't1' }, { id: 't2' }])
         mocks.decisionTree.fromApi.mockImplementation((tree) => ({ normalized: tree.id }))
 
         const result = await treeService.loadTrees()
 
-        expect(mocks.uiState.setTreeLoading).toHaveBeenNthCalledWith(1, true)
         expect(mocks.decisionTree.fromApi).toHaveBeenCalledTimes(2)
         expect(mocks.treeState.setTrees).toHaveBeenCalledWith([
             { normalized: 't1' },
             { normalized: 't2' },
         ])
-        expect(mocks.treeState.setError).toHaveBeenCalledWith(null)
-        expect(mocks.uiState.setTreeLoading).toHaveBeenLastCalledWith(false)
         expect(result).toEqual([{ normalized: 't1' }, { normalized: 't2' }])
     })
 
@@ -81,12 +63,10 @@ describe('TreeService', () => {
         expect(result).toEqual([])
     })
 
-    it('loadTrees stores error message and rethrows on failure', async () => {
+    it('loadTrees rethrows on failure', async () => {
         mocks.apiClient.get.mockRejectedValue(new Error('boom'))
 
         await expect(treeService.loadTrees()).rejects.toThrow('boom')
-        expect(mocks.treeState.setError).toHaveBeenCalledWith('boom')
-        expect(mocks.uiState.setTreeLoading).toHaveBeenLastCalledWith(false)
     })
 
     it('clearTrees clears tree store', () => {

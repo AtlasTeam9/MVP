@@ -17,7 +17,7 @@ class ExportService {
      * @param {string} sessionId - ID of the session
      * @param {string} format - Format of the export ('csv' or 'pdf')
      */
-    async exportResults(sessionId, format = 'csv') {
+    async exportResults(sessionId, format) {
         const blob = await apiClientService.get(`/session/${sessionId}/export/results`, {
             params: { format },
             responseType: 'blob',
@@ -69,7 +69,7 @@ class ExportService {
      */
     exportDeviceAsJSON(device) {
         if (!device) {
-            throw new StateError('Dispositivo mancante per l export.', {
+            throw new StateError('Device missing for export.', {
                 code: 'EXPORT_DEVICE_REQUIRED',
             })
         }
