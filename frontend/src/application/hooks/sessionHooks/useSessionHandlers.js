@@ -4,7 +4,6 @@ import { createAsyncHandler, getHandlerConfigs } from '@application/hooks/sessio
 import useUIStore from '@state/UIStore'
 import {
     selectIsSessionActionLoading,
-    selectSetSaving,
     selectSetSessionActionLoading,
 } from '@state/selectors/uiSelectors'
 
@@ -13,7 +12,6 @@ export function useSessionHandlers() {
     const navigate = useNavigate()
     const isLoading = useUIStore(selectIsSessionActionLoading)
     const setSessionActionLoading = useUIStore(selectSetSessionActionLoading)
-    const setSaving = useUIStore(selectSetSaving)
     const [error, setError] = useState(null)
     const configs = useMemo(() => getHandlerConfigs(navigate), [navigate])
     const actionHandlers = useMemo(
@@ -21,17 +19,15 @@ export function useSessionHandlers() {
             configs.reduce((handlers, cfg) => {
                 handlers[cfg.name] = createAsyncHandler(
                     setSessionActionLoading,
-                    setSaving,
                     setError,
                     cfg.fn,
                     cfg.errorMsg,
-                    cfg.isSavingAction,
                     cfg.onSuccess,
                     cfg.showToast
                 )
                 return handlers
             }, {}),
-        [configs, setSessionActionLoading, setSaving]
+        [configs, setSessionActionLoading]
     )
 
     return {

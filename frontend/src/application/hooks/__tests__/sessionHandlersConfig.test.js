@@ -62,31 +62,26 @@ describe('sessionHandlersConfig - createAsyncHandler success flow', () => {
     })
 
     it('createAsyncHandler executes success flow and resets flags', async () => {
-        const setIsLoading = vi.fn(),
-            setIsSaving = vi.fn()
+        const setIsLoading = vi.fn()
         const setError = vi.fn()
         const asyncFn = vi.fn().mockResolvedValue(undefined)
         const onSuccess = vi.fn()
 
         const handler = createAsyncHandler(
             setIsLoading,
-            setIsSaving,
             setError,
             asyncFn,
             'error',
-            true,
             onSuccess
         )
 
         await handler()
 
         expect(setIsLoading).toHaveBeenNthCalledWith(1, true)
-        expect(setIsSaving).toHaveBeenNthCalledWith(1, true)
         expect(setError).toHaveBeenCalledWith(null)
         expect(asyncFn).toHaveBeenCalledTimes(1)
         expect(onSuccess).toHaveBeenCalledTimes(1)
         expect(setIsLoading).toHaveBeenLastCalledWith(false)
-        expect(setIsSaving).toHaveBeenLastCalledWith(false)
     })
 
 })
@@ -99,18 +94,15 @@ describe('sessionHandlersConfig - createAsyncHandler error flow', () => {
 
     it('createAsyncHandler handles error flow', async () => {
         const setIsLoading = vi.fn()
-        const setIsSaving = vi.fn()
         const setError = vi.fn()
         const testError = new Error('boom')
         const asyncFn = vi.fn().mockRejectedValue(testError)
 
         const handler = createAsyncHandler(
             setIsLoading,
-            setIsSaving,
             setError,
             asyncFn,
             'custom error',
-            false,
             undefined
         )
 
@@ -119,23 +111,19 @@ describe('sessionHandlersConfig - createAsyncHandler error flow', () => {
         expect(setError).toHaveBeenCalledWith('custom error')
         expect(mocks.notifications.notifyError).toHaveBeenCalledWith(testError)
         expect(setIsLoading).toHaveBeenLastCalledWith(false)
-        expect(setIsSaving).toHaveBeenLastCalledWith(false)
     })
 
     it('createAsyncHandler can suppress toast notifications', async () => {
         const setIsLoading = vi.fn()
-        const setIsSaving = vi.fn()
         const setError = vi.fn()
         const testError = new Error('boom')
         const asyncFn = vi.fn().mockRejectedValue(testError)
 
         const handler = createAsyncHandler(
             setIsLoading,
-            setIsSaving,
             setError,
             asyncFn,
             'custom error',
-            false,
             undefined,
             false
         )

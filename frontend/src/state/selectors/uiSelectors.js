@@ -5,4 +5,3 @@ export const selectIsExportingSession = (state) => state.isExportingSession
 export const selectSetExportingSession = (state) => state.setExportingSession
 export const selectIsSessionActionLoading = (state) => state.isSessionActionLoading
 export const selectSetSessionActionLoading = (state) => state.setSessionActionLoading
-export const selectSetSaving = (state) => state.setSaving
