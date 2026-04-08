@@ -80,7 +80,7 @@ describe('ExportService export operations', () => {
     })
 
     it('exportDeviceAsJSON requires a device object', () => {
-        expect(() => exportService.exportDeviceAsJSON(null)).toThrow('Dispositivo mancante')
+        expect(() => exportService.exportDeviceAsJSON(null)).toThrow('Device missing for export.')
     })
 
     it('exportDeviceAsJSON serializes and downloads device data', () => {

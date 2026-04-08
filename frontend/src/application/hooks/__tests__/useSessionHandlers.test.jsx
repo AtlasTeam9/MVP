@@ -7,7 +7,6 @@ const mocks = vi.hoisted(() => ({
     uiState: {
         isSessionActionLoading: false,
         setSessionActionLoading: vi.fn(),
-        setSaving: vi.fn(),
     },
     getHandlerConfigs: vi.fn(),
     createAsyncHandler: vi.fn(),
@@ -32,21 +31,18 @@ describe('useSessionHandlers', () => {
         mocks.createAsyncHandler.mockReset()
         mocks.uiState.isSessionActionLoading = false
         mocks.uiState.setSessionActionLoading.mockReset()
-        mocks.uiState.setSaving.mockReset()
 
         mocks.getHandlerConfigs.mockReturnValue([
             {
                 name: 'handleYesClick',
                 fn: vi.fn(),
                 errorMsg: 'yes error',
-                isSavingAction: false,
                 onSuccess: undefined,
             },
             {
                 name: 'handleSaveAndExitClick',
                 fn: vi.fn(),
                 errorMsg: 'save error',
-                isSavingAction: true,
                 onSuccess: vi.fn(),
             },
         ])

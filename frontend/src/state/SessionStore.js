@@ -8,7 +8,6 @@ const INITIAL_SESSION_STATE = {
     isTestFinished: false,
     isResumeMode: false,
     isSessionUploaded: false,
-    results: null,
     resultsPerAsset: null,
     currentNode: null,
     currentAssetIndex: 0,
@@ -172,7 +171,6 @@ const createHistoryMethods = (set, get) => ({
 
 const createResultMethods = (set) => ({
     setTestFinished: (status) => set({ isTestFinished: status }),
-    setResults: (results) => set({ results }),
     setResultsPerAsset: (resultsPerAsset) => set({ resultsPerAsset }),
     setResumeMode: (isResumeMode) => set({ isResumeMode }),
     setPosition: (position) =>

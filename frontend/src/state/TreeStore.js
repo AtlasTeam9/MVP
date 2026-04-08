@@ -44,21 +44,19 @@ const useTreeStore = create(
         (set, get) => ({
             // State
             trees: [],
-            error: null,
 
             // Actions
             setTrees: (trees) => {
                 const normalizedTrees = Array.isArray(trees) ? trees.map(normalizeTree) : []
                 set({ trees: normalizedTrees })
             },
-            setError: (error) => set({ error }),
 
             // Selectors
             getNodeByTreeIndexAndNodeId: (treeIndex, nodeId) =>
                 findNodeInTree(get().trees, treeIndex, nodeId),
 
             // Clear store
-            clearStore: () => set({ trees: [], error: null }),
+            clearStore: () => set({ trees: [] }),
         }),
         { name: 'TreeStore' }
     )

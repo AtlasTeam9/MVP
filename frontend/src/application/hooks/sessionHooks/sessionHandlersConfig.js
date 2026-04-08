@@ -8,18 +8,15 @@ import { notificationService } from '@application/services/AppServices'
 export const createAsyncHandler =
     (
         setIsLoading,
-        setIsSaving,
         setError,
         asyncFn,
         errorMsg,
-        isSavingAction,
         onSuccess,
         showToast = true
     ) =>
     async () => {
         try {
             setIsLoading(true)
-            setIsSaving(Boolean(isSavingAction))
             setError(null)
             await asyncFn()
             onSuccess?.()
@@ -30,7 +27,6 @@ export const createAsyncHandler =
             }
         } finally {
             setIsLoading(false)
-            setIsSaving(false)
         }
     }
 
@@ -82,7 +78,6 @@ const BASE_HANDLER_CONFIGS = [
             await SessionService.saveAndExit()
         },
         errorMsg: 'Error saving and exiting:',
-        isSavingAction: true,
         onSuccess: (navigate) => () => navigate('/'),
     },
 ]
